@@ -1,0 +1,115 @@
+/*
+ * test_course_data.js — 课程数据回归测试（纯本地，不访问网络）
+ * 运行：node tools/test_course_data.js   （在仓库根目录执行）
+ *
+ * 校验 course-content.json 的结构完整性：章节数量、编号唯一性、
+ * 每个专题的讲解/示例/练习是否齐备、PDF 小节与交互专题的对应关系，
+ * 以及正文与讲解的篇幅下限（防止批量丢失内容）。
+ */
+"use strict";
+
+const assert = require("assert");
+
+/* 本脚本在 tools/ 下，课程数据位于上一级仓库根目录 */
+const chapters = require("../course-content.json");
+assert.strictEqual(chapters.length, 8, "course should contain chapters 1–8");
+/* 连续问号说明转换/保存过程中出现过编码替换错误，正文已不可用 */
+assert.ok(
+  !/\?{3,}/.test(JSON.stringify(chapters)),
+  "course content should not contain corrupted question-mark placeholders"
+);
+
+/* 跨章唯一编号集合与 PDF 小节计数器，用于全局查重与总量核对 */
+const sectionIds = new Set();
+const exerciseIds = new Set();
+const tutorialIds = new Set();
+let tutorialCount = 0;
+chapters.forEach((chapter, chapterIndex) => {
+  assert.ok(chapter.meta.chapter, `chapter ${chapterIndex + 1} should have a title`);
+  assert.ok(chapter.meta.blurb, `chapter ${chapterIndex + 1} should have an introduction`);
+  assert.ok(chapter.sections.length > 0, `chapter ${chapterIndex + 1} should have sections`);
+  assert.ok(chapter.tutorials.length > 0, `chapter ${chapterIndex + 1} should have PDF-ordered tutorials`);
+  if (chapterIndex > 0) {
+    assert.ok(chapter.sections.length >= 6, `chapter ${chapterIndex + 1} should cover the expanded topic set`);
+  }
+
+  chapter.sections.forEach((section) => {
+    assert.ok(section.id.startsWith(`${chapterIndex + 1}.`), `${section.id} should be in its chapter`);
+    assert.ok(!sectionIds.has(section.id), `${section.id} should be unique`);
+    sectionIds.add(section.id);
+    assert.ok(section.theory.length > 0, `${section.id} should have lesson content`);
+    const theoryText = section.theory.join("").replace(/<[^>]*>/g, "");
+    assert.ok(
+      theoryText.length >= 300,
+      `${section.id} should include detailed explanations, not only a topic summary`
+    );
+    assert.ok(section.sample.code, `${section.id} should have a code example`);
+    assert.ok(section.exercise.starter, `${section.id} should have an exercise starter`);
+    assert.ok(section.exercise.expected != null, `${section.id} should have expected output`);
+    assert.ok(section.exercise.hint, `${section.id} should have a hint`);
+    assert.ok(!exerciseIds.has(section.id), `${section.id} exercise should be unique`);
+    exerciseIds.add(section.id);
+  });
+
+  chapter.bookExercises.forEach((exercise) => {
+    assert.ok(!exerciseIds.has(exercise.id), `${exercise.id} should be unique`);
+    exerciseIds.add(exercise.id);
+  });
+
+  const tutorialNumbers = new Set();
+  const plainText = (item) =>
+    item.paragraphs.join("") + item.theory.join("").replace(/<[^>]*>/g, "");
+  chapter.tutorials.forEach((tutorial) => {
+    assert.ok(tutorial.number && tutorial.title, "tutorials should have a number and title");
+    assert.ok(!tutorialIds.has(tutorial.number), `${tutorial.number} should be unique across chapters`);
+    assert.ok(!tutorialNumbers.has(tutorial.number), `${tutorial.number} should be unique in its chapter`);
+    assert.ok(
+      Number.isInteger(tutorial.page) && tutorial.page > 0 && tutorial.page <= 296,
+      `${tutorial.number} should have a valid PDF page`
+    );
+    assert.ok(
+      chapter.sections.some((section) => section.id === tutorial.sectionId),
+      `${tutorial.number} should map to an interactive section in its own chapter`
+    );
+    // 含三级小节 (如 1.5.1) 的父节可能只保留导语, 正文由子小节承载
+    const childTutorials = chapter.tutorials.filter(
+      (other) => other.number.startsWith(`${tutorial.number}.`)
+    );
+    assert.ok(
+      tutorial.paragraphs.length >= (childTutorials.length ? 1 : 2),
+      `${tutorial.number} should contain original tutorial text`
+    );
+    assert.ok(
+      tutorial.theory.length > 0 || childTutorials.length > 0,
+      `${tutorial.number} should contain extended lesson content`
+    );
+    const fullText = plainText(tutorial) + childTutorials.map(plainText).join("");
+    assert.ok(
+      fullText.trim().length >= 100,
+      `${tutorial.number} should contain readable tutorial text`
+    );
+    tutorial.paragraphs.forEach((paragraph) => {
+      assert.ok(typeof paragraph === "string" && paragraph.trim(), `${tutorial.number} should have readable text`);
+    });
+    tutorial.theory.forEach((paragraph) => {
+      assert.ok(typeof paragraph === "string" && paragraph.trim(), `${tutorial.number} should have extended lesson text`);
+    });
+    tutorialNumbers.add(tutorial.number);
+    tutorialIds.add(tutorial.number);
+    tutorialCount++;
+  });
+  // 正文取自教材 md, 单节篇幅随原书小节长短而定 (如 7.8.3 原文仅数行),
+  // 因此按章整体把关, 防止大批正文缺失
+  const chapterText = chapter.tutorials.map(plainText).join("");
+  assert.ok(
+    chapterText.length >= 10000,
+    `chapter ${chapterIndex + 1} should keep the whole chapter text`
+  );
+});
+/* 固定总量：课程契约的一部分，修订课程数据时需同步调整 */
+assert.strictEqual(sectionIds.size, 64, "course should retain all 64 interactive sections");
+assert.strictEqual(tutorialIds.size, 91, "course should retain all 91 PDF topics");
+console.log(
+  `[ OK ] ${chapters.length} chapters, ${sectionIds.size} interactive sections, ` +
+  `${tutorialCount} PDF-ordered tutorials`
+);

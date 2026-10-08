@@ -1,0 +1,15 @@
+# Python environments and cache
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Node dependencies
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# 教材 PDF 体积较大, 不纳入版本控制; 由它生成的 md/ 书稿与 images/ 已跟踪
+c-programming-language-2nd-edition-simple-chinese.pdf
