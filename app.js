@@ -665,7 +665,11 @@
     var nav = item ? item.querySelector(".chips") : null;
     if (!nav) return;
     nav.innerHTML = "";
-    nav.setAttribute("aria-label", "PDF目录小节，共 " + activeLesson.tutorials.length + " 项");
+    /* 附录没有原书页码（page 为 null），提示与无障碍文案相应改写 */
+    var isAppendix = activeLesson.meta.kind === "appendix";
+    nav.setAttribute("aria-label",
+      (isAppendix ? "附录小节，共 " : "PDF目录小节，共 ") +
+      activeLesson.tutorials.length + " 项");
     activeLesson.tutorials.forEach(function (topic) {
       /* 正文小节的 id 由编号派生（1.5.1 → pdf-topic-1-5-1），点击时按 id 滚动 */
       var targetId = "pdf-topic-" + topic.number.replace(/\./g, "-");
@@ -675,7 +679,9 @@
       if (topic.practiceSectionId) {
         c.setAttribute("data-practice-sec", topic.practiceSectionId);
       }
-      c.title = "PDF 第 " + topic.page + " 页";
+      c.title = topic.page
+        ? "PDF 第 " + topic.page + " 页"
+        : (isAppendix ? "附录小节" : "");
       c.addEventListener("click", function () {
         var target = document.getElementById(targetId);
         if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -930,12 +936,21 @@
     var activeItem = null;
     window.CHAPTERS.forEach(function (chapter, index) {
       var isActive = chapter === activeLesson;
+      var isAppendix = chapter.meta.kind === "appendix";
       var item = el("div", "chapter-item");
       item.setAttribute("data-chapter", String(index + 1));
-      /* 编号已由 chapter-tab-no 单独显示，标题里的「第 N 章」前缀去掉以免重复 */
+      /* 编号已由 chapter-tab-no 单独显示：正文章去掉「第 N 章」前缀，
+         附录去掉「附录X」前缀，避免与左侧编号重复 */
+      var tabTitle = chapter.meta.chapter
+        .replace(/^第\s*\d+\s*章\s*/, "")
+        .replace(/^附录\s*[A-Z]\s*/, "");
+      /* 编号栏：正文章 01…08，附录用 A/B/C */
+      var tabNo = isAppendix
+        ? ((chapter.meta.chapter.match(/^附录\s*([A-Z])/) || [])[1] || "")
+        : String(index + 1).padStart(2, "0");
       var button = el("button", "chapter-tab",
-        '<span class="chapter-tab-no">' + String(index + 1).padStart(2, "0") + "</span>" +
-        '<span class="chapter-tab-title">' + esc(chapter.meta.chapter.replace(/^第\s*\d+\s*章\s*/, "")) + "</span>" +
+        '<span class="chapter-tab-no">' + esc(tabNo) + "</span>" +
+        '<span class="chapter-tab-title">' + esc(tabTitle) + "</span>" +
         '<span class="chapter-tab-caret" aria-hidden="true">⌄</span>');
       button.type = "button";
       button.setAttribute("data-chapter", String(index + 1));
@@ -1121,8 +1136,8 @@
     });
     $("compilerSel").addEventListener("change", refreshStdSel);
 
-    // 载入第一节示例
-    var first = L.sections[0];
+    // 载入第一节示例（恢复到的章节可能是只读附录，没有专题，故固定取第 1 章）
+    var first = window.CHAPTER1.sections[0];
     setCode(first.sample.code, first.sample.stdin, null);
     setMeta("就绪 · 载入了 1.1 示例", "");
 

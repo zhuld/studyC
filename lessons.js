@@ -27,15 +27,23 @@
 
   loadJson("course-content.json")
     .then(function (chapters) {
-      /* 课程固定为 8 章，数量不符说明拿到的不是本课程的数据文件 */
-      if (!Array.isArray(chapters) || chapters.length !== 8) {
-        throw new Error("课程内容格式错误：应包含 8 个章节");
+      /* 课程固定为 8 章 + 3 个附录, 数量不符说明拿到的不是本课程的数据文件 */
+      if (!Array.isArray(chapters) || chapters.length !== 11) {
+        throw new Error("课程内容格式错误：应包含 8 个章节与 3 个附录");
       }
 
       chapters.forEach(function (chapter, chapterIndex) {
         if (!chapter.meta || !Array.isArray(chapter.sections) ||
             !Array.isArray(chapter.tutorials) || !Array.isArray(chapter.bookExercises)) {
           throw new Error("课程内容格式错误：第 " + (chapterIndex + 1) + " 章结构不完整");
+        }
+
+        /* 附录 (meta.kind = "appendix") 是只读正文：没有交互专题，
+           也没有原书页码可用；正文章则必须两者齐备。两者不可混用。 */
+        var isAppendix = chapter.meta.kind === "appendix";
+        if (isAppendix !== (chapter.sections.length === 0)) {
+          throw new Error("课程内容格式错误：第 " + (chapterIndex + 1) +
+            " 章的附录标记与交互专题数不匹配");
         }
 
         /* 专题编号是判题与进度存档的键，必须唯一 */
@@ -52,15 +60,33 @@
           var hasChildren = chapter.tutorials.some(function (other) {
             return other.number.indexOf(tutorial.number + ".") === 0;
           });
-          /* 段落数下限按是否含子小节区分：父节可只剩导语，叶子小节至少要有一节正文 */
-          if (!tutorial.number || !tutorial.title ||
-              !Number.isInteger(tutorial.page) || tutorial.page < 1 ||
-              !practiceSections[tutorial.sectionId] ||
-              !Array.isArray(tutorial.paragraphs) ||
-              tutorial.paragraphs.length < (hasChildren ? 1 : 2) ||
+          function bad(reason) {
+            throw new Error("课程小节数据格式错误：" +
+              (tutorial.number || "编号缺失") + "（" + reason + "）");
+          }
+          if (!tutorial.number || !tutorial.title) bad("缺编号或标题");
+          if (!Array.isArray(tutorial.paragraphs) || !tutorial.paragraphs.length) {
+            bad("缺正文");
+          }
+
+          if (isAppendix) {
+            /* 附录只有书稿正文：原书页码无从取得，也不挂交互专题，
+               因此 page 必须为 null、不能带 sectionId，theory 允许为空 */
+            if (tutorial.page !== null || tutorial.sectionId != null) bad("附录不应带页码或专题");
+            if (!Array.isArray(tutorial.theory)) bad("theory 应为数组");
+            return;
+          }
+
+          /* 正文章：段落数下限按是否含子小节区分（父节可只剩导语），
+             theory 是配套课程讲解，父节可以为空、叶子小节必须有 */
+          if (!Number.isInteger(tutorial.page) || tutorial.page < 1 ||
+              !practiceSections[tutorial.sectionId]) {
+            bad("页码或配套专题缺失");
+          }
+          if (tutorial.paragraphs.length < (hasChildren ? 1 : 2) ||
               !Array.isArray(tutorial.theory) ||
               (!tutorial.theory.length && !hasChildren)) {
-            throw new Error("课程小节数据格式错误：" + (tutorial.number || "编号缺失"));
+            bad("正文或讲解篇幅不足");
           }
         });
 

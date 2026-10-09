@@ -317,7 +317,7 @@
           "<pre class=\"card-code\">   1 -17\n   20 -6\n   40 4\n   60 15\n   80 26\n   100 37\n   120 48\n   140 60\n   160 71\n   180 82\n   200 93\n   220 104\n   240 115\n   260 126\n   280 137\n   300 148</pre>"
         ],
         "theory": [
-          "<p>此程序中仍然只包括一个名为 <code>main</code>的函数定义。它比前面打印“ <code>hello, world</code>” 的程序长一些，但并不复杂。这个程序中引入了一些新的概念，包括注释、声明、变量、算术表达式、循环以及格式化输出。该程序如下所示：</p>\n<pre class=\"card-code\">   #include &lt;stdio.h&gt;\n   /* 当fahr=0，20，… ，300时，分别打印华氏温度与摄氏温度对照表 */\n\n   main()\n   {\n     int fahr, celsius;\n     int lower, upper, step;\n     lower = 0;      /* 温度表的下限 */\n     upper = 300;    /* 温度表的上限 */\n     step = 20;      /* 步长 */\n     fahr = lower;\n     while (fahr &lt;= upper) {\n         celsius = 5 * (fahr-32) / 9;\n         printf(&quot;%d\\t%d\\n&quot;, fahr, celsius);\n         fahr = fahr + step;\n     }\n   }</pre>\n<p>其中的两行：</p>\n<pre class=\"card-code\">   /*当fahr=0，20，… ，300时，分别</pre>\n<p>打印华氏温度与摄氏温度对照表 */</p>\n<p>称为注释，此处，它简单地解释，该程序是做什么用的。包含在/*与*/之间的字符序列将被编译器忽略。注释可以自由地运用在程序中，使得程序更易于理解。程序中允许出现空格、制表符或换行符之处，都可以使用注释。</p>\n<p>在 C语言中，所有变量都必须先声明后使用。声明通常放在函数起始处，在任何可执行语句之前。声明用于说明变量的属性，它由一个类型名和一个变量表组成，例如：</p>\n<pre class=\"card-code\">    int fahr, celsius;\n    int lower, upper, step;</pre>\n<p>其中，类型<code>int</code>表示其后所列变量为整数，与之相对应的，<code>float</code>表示所列变量为浮点数（即，可以带有小数部分的数）。<code>int</code>与<code>float</code>类型的取值范围取决于具体的机器。对于<code>int</code>类型，通常为 16位，其取值范围在-32768～32767之间，也有用 32位表示的<code>int</code>类型。<code>float</code>类</p>\n<p>-38 38型通常是 32位，它至少有 6位有效数字，取值范围一般在 10 ～10 之间。</p>\n<p>除<code>int</code>与<code>float</code>类型之外，<code>C</code>语高还提供了其它一些基本数据类型，例如：</p>\n<p><code>char</code> 字符—— 一个字节</p>\n<pre class=\"card-code\">   short 短整型\n   long 长整型\n   double 双精度浮点型</pre>\n<p>这些数据类型对象的大小也取决于具体的机器。另外，还存在这些基本数据类型的数组、结构、联合，指向这些类型的指针以及返回这些类型值的函教。我们将在后续相应的章节中分别介绍。</p>\n<p>在上面的温度转换程序中，最开始执行的计算是下列 4个赋值语句：</p>\n<pre class=\"card-code\">    lower = 0;</pre>\n<pre class=\"card-code\">    upper = 300;\n    step = 20;\n    fahr = lower;</pre>\n<p>它们为变量设置初值。各条语句均以分号结束。</p>\n<p>温度转换表中的各行计算方式相同，因此可以用循环语句重复输出各行。这是<code>while</code>循环语句的用途：</p>\n<pre class=\"card-code\">    while (fahr &lt;= upper) {\n       ...\n    }</pre>\n<p><code>while</code> 循环语句的执行方式是这样的：首先测试圆括号中的条件；如果条件为真<code>(fahr&lt;=upper)</code>，则执行循环体（括在花括号中的<code>3</code>条语句）；然后再重新测试圆括号中的条件，如果为真，则再次执行循环体；当圆括号中的条件测试结果为假<code>(fahr&gt;upper)</code>时，循环结束，并继续执行跟在<code>while</code>循环语句之后的下一条语句。在本程序中，循环语句后没有其它语句，因此整个程序的执行终止。</p>\n<p><code>while</code> 语句的循环体可以是用花括号括起来的一条或多条语句（如上面的温度转换程序），也可以是不用花括号包括的单条语句，例如：</p>\n<pre class=\"card-code\">   while (i &lt; j)\n       i = 2 * i;</pre>\n<p>在这两种情况下，我们总是把由<code>while</code>控制的语句缩进一个制表位，这样就可以很容易地看出循环语句中包含哪些语句。这种缩进方式突出了程序的逻辑结构。尽管 C编译器并不关心程序的外观形式，但正确的缩进以及保留适当空格的程序设计风格对程序的易读性非常重要。我们建议每行只书写一条语句，并在运算符两边各加上一个空格字符，这样可以使得运算的结合关系更清楚明了。相比而言，花括号的位置就不那么重要了。我们从比较流行的一些风格中选择了一种，读者可以选择适合自己的一种风格，并养成一直使用这种风格的好习惯。</p>\n<p>在该程序中，绝大部分工作都是在循环体中完成的。循环体中的赋值语句</p>\n<pre class=\"card-code\">   celsius =  5 * (fahr - 32) / 9 ：</pre>\n<p>用于计算与指定华氏温度相对应的摄氏温度值，并将结果赋值给变量<code>celsius</code>。在该语句中，之所以把表达式写成先乘<code>5</code>然后再除以<code>9</code>而不是直接写成<code>5 / 9</code> ，其原因是在 C语言及许多其它语言中，整数除法操作将执行舍位，结果中的任何小数部分都会被舍弃。由于 <code>5</code>和 <code>9</code>都是整数，<code>5 / 9</code> 相除后经截取所得的结果为 0，因此这样求得的所有摄氏温度都将为 0。</p>\n<p>从该例子中也可以看出<code>printf</code>函数的一些功能。<code>printf</code>是一个通用输出格式化函数，第 7章将对此做详细介绍。该函数的第一个参数是待打印的字符串，其中的每个百分号（%）表示其它的参数（第二个、第三个、…… 参数）之一进行替换的位置，并指定打印格式。例如，<code>%d</code>指定一个整型参数，因此语句</p>\n<pre class=\"card-code\">   printf(&quot; %d\\t%d\\n&quot;, fahr, celsius);</pre>\n<p>用于打印两个整数<code>fahr</code>与<code>celsius</code>的值，并在两者之间留一个制表符的空间（<code>\\t</code>）。</p>\n<p><code>printf</code>函数的第一个参数中的各个%分别对应于第二个、第三个、…… 参数，它们在数目和类型上都必须匹配，否则将出现错误的结果。</p>\n<p>顺便指出，<code>printf</code>函数并不是 C语言本身的一部分，C 语言本身并没有定义输入／输出功能。<code>printf</code> 仅仅是标准库函数中一个有用的函数而已，这些标准序函数在 C语言程序中通常都可以使用。但是，ANSI 标准定义了<code>printf</code>函数的行为，因此，对每个符合该标准的编译器和库来说，该函数的属性都是相同的。</p>\n<p>为了将重点放到讲述 C语言本身上，我们在第 7章之前的各章中将不再对输入／输出做更多的介绍，并且，特别将格式化输入推后到第 7章讲解。如果读者想了解数据输入，可以先阅读 7.4节中对<code>scanf</code>函数的讨论部分，<code>scanf</code>函数类似于<code>printf</code>函数，但它用于读输入数据而不是写输出数据。</p>\n<p>上述的温度转换程序存在两个问题。比较简单的问题是，由于输出的数不是右对齐的，所以输出的结果不是很美观。这个问题比较容易解决：如果在 <code>printf</code>语句的第一个参数的<code>%d</code>中指明打印宽度，则打印的数字会在打印区域内右对齐。例如，可以用语句</p>\n<pre class=\"card-code\">   printf(&quot; %3d %6d\\n&quot;, fahr, celsius);</pre>\n<p>打印<code>fahr</code>与<code>celsius</code>的值，这样，<code>fahr</code>的值占 3个数字宽，<code>celsius</code>的值占 6个数字宽，输出的结果如下所示：</p>\n<pre class=\"card-code\">     0     -17\n    20      -6\n    40       4\n    60      15\n    80      26\n   100      37\n   ...</pre>\n<p>另一个较为严重的问题是，由于我们使用的是整型算术运算，因此经计算得到的摄氏温度值不太精确，例如，与 0℉ 对应的精确的摄氏温度应该为-17.8℃ ，而不是-17℃ 。为了得到更精确的结果，应该用浮点算术运算代替上面的整型算术运算。这就需要对程序做适当修改。下面是该程序的又一种版本</p>\n<pre class=\"card-code\">   #include &lt;stdio.h&gt;\n   /* print Fahrenheit-Celsius table\n       for fahr = 0, 20, ..., 300; floating-point version */\n   main()\n   {\n     float fahr, celsius;\n     float lower, upper, step;\n     lower = 0;      /* lower limit of temperatuire scale */\n     upper = 300;    /* upper limit */\n     step = 20;      /* step size */\n     fahr = lower;\n     while (fahr &lt;= upper) {\n         celsius = (5.0/9.0) * (fahr-32.0);\n         printf(&quot;%3.0f %6.1f\\n&quot;, fahr, celsius);\n         fahr = fahr + step;\n     }\n   }</pre>\n<p>这个程序与前一个程序基本相同，不同的是，它把 <code>fahr</code>与 <code>celsius</code>声明为 <code>float</code>类型，转换公式的表述方式也更自然一些。在前一个程序中，之所以不能使用<code>5 / 9</code> 的形式，是因为按整型除法的计算规则，它们相除并舍位后得到的结果为<code>0</code>。但是，常数中的小数点表明该常数是一个浮点数，因此，<code>5.0 / 9.0</code> 是两个浮点数相除，结果将不被舍位。</p>\n<p>如果某个算术运算符的所有操作数均为整型，则执行整型运算。但是，如果某个算术运算符有一个浮点型操作数和一个整型操作数，则在开始运算之前整型操作数将会被转换为浮点型。例如，在表达式<code>fahr</code> – <code>32</code> 中，<code>32</code>在运算过程中将被自动转换为浮点数再参与运算。不过，即使浮点常量取的是整型值，在书写时最好还是为它加上一个显式的小数点，这样可以强调其浮点性质，便于阅读。</p>\n<p>第 2章将详细介绍把整型数转换为浮点型数的规则。在这里需要注意，赋值语句</p>\n<pre class=\"card-code\">   fahr = lower;</pre>\n<p>与条件测试语句</p>\n<pre class=\"card-code\">   while (fahr &lt;= upper)</pre>\n<p>也都是按照这种方式执行的，即在运算之前先把<code>int</code>类型的操作数转换为<code>float</code>类型的操作数。</p>\n<p><code>printf</code>中的转换说明<code>%3.0f</code>表明待打印的浮点数（即<code>fahr</code>）至少占<code>3</code>个字符宽，且不带小数点和小数部分；<code>%6.1f</code>表明另一个待打印的数（<code>celsius</code>）至少占<code>6</code>个字符宽，且小数点后面有<code>1</code>位数字。其输出如下所示：</p>\n<pre class=\"card-code\">     0   -17.8\n    20    -6.7\n    40     4.4\n   ...</pre>\n<p>格式说明可以省略宽度与精度，例如，<code>%6f</code>表示待打印的浮点数至少有<code>6</code>个字符宽；<code>%.2f</code>指定待打印的浮点数的小数点后有两位小数，但宽度没有限制；<code>%f</code>则仅仅要求按照浮点数打印该数。</p>\n<pre class=\"card-code\">   %d        按照十进制整型数打印\n   %6d       按照十进制整型数打印，至少6个字符宽\n   %f        按照浮点数打印\n   %6f       按照浮点数打印，至少6个字符宽</pre>\n<p><code>%.2f</code> 按照浮点数打印，小数点后有两位小数<code>%6.2f</code> 按照浮点数打印，至少<code>6</code>个字符宽，小数点后有两位小数</p>\n<p>此外，<code>printf</code> 函数还支持下列格式说明：<code>%o</code> 表示八进制数；<code>%x</code> 表示十六进制数；<code>%c</code>表示字符；<code>%s</code>表示字符串；%%表示百分号（%）本身。</p>\n<p>练习 1-3 修改温度转换程序，使之能在转换表的顶部打印一个标题。</p>\n<p>练习 1-4 编写一个程序打印摄氏温度转换为相应华氏温度的转换表。</p>"
+          "<p>此程序中仍然只包括一个名为 <code>main</code>的函数定义。它比前面打印“ <code>hello, world</code>” 的程序长一些，但并不复杂。这个程序中引入了一些新的概念，包括注释、声明、变量、算术表达式、循环以及格式化输出。该程序如下所示：</p>\n<pre class=\"card-code\">   #include &lt;stdio.h&gt;\n   /* 当fahr=0，20，… ，300时，分别打印华氏温度与摄氏温度对照表 */\n\n   main()\n   {\n     int fahr, celsius;\n     int lower, upper, step;\n     lower = 0;      /* 温度表的下限 */\n     upper = 300;    /* 温度表的上限 */\n     step = 20;      /* 步长 */\n     fahr = lower;\n     while (fahr &lt;= upper) {\n         celsius = 5 * (fahr-32) / 9;\n         printf(&quot;%d\\t%d\\n&quot;, fahr, celsius);\n         fahr = fahr + step;\n     }\n   }</pre>\n<p>其中的两行：</p>\n<pre class=\"card-code\">   /*当fahr=0，20，… ，300时，分别\n   打印华氏温度与摄氏温度对照表 */</pre>\n<p>称为注释，此处，它简单地解释，该程序是做什么用的。包含在/*与*/之间的字符序列将被编译器忽略。注释可以自由地运用在程序中，使得程序更易于理解。程序中允许出现空格、制表符或换行符之处，都可以使用注释。</p>\n<p>在 C语言中，所有变量都必须先声明后使用。声明通常放在函数起始处，在任何可执行语句之前。声明用于说明变量的属性，它由一个类型名和一个变量表组成，例如：</p>\n<pre class=\"card-code\">    int fahr, celsius;\n    int lower, upper, step;</pre>\n<p>其中，类型<code>int</code>表示其后所列变量为整数，与之相对应的，<code>float</code>表示所列变量为浮点数（即，可以带有小数部分的数）。<code>int</code>与<code>float</code>类型的取值范围取决于具体的机器。对于<code>int</code>类型，通常为 16位，其取值范围在-32768～32767之间，也有用 32位表示的<code>int</code>类型。<code>float</code>类</p>\n<p>-38 38型通常是 32位，它至少有 6位有效数字，取值范围一般在 10 ～10 之间。</p>\n<p>除<code>int</code>与<code>float</code>类型之外，<code>C</code>语高还提供了其它一些基本数据类型，例如：</p>\n<p><code>char</code> 字符—— 一个字节</p>\n<pre class=\"card-code\">   short 短整型\n   long 长整型\n   double 双精度浮点型</pre>\n<p>这些数据类型对象的大小也取决于具体的机器。另外，还存在这些基本数据类型的数组、结构、联合，指向这些类型的指针以及返回这些类型值的函教。我们将在后续相应的章节中分别介绍。</p>\n<p>在上面的温度转换程序中，最开始执行的计算是下列 4个赋值语句：</p>\n<pre class=\"card-code\">    lower = 0;</pre>\n<pre class=\"card-code\">    upper = 300;\n    step = 20;\n    fahr = lower;</pre>\n<p>它们为变量设置初值。各条语句均以分号结束。</p>\n<p>温度转换表中的各行计算方式相同，因此可以用循环语句重复输出各行。这是<code>while</code>循环语句的用途：</p>\n<pre class=\"card-code\">    while (fahr &lt;= upper) {\n       ...\n    }</pre>\n<p><code>while</code> 循环语句的执行方式是这样的：首先测试圆括号中的条件；如果条件为真<code>(fahr&lt;=upper)</code>，则执行循环体（括在花括号中的<code>3</code>条语句）；然后再重新测试圆括号中的条件，如果为真，则再次执行循环体；当圆括号中的条件测试结果为假<code>(fahr&gt;upper)</code>时，循环结束，并继续执行跟在<code>while</code>循环语句之后的下一条语句。在本程序中，循环语句后没有其它语句，因此整个程序的执行终止。</p>\n<p><code>while</code> 语句的循环体可以是用花括号括起来的一条或多条语句（如上面的温度转换程序），也可以是不用花括号包括的单条语句，例如：</p>\n<pre class=\"card-code\">   while (i &lt; j)\n       i = 2 * i;</pre>\n<p>在这两种情况下，我们总是把由<code>while</code>控制的语句缩进一个制表位，这样就可以很容易地看出循环语句中包含哪些语句。这种缩进方式突出了程序的逻辑结构。尽管 C编译器并不关心程序的外观形式，但正确的缩进以及保留适当空格的程序设计风格对程序的易读性非常重要。我们建议每行只书写一条语句，并在运算符两边各加上一个空格字符，这样可以使得运算的结合关系更清楚明了。相比而言，花括号的位置就不那么重要了。我们从比较流行的一些风格中选择了一种，读者可以选择适合自己的一种风格，并养成一直使用这种风格的好习惯。</p>\n<p>在该程序中，绝大部分工作都是在循环体中完成的。循环体中的赋值语句</p>\n<pre class=\"card-code\">   celsius =  5 * (fahr - 32) / 9 ：</pre>\n<p>用于计算与指定华氏温度相对应的摄氏温度值，并将结果赋值给变量<code>celsius</code>。在该语句中，之所以把表达式写成先乘<code>5</code>然后再除以<code>9</code>而不是直接写成<code>5 / 9</code> ，其原因是在 C语言及许多其它语言中，整数除法操作将执行舍位，结果中的任何小数部分都会被舍弃。由于 <code>5</code>和 <code>9</code>都是整数，<code>5 / 9</code> 相除后经截取所得的结果为 0，因此这样求得的所有摄氏温度都将为 0。</p>\n<p>从该例子中也可以看出<code>printf</code>函数的一些功能。<code>printf</code>是一个通用输出格式化函数，第 7章将对此做详细介绍。该函数的第一个参数是待打印的字符串，其中的每个百分号（%）表示其它的参数（第二个、第三个、…… 参数）之一进行替换的位置，并指定打印格式。例如，<code>%d</code>指定一个整型参数，因此语句</p>\n<pre class=\"card-code\">   printf(&quot; %d\\t%d\\n&quot;, fahr, celsius);</pre>\n<p>用于打印两个整数<code>fahr</code>与<code>celsius</code>的值，并在两者之间留一个制表符的空间（<code>\\t</code>）。</p>\n<p><code>printf</code>函数的第一个参数中的各个%分别对应于第二个、第三个、…… 参数，它们在数目和类型上都必须匹配，否则将出现错误的结果。</p>\n<p>顺便指出，<code>printf</code>函数并不是 C语言本身的一部分，C 语言本身并没有定义输入／输出功能。<code>printf</code> 仅仅是标准库函数中一个有用的函数而已，这些标准序函数在 C语言程序中通常都可以使用。但是，ANSI 标准定义了<code>printf</code>函数的行为，因此，对每个符合该标准的编译器和库来说，该函数的属性都是相同的。</p>\n<p>为了将重点放到讲述 C语言本身上，我们在第 7章之前的各章中将不再对输入／输出做更多的介绍，并且，特别将格式化输入推后到第 7章讲解。如果读者想了解数据输入，可以先阅读 7.4节中对<code>scanf</code>函数的讨论部分，<code>scanf</code>函数类似于<code>printf</code>函数，但它用于读输入数据而不是写输出数据。</p>\n<p>上述的温度转换程序存在两个问题。比较简单的问题是，由于输出的数不是右对齐的，所以输出的结果不是很美观。这个问题比较容易解决：如果在 <code>printf</code>语句的第一个参数的<code>%d</code>中指明打印宽度，则打印的数字会在打印区域内右对齐。例如，可以用语句</p>\n<pre class=\"card-code\">   printf(&quot; %3d %6d\\n&quot;, fahr, celsius);</pre>\n<p>打印<code>fahr</code>与<code>celsius</code>的值，这样，<code>fahr</code>的值占 3个数字宽，<code>celsius</code>的值占 6个数字宽，输出的结果如下所示：</p>\n<pre class=\"card-code\">     0     -17\n    20      -6\n    40       4\n    60      15\n    80      26\n   100      37\n   ...</pre>\n<p>另一个较为严重的问题是，由于我们使用的是整型算术运算，因此经计算得到的摄氏温度值不太精确，例如，与 0℉ 对应的精确的摄氏温度应该为-17.8℃ ，而不是-17℃ 。为了得到更精确的结果，应该用浮点算术运算代替上面的整型算术运算。这就需要对程序做适当修改。下面是该程序的又一种版本</p>\n<pre class=\"card-code\">   #include &lt;stdio.h&gt;\n   /* print Fahrenheit-Celsius table\n       for fahr = 0, 20, ..., 300; floating-point version */\n   main()\n   {\n     float fahr, celsius;\n     float lower, upper, step;\n     lower = 0;      /* lower limit of temperatuire scale */\n     upper = 300;    /* upper limit */\n     step = 20;      /* step size */\n     fahr = lower;\n     while (fahr &lt;= upper) {\n         celsius = (5.0/9.0) * (fahr-32.0);\n         printf(&quot;%3.0f %6.1f\\n&quot;, fahr, celsius);\n         fahr = fahr + step;\n     }\n   }</pre>\n<p>这个程序与前一个程序基本相同，不同的是，它把 <code>fahr</code>与 <code>celsius</code>声明为 <code>float</code>类型，转换公式的表述方式也更自然一些。在前一个程序中，之所以不能使用<code>5 / 9</code> 的形式，是因为按整型除法的计算规则，它们相除并舍位后得到的结果为<code>0</code>。但是，常数中的小数点表明该常数是一个浮点数，因此，<code>5.0 / 9.0</code> 是两个浮点数相除，结果将不被舍位。</p>\n<p>如果某个算术运算符的所有操作数均为整型，则执行整型运算。但是，如果某个算术运算符有一个浮点型操作数和一个整型操作数，则在开始运算之前整型操作数将会被转换为浮点型。例如，在表达式<code>fahr</code> – <code>32</code> 中，<code>32</code>在运算过程中将被自动转换为浮点数再参与运算。不过，即使浮点常量取的是整型值，在书写时最好还是为它加上一个显式的小数点，这样可以强调其浮点性质，便于阅读。</p>\n<p>第 2章将详细介绍把整型数转换为浮点型数的规则。在这里需要注意，赋值语句</p>\n<pre class=\"card-code\">   fahr = lower;</pre>\n<p>与条件测试语句</p>\n<pre class=\"card-code\">   while (fahr &lt;= upper)</pre>\n<p>也都是按照这种方式执行的，即在运算之前先把<code>int</code>类型的操作数转换为<code>float</code>类型的操作数。</p>\n<p><code>printf</code>中的转换说明<code>%3.0f</code>表明待打印的浮点数（即<code>fahr</code>）至少占<code>3</code>个字符宽，且不带小数点和小数部分；<code>%6.1f</code>表明另一个待打印的数（<code>celsius</code>）至少占<code>6</code>个字符宽，且小数点后面有<code>1</code>位数字。其输出如下所示：</p>\n<pre class=\"card-code\">     0   -17.8\n    20    -6.7\n    40     4.4\n   ...</pre>\n<p>格式说明可以省略宽度与精度，例如，<code>%6f</code>表示待打印的浮点数至少有<code>6</code>个字符宽；<code>%.2f</code>指定待打印的浮点数的小数点后有两位小数，但宽度没有限制；<code>%f</code>则仅仅要求按照浮点数打印该数。</p>\n<pre class=\"card-code\">   %d        按照十进制整型数打印\n   %6d       按照十进制整型数打印，至少6个字符宽\n   %f        按照浮点数打印\n   %6f       按照浮点数打印，至少6个字符宽</pre>\n<p><code>%.2f</code> 按照浮点数打印，小数点后有两位小数<code>%6.2f</code> 按照浮点数打印，至少<code>6</code>个字符宽，小数点后有两位小数</p>\n<p>此外，<code>printf</code> 函数还支持下列格式说明：<code>%o</code> 表示八进制数；<code>%x</code> 表示十六进制数；<code>%c</code>表示字符；<code>%s</code>表示字符串；%%表示百分号（%）本身。</p>\n<p>练习 1-3 修改温度转换程序，使之能在转换表的顶部打印一个标题。</p>\n<p>练习 1-4 编写一个程序打印摄氏温度转换为相应华氏温度的转换表。</p>"
         ]
       },
       {
@@ -408,7 +408,7 @@
           "<pre class=\"card-code\">   #include &lt;stdio.h&gt;\n   #define IN   1  /* inside a word */\n   #define OUT  0  /* outside a word */ \n   /* count lines, words, and characters in input */\n   main()\n   {\n       int c, nl, nw, nc, state;\n       state = OUT;\n       nl = nw = nc = 0;\n       while ((c = getchar()) != EOF) {\n           ++nc;\n           if (c == &#x27;\\n&#x27;)\n               ++nl;\n           if (c == &#x27; &#x27; || c == &#x27;\\n&#x27; || c == &#x27;\\t&#x27;)\n               state = OUT;\n           else if (state == OUT) {\n               state = IN;\n               ++nw;\n           }\n       }\n       printf(&quot;%d %d %d\\n&quot;, nl, nw, nc);\n   }</pre>"
         ],
         "theory": [
-          "<p>程序执行时，每当遇到单词的第一个字符，它就作为一个新单词加以统计。<code>state</code> 变量记录程序当前是否正位于一个单词之中，它的初值是“ 不在单词中”，即初值被赋为<code>OUT</code>。我们在这里使用了符号常量<code>IN</code>与<code>OUT</code>，而没有使用其对应的数值 1与 0，这样程序更易读。在较小的程序中，这种做法也许看不出有什么优势，但在较大的程序中，如果从一开始就这样做，因此而增加的一点工作量与提高程序可读性带来的好处相比是值得的。读者也会发现，如果程序中的幻数都以符号常量的形式出现，对程序进行大量修改就会相对容易得多。</p>\n<p>下列语句</p>\n<pre class=\"card-code\">   nl = nw = nc = 0;</pre>\n<p>将把其中的<code>3</code>个变量<code>nl</code>、<code>nw</code>与<code>nc</code>都设置为<code>0</code>。这种用法很常见，但要注意这样一个事实：在兼有值与赋值两种功能的表达式中，赋值结合次序是由右至左。所以上面这条语句等同于</p>\n<pre class=\"card-code\">   n1 = (nw = (nc = 0));</pre>\n<p>运算符||代表 OR（逻辑或），所以下列语句</p>\n<pre class=\"card-code\">   if (c == &#x27; &#x27; || c== &#x27;\\n&#x27; || c == &#x27;\\t&#x27;)</pre>\n<p>的意义是“ 如果<code>c</code>是空格，或<code>c</code>是换行符，或<code>c</code>是制表符”（前面讲过，转义字符序列<code>\\t</code>是制表符的可见表示形式）。相应地，运算符&amp;&amp;代表 AND（逻辑与），它仅比||高一个优先级。由&amp;&amp;或||连接的表达式由左至右求值，并保证在求值过程中只要能够判断最终的结果为真或假，求值就立即终止。如果 <code>c</code>是空格，则没有必要再测试它是否为换行符或制表符，这样就不必执行后面两个测试。在这里，这一点并不特别重要，但在某些更复杂的情况下这样做就有必要了，不久我们将会看到这种例子。</p>\n<p>这段程序中还包括一个<code>else</code>部分，它指定当<code>if</code>语句中的条件部分为假时所要执行的动作。其一般形式为：</p>\n<pre class=\"card-code\">   if (表述式)</pre>\n<p>语句<code>1</code></p>\n<pre class=\"card-code\">   else</pre>\n<p>语句<code>2</code>其中，<code>if-else</code>中的两条语句有且仅有一条语句被执行。如果表达式的值为真，则执行语句<code>1</code>，否则执行语句<code>2</code>。这两条语句都既可以是单条语句，也可以是括在花括号内的语句序列。在单词计数程序中，<code>else</code> 之后的语句仍是一个<code>if</code> 语句，该 <code>if</code>语句控制了包含在花括号内的两条语句。</p>\n<p>练习 1-11 你准备如何测试单词计数程序？如果程序中存在某种错误，那么什么样的输入最可能发现这类错误呢’</p>\n<p>练习 1-12 编写一个程序，以每行一个单词的形式打印其输入。</p>"
+          "<p>程序执行时，每当遇到单词的第一个字符，它就作为一个新单词加以统计。<code>state</code> 变量记录程序当前是否正位于一个单词之中，它的初值是“ 不在单词中”，即初值被赋为<code>OUT</code>。我们在这里使用了符号常量<code>IN</code>与<code>OUT</code>，而没有使用其对应的数值 1与 0，这样程序更易读。在较小的程序中，这种做法也许看不出有什么优势，但在较大的程序中，如果从一开始就这样做，因此而增加的一点工作量与提高程序可读性带来的好处相比是值得的。读者也会发现，如果程序中的幻数都以符号常量的形式出现，对程序进行大量修改就会相对容易得多。</p>\n<p>下列语句</p>\n<pre class=\"card-code\">   nl = nw = nc = 0;</pre>\n<p>将把其中的<code>3</code>个变量<code>nl</code>、<code>nw</code>与<code>nc</code>都设置为<code>0</code>。这种用法很常见，但要注意这样一个事实：在兼有值与赋值两种功能的表达式中，赋值结合次序是由右至左。所以上面这条语句等同于</p>\n<pre class=\"card-code\">   n1 = (nw = (nc = 0));</pre>\n<p>运算符||代表 OR（逻辑或），所以下列语句</p>\n<pre class=\"card-code\">   if (c == &#x27; &#x27; || c== &#x27;\\n&#x27; || c == &#x27;\\t&#x27;)</pre>\n<p>的意义是“ 如果<code>c</code>是空格，或<code>c</code>是换行符，或<code>c</code>是制表符”（前面讲过，转义字符序列<code>\\t</code>是制表符的可见表示形式）。相应地，运算符&amp;&amp;代表 AND（逻辑与），它仅比||高一个优先级。由&amp;&amp;或||连接的表达式由左至右求值，并保证在求值过程中只要能够判断最终的结果为真或假，求值就立即终止。如果 <code>c</code>是空格，则没有必要再测试它是否为换行符或制表符，这样就不必执行后面两个测试。在这里，这一点并不特别重要，但在某些更复杂的情况下这样做就有必要了，不久我们将会看到这种例子。</p>\n<p>这段程序中还包括一个<code>else</code>部分，它指定当<code>if</code>语句中的条件部分为假时所要执行的动作。其一般形式为：</p>\n<pre class=\"card-code\">   if (表述式)\n\n语句`1`\n   else\n\n语句`2`</pre>\n<p>其中，<code>if-else</code>中的两条语句有且仅有一条语句被执行。如果表达式的值为真，则执行语句<code>1</code>，否则执行语句<code>2</code>。这两条语句都既可以是单条语句，也可以是括在花括号内的语句序列。在单词计数程序中，<code>else</code> 之后的语句仍是一个<code>if</code> 语句，该 <code>if</code>语句控制了包含在花括号内的两条语句。</p>\n<p>练习 1-11 你准备如何测试单词计数程序？如果程序中存在某种错误，那么什么样的输入最可能发现这类错误呢’</p>\n<p>练习 1-12 编写一个程序，以每行一个单词的形式打印其输入。</p>"
         ]
       },
       {
@@ -421,7 +421,7 @@
           "<p>所有的输入字符可以分成 12类，因此可以用一个数组存放各个数字出现的次数，这样比使用 10个独立的变量更方便。下面是该程序的一种版本：</p>"
         ],
         "theory": [
-          "<pre class=\"card-code\">   #include &lt;stdio.h&gt;\n   /* count digits, white space, others */\n   main()\n   {\n       int c, i, nwhite, nother;\n       int ndigit[10];\n       nwhite = nother = 0;\n       for (i = 0; i &lt; 10; ++i)\n           ndigit[i] = 0;\n       while ((c = getchar()) != EOF)\n           if (c &gt;= &#x27;0&#x27; &amp;&amp; c &lt;= &#x27;9&#x27;)\n               ++ndigit[c-&#x27;0&#x27;];\n           else if (c == &#x27; &#x27; || c == &#x27;\\n&#x27; || c == &#x27;\\t&#x27;)\n               ++nwhite;\n           else\n               ++nother;\n       printf(&quot;digits =&quot;);\n       for (i = 0; i &lt; 10; ++i)\n           printf(&quot; %d&quot;, ndigit[i]);\n       printf(&quot;, white space = %d, other = %d\\n&quot;,\n           nwhite, nother);\n   }</pre>\n<p>当把这段程序本身作为输入时，输出结果为：</p>\n<pre class=\"card-code\">   digits = 9 3 0 0 0 0 0 0 0 1, white space = 123, other = 345</pre>\n<p>该程序中的声明语句</p>\n<pre class=\"card-code\">   int ndigit[10]，</pre>\n<p>将变量<code>ndigit</code>声明为由 10个整型数构成的数组。在 C语言中，数组下标总是从 0开始，因</p>\n<pre class=\"card-code\">此该数组的 10个元素分别为ndigit[0]、ndiglt[1]、… 、ndigit[9]，这可以通过初始</pre>\n<p>化和打印数组的两个<code>for</code>循环语句反映出来。</p>\n<p>数组下标可以是任何整型表达式，包括整型变量（如<code>i</code>）以及整型常量。</p>\n<p>该程序的执行取决于数字的字符表示属性。例如，测试语句</p>\n<pre class=\"card-code\">   if (c &gt;= &#x27;0&#x27; &amp;&amp; c &lt;= &#x27;9&#x27;)</pre>\n<p>用于判断<code>c</code>中的字符是否为数字。如果它是数字，那么该数字对应的数值是</p>\n<pre class=\"card-code\">   c- &#x27;0&#x27;</pre>\n<p>只有当<code>'0'</code>、<code>'1'</code>、… 、<code>'9'</code>具有连续递增的值时，这种做法才可行。幸运的是，所有的字符集都是这样的。</p>\n<p>由定义可知，<code>char</code>类型的字符是小整型，因此<code>char</code>类型的变量和常量在算术表达式中等价于<code>int</code>类型的变量和常量。这样做既自然又方便，例如，<code>c - '0'</code> 是一个整型表达式，如果存储在 <code>c</code>中的字符是<code>'0'</code>～<code>'9'</code>，其值将为 0～9，因此可以充当数组 <code>ndigit</code>的合法下标。</p>\n<p>判断一个字符是数字、空白符还是其它字符的功能可以由下列语句序列完成：</p>\n<pre class=\"card-code\">   if (c &gt;= &#x27;0&#x27; &amp;&amp; c &lt;= &#x27;9&#x27;)\n       ++ndigit[c-&#x27;0&#x27;];\n   else if (c == &#x27; &#x27; || c == &#x27;\\n&#x27; || c == &#x27;\\t&#x27;)\n       ++nwhite;\n   else\n       ++nother;</pre>\n<p>程序中经常使用下列方式表示多路判定：</p>\n<pre class=\"card-code\">   if (条件1)</pre>\n<p>语句<code>1</code></p>\n<pre class=\"card-code\">   else if ( 条件1)</pre>\n<p>语句<code>2</code></p>\n<pre class=\"card-code\">   ...\n   ...\n   else</pre>\n<p>语句<code>n</code></p>\n<p>在这种方式中，各条件从前往后依次求值，直到满足某个条件，然后执行对应的语句部分。这部分语句执行完成后，整个语句体执行结束（其中的任何语句都可以是括在花括号中的若干条语句）。如果所有条件都不满足，则执行位于最后一个<code>else</code>之后的语句（如果有的话）。类似于前面的单词计数程序，如果没有最后一个<code>else</code>及对应的语句，该语句体将不执行任何动作。在第一个<code>if</code>与最后一个<code>else</code>之间可以有<code>0</code>个或多个下列形式的语句序列：</p>\n<pre class=\"card-code\">   else if ( 条件)</pre>\n<p>语句</p>\n<p>就程序设计风格而言，我们建议读者采用上面所示的缩进格式以体现该结构的层次关系，否则，如果每个<code>if</code>都比前一个<code>else</code>向里缩进一些距离，那么较长的判定序列就可能超出页面的右边界。</p>\n<p>第 3章将讨论的 <code>switch</code>语句提供了编写多路分支程序的另一种方式，它特别适合于判定某个整型或字符表达式是否与一个常量集合中的某个元素相匹配的情况。我们将在 3.4节给出用<code>switch</code>语句编写的该程序的另一个版本，与此进行比较。</p>\n<p>练习 1-13 编写一个程序，打印输入中单词长度的直方图。水平方向的直方图比较容易绘制，垂直方向的直方图则要困难些。</p>\n<p>练习 1-14 编写一个程序，打印输入中各个字符出现频度的直方图。</p>"
+          "<pre class=\"card-code\">   #include &lt;stdio.h&gt;\n   /* count digits, white space, others */\n   main()\n   {\n       int c, i, nwhite, nother;\n       int ndigit[10];\n       nwhite = nother = 0;\n       for (i = 0; i &lt; 10; ++i)\n           ndigit[i] = 0;\n       while ((c = getchar()) != EOF)\n           if (c &gt;= &#x27;0&#x27; &amp;&amp; c &lt;= &#x27;9&#x27;)\n               ++ndigit[c-&#x27;0&#x27;];\n           else if (c == &#x27; &#x27; || c == &#x27;\\n&#x27; || c == &#x27;\\t&#x27;)\n               ++nwhite;\n           else\n               ++nother;\n       printf(&quot;digits =&quot;);\n       for (i = 0; i &lt; 10; ++i)\n           printf(&quot; %d&quot;, ndigit[i]);\n       printf(&quot;, white space = %d, other = %d\\n&quot;,\n           nwhite, nother);\n   }</pre>\n<p>当把这段程序本身作为输入时，输出结果为：</p>\n<pre class=\"card-code\">   digits = 9 3 0 0 0 0 0 0 0 1, white space = 123, other = 345</pre>\n<p>该程序中的声明语句</p>\n<pre class=\"card-code\">   int ndigit[10]，</pre>\n<p>将变量<code>ndigit</code>声明为由 10个整型数构成的数组。在 C语言中，数组下标总是从 0开始，因此该数组的 10个元素分别为ndigit[0]、ndiglt[1]、… 、ndigit[9]，这可以通过初始化和打印数组的两个<code>for</code>循环语句反映出来。</p>\n<p>数组下标可以是任何整型表达式，包括整型变量（如<code>i</code>）以及整型常量。</p>\n<p>该程序的执行取决于数字的字符表示属性。例如，测试语句</p>\n<pre class=\"card-code\">   if (c &gt;= &#x27;0&#x27; &amp;&amp; c &lt;= &#x27;9&#x27;)</pre>\n<p>用于判断<code>c</code>中的字符是否为数字。如果它是数字，那么该数字对应的数值是</p>\n<pre class=\"card-code\">   c- &#x27;0&#x27;</pre>\n<p>只有当<code>'0'</code>、<code>'1'</code>、… 、<code>'9'</code>具有连续递增的值时，这种做法才可行。幸运的是，所有的字符集都是这样的。</p>\n<p>由定义可知，<code>char</code>类型的字符是小整型，因此<code>char</code>类型的变量和常量在算术表达式中等价于<code>int</code>类型的变量和常量。这样做既自然又方便，例如，<code>c - '0'</code> 是一个整型表达式，如果存储在 <code>c</code>中的字符是<code>'0'</code>～<code>'9'</code>，其值将为 0～9，因此可以充当数组 <code>ndigit</code>的合法下标。</p>\n<p>判断一个字符是数字、空白符还是其它字符的功能可以由下列语句序列完成：</p>\n<pre class=\"card-code\">   if (c &gt;= &#x27;0&#x27; &amp;&amp; c &lt;= &#x27;9&#x27;)\n       ++ndigit[c-&#x27;0&#x27;];\n   else if (c == &#x27; &#x27; || c == &#x27;\\n&#x27; || c == &#x27;\\t&#x27;)\n       ++nwhite;\n   else\n       ++nother;</pre>\n<p>程序中经常使用下列方式表示多路判定：</p>\n<pre class=\"card-code\">   if (条件1)\n\n      语句`1`\n   else if ( 条件1)\n\n      语句`2`\n      ...\n      ...\n   else\n\n      语句`n`</pre>\n<p>在这种方式中，各条件从前往后依次求值，直到满足某个条件，然后执行对应的语句部分。这部分语句执行完成后，整个语句体执行结束（其中的任何语句都可以是括在花括号中的若干条语句）。如果所有条件都不满足，则执行位于最后一个<code>else</code>之后的语句（如果有的话）。类似于前面的单词计数程序，如果没有最后一个<code>else</code>及对应的语句，该语句体将不执行任何动作。在第一个<code>if</code>与最后一个<code>else</code>之间可以有<code>0</code>个或多个下列形式的语句序列：</p>\n<pre class=\"card-code\">   else if ( 条件)</pre>\n<p>语句</p>\n<p>就程序设计风格而言，我们建议读者采用上面所示的缩进格式以体现该结构的层次关系，否则，如果每个<code>if</code>都比前一个<code>else</code>向里缩进一些距离，那么较长的判定序列就可能超出页面的右边界。</p>\n<p>第 3章将讨论的 <code>switch</code>语句提供了编写多路分支程序的另一种方式，它特别适合于判定某个整型或字符表达式是否与一个常量集合中的某个元素相匹配的情况。我们将在 3.4节给出用<code>switch</code>语句编写的该程序的另一个版本，与此进行比较。</p>\n<p>练习 1-13 编写一个程序，打印输入中单词长度的直方图。水平方向的直方图比较容易绘制，垂直方向的直方图则要困难些。</p>\n<p>练习 1-14 编写一个程序，打印输入中各个字符出现频度的直方图。</p>"
         ]
       },
       {
@@ -434,7 +434,7 @@
           "<p>到目前为止，我们所使用的函数（如 <code>printf</code>、<code>getchar</code> 和 <code>putchar</code>等）都是函数库中提供的函数。现在，让我们自己动手来编写一些函数。C 语言没有像 Fortran语言一样提供类似于**的求幂运算符，我们现在通过编写一个求幂的函数 <code>power(m, n)</code>来说明函数定义的方法。<code>power(m, n)</code>函数用于计算整数<code>m</code>的<code>n</code>次幂，其中<code>n</code>是正整数。对函数调用<code>power(2,</code><code>5)</code>来说，其结果值为 32。该函数并非一个实用的求幂函数，它只能处理较小的整数的正整数</p>"
         ],
         "theory": [
-          "<p>y次幂，但这对于说明问题已足够了。（标准库中提供了一个计算 x的函数<code>pow(x, y)</code>。）</p>\n<p>下面是函数<code>power(m, n)</code>的定义及调用它的主程序，这样我们可以看到一个完整的程序结构。</p>\n<pre class=\"card-code\">   #include &lt;stdio.h&gt;\n   int power(int m, int n);\n    /* test power function */\n    main()\n    {\n        int i;\n        for (i = 0; i &lt; 10; ++i)\n            printf(&quot;%d %d %d\\n&quot;, i, power(2,i), power(-3,i));\n        return 0;\n    }\n    /* power:  raise base to n-th power; n &gt;= 0 */\n    int power(int base, int n)\n    {\n        int i,  p;\n        p = 1;\n        for (i = 1; i &lt;= n; ++i)\n            p = p * base;\n        return p;\n    }</pre>\n<p>函数定义的一般形式为：</p>\n<p>返回值类型 函数名<code>(0</code>个或多个参数声明)</p>\n<pre class=\"card-code\">   {</pre>\n<p>声明部分语句序列</p>\n<pre class=\"card-code\">   }</pre>\n<p>函数定义可以以任意次序出现在一个源文件或多个源文件中，但同一函数不能分割存放在多个文件中。如果源程序分散在多个文件中，那么，在编译和加载时，就需要做更多的工作，但这是操作系统的原因，并不是语言的属性决定的。我们暂且假定将<code>main</code>和<code>power</code>这两个函数放在同一文件中，这样前面所学的有关运行 C语言程序的知识仍然有效。</p>\n<p><code>main</code>函数在下列语句中调用了两次<code>power</code>函数：</p>\n<pre class=\"card-code\">   printf(&quot;%d %d %d\\n&quot;, i, power(2, i), power(-i, 3));</pre>\n<p>每次调用时，<code>main</code>函数向<code>power</code>函数传递两个参数；在调用执行完成时，<code>power</code>函数向<code>main</code>函数返回一个格式化的整数并打印。在表达式中，<code>power(2, i)</code>同<code>2</code>和<code>i</code>一样都是整数（并不是所有函数的结果都是整型值，我们将在第 4章中讨论）。</p>\n<p><code>power</code>函数的第一行语句</p>\n<pre class=\"card-code\">   int power(int base, int n)</pre>\n<p>声明参数的类型、名字以及该函数返回结果的类型。<code>power</code>函数的参数使用的名字只在<code>power</code>函数内部有效，对其它任何函数都是不可见的：其它函数可以使用与之相同的参数名字而不会引起冲突。变量<code>i</code>与<code>p</code>也是这样：<code>power</code>函数中的<code>i</code>与<code>main</code>函数中的<code>i</code>无关。</p>\n<p>我们通常把函数定义中圆括号内列表中出现的变量称为形式参数，而把函数调用中与形式参数对应的值称为实际参数。</p>\n<p><code>power</code>函数计算所得的结果通过<code>return</code>语句返回给<code>main</code>函数。关键字<code>return</code>的后面可以跟任何表达式，形式为：</p>\n<pre class=\"card-code\">   return 表达式;</pre>\n<p>函数不一定都有返回值。不带表达式的 <code>return</code>语句将把控制权返回给调用者，但不返回有用的值。这等同于在到达函数的右终结花括号时，函数就“ 到达了尽头”。主调函数也可以忽略函数返回的值。</p>\n<p>读者可能已经注意到，<code>main</code>函数的末尾有一个<code>return</code>语句。由于<code>main</code>本身也是函数，因此也可以向其调用者返回一个值，该调用者实际上就是程序的执行环境。一般来说，返回值为 0表示正常终止，返回值为非 0表示出现异常情况或出错结束条件。为简洁起见，前面的 <code>main</code>函数都省略了 <code>return</code>语句，但我们将在以后的 <code>main</code>函数中包含 <code>return</code>语句，以提醒大家注意，程序还要向其执行环境返回状态。</p>\n<p>出现在<code>main</code>函数之前的声明语句</p>\n<pre class=\"card-code\">   int power(int m, int n);</pre>\n<p>表明 <code>power</code>函数有两个 <code>int</code>类型的参数，并返回一个<code>int</code>类型的值。这种声明称为函数原型，它必须与<code>power</code>函数的定义和用法一致。如果函数的定义、用法与函数原型不一致，将出现错误。</p>\n<p>函数原型与函数声明中参数名不要求相同。事实上，函数原型中的参数名是可选的，这样上面的函数原型也可以写成以下形式</p>\n<pre class=\"card-code\">   int power(int, int);</pre>\n<p>但是，合适的参数名能够起到很好的说明性作用，因此我们在函数原型中总是指明参数名。</p>\n<p>回顾一下，ANSI C 同较早版本 C语言之间的最大区别在于函数的声明与定义方式的不同。按照 C语言的最初定义，<code>power</code>函数应该写成下列形式：</p>\n<pre class=\"card-code\">   /* power:  raise base to n-th power; n &gt;= 0 */\n   /*         (old-style version) */\n   power(base, n)\n   int base, n;\n   {\n       int i, p;\n       p = 1;\n       for (i = 1; i &lt;= n; ++i)\n           p = p * base;\n       return p;\n   }</pre>\n<p>其中，参数名在圆括号内指定，参数类型在左花括号之前声明。如果没有声明某个参数的类型，则默认为<code>int</code>类型。函数体与 ANSI C中形式相同。</p>\n<p>在 C语言的最初定义中，可以在程序的开头按照下面这种形式声明<code>power</code>函数：</p>\n<pre class=\"card-code\">   int power();</pre>\n<p>函数声明中不允许包含参数列表，这样编译器就无法在此时检查<code>power</code>函数调用的合法性。事实上，<code>power</code>函数在默认情况下将被假定返回<code>int</code>类型的值，因此整个函数的声明可以全部省略。</p>\n<p>在 ANSI C中定义的函数原型语法中，编译器可以很容易检测出函数调用中参数数目和类型方面的错误。ANSI C 仍然支持旧式的函数声明与定义，这样至少可以有一个过渡阶段。但我们还是强烈建议读者：在使用新式的编译器时，最好使用新式的函数原型声明方式。</p>\n<p>练习 1-15 重新编写 1.2节中的温度转换程序，使用函数实现温度转换计算。</p>"
+          "<p>y次幂，但这对于说明问题已足够了。（标准库中提供了一个计算 x的函数<code>pow(x, y)</code>。）</p>\n<p>下面是函数<code>power(m, n)</code>的定义及调用它的主程序，这样我们可以看到一个完整的程序结构。</p>\n<pre class=\"card-code\">   #include &lt;stdio.h&gt;\n   int power(int m, int n);\n    /* test power function */\n    main()\n    {\n        int i;\n        for (i = 0; i &lt; 10; ++i)\n            printf(&quot;%d %d %d\\n&quot;, i, power(2,i), power(-3,i));\n        return 0;\n    }\n    /* power:  raise base to n-th power; n &gt;= 0 */\n    int power(int base, int n)\n    {\n        int i,  p;\n        p = 1;\n        for (i = 1; i &lt;= n; ++i)\n            p = p * base;\n        return p;\n    }</pre>\n<p>函数定义的一般形式为：</p>\n<p>返回值类型 函数名<code>(0</code>个或多个参数声明)</p>\n<pre class=\"card-code\">   {\n\n      声明部分语句序列\n\n   }</pre>\n<p>函数定义可以以任意次序出现在一个源文件或多个源文件中，但同一函数不能分割存放在多个文件中。如果源程序分散在多个文件中，那么，在编译和加载时，就需要做更多的工作，但这是操作系统的原因，并不是语言的属性决定的。我们暂且假定将<code>main</code>和<code>power</code>这两个函数放在同一文件中，这样前面所学的有关运行 C语言程序的知识仍然有效。</p>\n<p><code>main</code>函数在下列语句中调用了两次<code>power</code>函数：</p>\n<pre class=\"card-code\">   printf(&quot;%d %d %d\\n&quot;, i, power(2, i), power(-i, 3));</pre>\n<p>每次调用时，<code>main</code>函数向<code>power</code>函数传递两个参数；在调用执行完成时，<code>power</code>函数向<code>main</code>函数返回一个格式化的整数并打印。在表达式中，<code>power(2, i)</code>同<code>2</code>和<code>i</code>一样都是整数（并不是所有函数的结果都是整型值，我们将在第 4章中讨论）。</p>\n<p><code>power</code>函数的第一行语句</p>\n<pre class=\"card-code\">   int power(int base, int n)</pre>\n<p>声明参数的类型、名字以及该函数返回结果的类型。<code>power</code>函数的参数使用的名字只在<code>power</code>函数内部有效，对其它任何函数都是不可见的：其它函数可以使用与之相同的参数名字而不会引起冲突。变量<code>i</code>与<code>p</code>也是这样：<code>power</code>函数中的<code>i</code>与<code>main</code>函数中的<code>i</code>无关。</p>\n<p>我们通常把函数定义中圆括号内列表中出现的变量称为形式参数，而把函数调用中与形式参数对应的值称为实际参数。</p>\n<p><code>power</code>函数计算所得的结果通过<code>return</code>语句返回给<code>main</code>函数。关键字<code>return</code>的后面可以跟任何表达式，形式为：</p>\n<pre class=\"card-code\">   return 表达式;</pre>\n<p>函数不一定都有返回值。不带表达式的 <code>return</code>语句将把控制权返回给调用者，但不返回有用的值。这等同于在到达函数的右终结花括号时，函数就“ 到达了尽头”。主调函数也可以忽略函数返回的值。</p>\n<p>读者可能已经注意到，<code>main</code>函数的末尾有一个<code>return</code>语句。由于<code>main</code>本身也是函数，因此也可以向其调用者返回一个值，该调用者实际上就是程序的执行环境。一般来说，返回值为 0表示正常终止，返回值为非 0表示出现异常情况或出错结束条件。为简洁起见，前面的 <code>main</code>函数都省略了 <code>return</code>语句，但我们将在以后的 <code>main</code>函数中包含 <code>return</code>语句，以提醒大家注意，程序还要向其执行环境返回状态。</p>\n<p>出现在<code>main</code>函数之前的声明语句</p>\n<pre class=\"card-code\">   int power(int m, int n);</pre>\n<p>表明 <code>power</code>函数有两个 <code>int</code>类型的参数，并返回一个<code>int</code>类型的值。这种声明称为函数原型，它必须与<code>power</code>函数的定义和用法一致。如果函数的定义、用法与函数原型不一致，将出现错误。</p>\n<p>函数原型与函数声明中参数名不要求相同。事实上，函数原型中的参数名是可选的，这样上面的函数原型也可以写成以下形式</p>\n<pre class=\"card-code\">   int power(int, int);</pre>\n<p>但是，合适的参数名能够起到很好的说明性作用，因此我们在函数原型中总是指明参数名。</p>\n<p>回顾一下，ANSI C 同较早版本 C语言之间的最大区别在于函数的声明与定义方式的不同。按照 C语言的最初定义，<code>power</code>函数应该写成下列形式：</p>\n<pre class=\"card-code\">   /* power:  raise base to n-th power; n &gt;= 0 */\n   /*         (old-style version) */\n   power(base, n)\n   int base, n;\n   {\n       int i, p;\n       p = 1;\n       for (i = 1; i &lt;= n; ++i)\n           p = p * base;\n       return p;\n   }</pre>\n<p>其中，参数名在圆括号内指定，参数类型在左花括号之前声明。如果没有声明某个参数的类型，则默认为<code>int</code>类型。函数体与 ANSI C中形式相同。</p>\n<p>在 C语言的最初定义中，可以在程序的开头按照下面这种形式声明<code>power</code>函数：</p>\n<pre class=\"card-code\">   int power();</pre>\n<p>函数声明中不允许包含参数列表，这样编译器就无法在此时检查<code>power</code>函数调用的合法性。事实上，<code>power</code>函数在默认情况下将被假定返回<code>int</code>类型的值，因此整个函数的声明可以全部省略。</p>\n<p>在 ANSI C中定义的函数原型语法中，编译器可以很容易检测出函数调用中参数数目和类型方面的错误。ANSI C 仍然支持旧式的函数声明与定义，这样至少可以有一个过渡阶段。但我们还是强烈建议读者：在使用新式的编译器时，最好使用新式的函数原型声明方式。</p>\n<p>练习 1-15 重新编写 1.2节中的温度转换程序，使用函数实现温度转换计算。</p>"
         ]
       },
       {
@@ -2742,6 +2742,2016 @@
         "theory": [
           "<img src=\"images/fig-8-1.png\" alt=\"图 8-1\">\n<p><strong>图 8-1</strong></p>\n<p>当有申请请求时，<code>malloc</code>将扫描空闲块链表，直到找到一个足够大的块为止。该算法称为“ 首次适应”（first fit）；与之相对的算法是“ 最佳适应”（best fit），它寻找满足条件的最小块。如果该块恰好与请求的大小相符合，则将它从链表中移走并返回给用户。如果该块太大，则将它分成两部分：大小合适的块返回给用户，剩下的部分留在空闲块链表中。如果找不到一个足够大的块，则向操作系统申请一个大块并加入到空闲块链表中。</p>\n<p>释放过程也是首先搜索空闲块链表，以找到可以插入被释放块的合适位置。如果与被释放块相邻的任一边是一个空闲块，则将这两个块合成一个更大的块，这样存储空间不会有太多的碎片。因为空闲块链表是以地址的递增顺序链接在一起的，所以很容易判断相邻的块是否空闲。</p>\n<p>我们在第 5章中曾提出了这样的问题，即确保由 <code>malloc</code>函数返回的存储空间满足将要保存的对象的对齐要求。虽然机器类型各异，但是，每个特定的机器都有一个最受限的类型：如果最受限的类型可以存储在某个特定的地址中，则其它所有的类型也可以存放在此地址中。在某些机器中，最受限的类型是 <code>double</code>类型；而在另外一些机器中，最受限的类型是 <code>int</code></p>\n<pre class=\"card-code\">或long类型。</pre>\n<p>空闲块包含一个指向链表中下一个块的指针、一个块大小的记录和一个指向空闲空间本身的指针。位于块开始处的控制信息称为“ 头部“ 。为了简化块的对齐，所有块的大小都必须是头部大小的整数倍，且头部已正确地对齐。这是通过一个联合实现的，该联合包含所需的头部结构以及一个对齐要求最受限的类型的实例，在下面这段程序中，我们假定<code>long</code>类型为最受限的类型：</p>\n<pre class=\"card-code\">   typedef long Align;    /* for alignment to long boundary */\n   union header {         /* block header */\n       struct {\n           union header *ptr; /* next block if on free list */\n           unsigned size;     /* size of this block */\n       } s;\n       Align x;           /* force alignment of blocks */\n   };\n   typedef union header Header;</pre>\n<p>在该联合中，<code>Align</code> 字段永远不会被使用，它仅仅用于强制每个头部在最坏的情况下满足对齐要求。</p>\n<p>在 <code>malloc</code>函数中，请求的长度（以字符为单位）将被舍入，以保证它是头部大小的整数倍。实际分配的块将多包含一个单元，用于头部本身。实际分配的块的大小将被记录在头部的<code>size</code>字段中。<code>malloc</code>函数返回的指引将指向空闲空间，而不是块的头部。用户可对获得的存储空间进行任何操作，但是，如果在分配的存储空间之外写入数据，则可能会破坏块链表。图 8-2表示由<code>malloc</code>返回的块。</p>\n<img src=\"images/fig-8-2.png\" alt=\"图 8-2  malloc 返回的块\">\n<p><strong>图 8-2  malloc 返回的块</strong></p>\n<p>其中的 <code>size</code>字段是必需的，因为由 <code>malloc</code>函数控制的块不一定是连续的，这样就不可能通过指针算术运算计算其大小。</p>\n<p>变量<code>base</code>表示空闲块链表的头部。第一次调用<code>malloc</code>函数时，<code>freep</code>为<code>NULL</code>，系统将创建一个退化的空闲块链表，它只包含一个大小为 0 的块，且该块指向它自己。任何情况下，当请求空闲空间时，都将搜索空闲块链表。搜索从上一次找到空闲块的地方（<code>freep</code>）开始。该策略可以保证链表是均匀的。如果找到的块太大，则将其尾部返回给用户，这样，初始块的头部只需要修改<code>size</code>字段即可。在任何情况下，返回给用户的指针都指向块内的空闲存储空间，即比指向头部的指针大一个单元。</p>\n<pre class=\"card-code\">   static Header base;       /* empty list to get started */\n   static Header *freep = NULL;     /* start of free list */\n   /* malloc:  general-purpose storage allocator */\n   void *malloc(unsigned nbytes)</pre>\n<pre class=\"card-code\">   {\n       Header *p, *prevp;\n       Header *moreroce(unsigned);\n       unsigned nunits;\n       nunits = (nbytes+sizeof(Header)-1)/sizeof(header) + 1;\n       if ((prevp = freep) == NULL) {   /* no free list yet */\n           base.s.ptr = freeptr = prevptr = &amp;base;\n           base.s.size = 0;\n       }\n       for (p = prevp-&gt;s.ptr; ; prevp = p, p = p-&gt;s.ptr) {\n           if (p-&gt;s.size &gt;= nunits) {  /* big enough */\n               if (p-&gt;s.size == nunits)  /* exactly */\n                   prevp-&gt;s.ptr = p-&gt;s.ptr;\n               else {              /* allocate tail end */\n                   p-&gt;s.size -= nunits;\n                   p += p-&gt;s.size;\n                   p-&gt;s.size = nunits;\n               }\n               freep = prevp;\n               return (void *)(p+1);\n           }\n           if (p == freep)  /* wrapped around free list */\n               if ((p = morecore(nunits)) == NULL)\n                   return NULL;    /* none left */\n       }\n   }</pre>\n<p>函数 <code>morecore</code>用于向操作系统请求存储空间，其实现细节因系统的不同而不同。因为向系统请求存储空间是一个开销很大的操作，因此，我们不希望每次调用 <code>malloc</code>函数时都执行该操作，基于这个考虑，<code>morecore</code>函数请求至少 <code>NALLOC</code>个单元。这个较大的块将根据需要分成较小的块。在设置完<code>size</code>字段之后，<code>morecore</code>函数调用<code>free</code>函数把多余的存储空间插入到空闲区域中。</p>\n<p>UNIX 系统调用<code>sbrk(n)</code>返回一个指针，该指针指向<code>n</code>个字节的存储空间。如果没有空闲空间，尽管返回<code>NULL</code>可能更好一些，但<code>sbrk</code>调用返回-1。必须将-1强制转换为<code>char *</code>类型，以便与返回值进行比较。而且，强制类型转换使得该函数不会受不同机器中指针表示的不同的影响。但是，这里仍然假定，由<code>sbrk</code>调用返回的指向不同块的多个指针之间可以进行有意义的比较。ANSI 标准并没有保证这一点，它只允许指向同一个数组的指针间的比较。因此，只有在一般指针间的比较操作有意义的机器上，该版本的<code>malloc</code>函数才能够移植。</p>\n<pre class=\"card-code\">   #define NALLOC  1024   /* minimum #units to request */\n   /* morecore:  ask system for more memory */\n   static Header *morecore(unsigned nu)\n   {\n       char *cp, *sbrk(int);\n       Header *up;\n       if (nu &lt; NALLOC)\n           nu = NALLOC;\n       cp = sbrk(nu * sizeof(Header));\n       if (cp == (char *) -1)   /* no space at all */\n           return NULL;\n       up = (Header *) cp;</pre>\n<pre class=\"card-code\">       up-&gt;s.size = nu;\n       free((void *)(up+1));\n       return freep;\n   }</pre>\n<p>我们最后来看一下<code>free</code>函数。它从<code>freep</code>指向的地址开始，逐个扫描空闲块链表，寻找可以插入空闲块的地方。该位置可能在两个空闲块之间，也可能在链表的末尾。在任何一种情况下，如果被释放的块与另一空闲块相邻，则将这两个块合并起来。合并两个块的操作很简单，只需要设置指针指向正确的位置，并设置正确的块大小就可以了。</p>\n<pre class=\"card-code\">   /* free:  put block ap in free list */\n   void free(void *ap)\n   {\n       Header *bp, *p;\n       bp = (Header *)ap - 1;    /* point to  block header */\n       for (p = freep; !(bp &gt; p &amp;&amp; bp &lt; p-&gt;s.ptr); p = p-&gt;s.ptr)\n            if (p &gt;= p-&gt;s.ptr &amp;&amp; (bp &gt; p || bp &lt; p-&gt;s.ptr))\n                break;  /* freed block at start or end of arena */\n       if (bp + bp-&gt;size == p-&gt;s.ptr) {    /* join to upper nbr */\n           bp-&gt;s.size += p-&gt;s.ptr-&gt;s.size;\n           bp-&gt;s.ptr = p-&gt;s.ptr-&gt;s.ptr;\n       } else\n           bp-&gt;s.ptr = p-&gt;s.ptr;\n       if (p + p-&gt;size == bp) {            /* join to lower nbr */\n           p-&gt;s.size += bp-&gt;s.size;\n           p-&gt;s.ptr = bp-&gt;s.ptr;\n       } else\n           p-&gt;s.ptr = bp;\n       freep = p;\n   }</pre>\n<p>虽然存储分配从本质上是与机器相关的，但是，以上的代码说明了如何控制与具体机器相关的部分，并将这部分程序控制到最少量。<code>typedef</code>和<code>union</code>的使用解决了地址的对齐（假定<code>sbrk</code>返回的是合适的指针）问题。类型的强制转换使得指针的转换是显式进行的，这样做甚至可以处理设计不够好的系统接口问题。虽然这里所讲的内容只涉及到存储分配，但是，这种通用方法也适用于其它情况。</p>\n<p>练习 8-6 标准库函数 <code>calloc(n, size)</code>返回一个指针，它指向 <code>n</code>个长度为 <code>size</code>的对象，且所有分配的存储空间都被初始化为 0。通过调用或修改<code>malloc</code>函数来实现<code>calloc</code>函数。</p>\n<p>练习 8-7 <code>malloc</code> 接收对存储空间的请求时，并不检查请求长度的合理性；而 <code>free</code>则认为被释放的块包含一个有效的长度字段。改进这些函数，使它们具有错误检查的功能。</p>\n<p>练习 8-8 编写函数<code>bfree(p, n)</code>，释放一个包含<code>n</code>个字符的任意块<code>p</code>，并将它放入由<code>malloc</code>和<code>free</code>维护的空闲块链表中。通过使用<code>bfree</code>，用户可以在任意时刻向空闲块链表中添加一个静态或外部数组。</p>"
         ]
+      }
+    ]
+  },
+  {
+    "meta": {
+      "kicker": "APPENDIX A · REFERENCE MANUAL",
+      "chapter": "附录A 参考手册",
+      "kind": "appendix",
+      "blurb": "本手册描述的 C语言是 1988年 10月 31日提交给 ANSI的草案，批准号为“ 美国国家信息系统标准—— C 程序设计语言，X3.159-1989”。尽管我们已尽最大努力，力求准确地将该手册作为 C语言的指南介绍给读者，但它毕竟不是标准本身，而仅仅只是对标准的一个解释而已。"
+    },
+    "sections": [],
+    "bookExercises": [],
+    "tutorials": [
+      {
+        "number": "A.1",
+        "title": "引言",
+        "page": null,
+        "paragraphs": [
+          "<p>本手册描述的 C语言是 1988年 10月 31日提交给 ANSI的草案，批准号为“ 美国国家信息系统标准—— C 程序设计语言，X3.159-1989”。尽管我们已尽最大努力，力求准确地将该手册作为 C语言的指南介绍给读者，但它毕竟不是标准本身，而仅仅只是对标准的一个解释而已。</p>",
+          "<p>该手册的组织与标准基本类似，与本书的第 1 版也类似，但是对细节的组织有些不同。本手册给出的语法与标准是相同的，但是，其中少量元素的命名可能有些不同，词法记号和预处理器的定义也没有形式化。</p>",
+          "<p>本手册中，说明部分的文字指出了 ANSI标准 C语言与本书第 1版定义的 C语言或其它编译器支持的语言之间的差别。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.2",
+        "title": "词法规则",
+        "page": null,
+        "paragraphs": [
+          "<p>程序由存储在文件中的一个或多个翻译单元（translation unit）组成。程序的翻译分几个阶段完成，这部分内容将在 A.12节中介绍。翻译的第一阶段完成低级的词法转换，执行以字符#开头的行中的指令，并进行宏定义和宏扩展。在预处理（将在 A.12节中介绍）完成后，程序被归约成一个记号序列。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.2.1",
+        "title": "记号",
+        "page": null,
+        "paragraphs": [
+          "<p>C 语言中共有 6类记号：标识符、关键字、常量、字符串字面值、运算符和其它分隔符。空格，横向制表符和纵向制表符、换行符，换页符和注释（统称空白符）在程序中仅用来分隔记号，因此将被忽略。相邻的标识符、关键字和常量之间需要用空白符来分隔。</p>",
+          "<p>如果到某一字符为止的输入流被分隔成若干记号，那么，下一个记号就是后续字符序列中可能构成记号的最长的字符串。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.2.2",
+        "title": "注释",
+        "page": null,
+        "paragraphs": [
+          "<p>注释以字符/*开始，以*/结束。注释不能够嵌套，也不能够出现在字符串字面值或字符字面值中。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.2.3",
+        "title": "标识符",
+        "page": null,
+        "paragraphs": [
+          "<p>标识符是由字母和数字构成的序列。第一个字符必须是字母，下划线“ _” 也被看成是字母。大写字母和小写字母是不同的。标识符可以为任意长度。对于内部标识符来说，至少前31 个字母是有效的，在某些实现中，有效的字符数可能更多。内部标识符包括预处理器的宏名和其它所有没有外部连接（参见 A.11.2节）的名字。带有外部连接的标识符的限制更严格一些，实现可能只认为这些标识符的前 6个字符是有效的，而且有可能忽略大小写的不同。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.2.4",
+        "title": "关键宇",
+        "page": null,
+        "paragraphs": [
+          "<p>下列标识符被保留作为关键字，且不能用于其它用途：</p>",
+          "<pre class=\"card-code\">auto double int struct\nbreak else long switch\ncase enum register typedef\nchar extern return union\nconst float short unsigned\ncontinue for signed void\ndefault goto sizeof volatile\ndo if static while</pre>",
+          "<p>某些实现还把<code>fortran</code>和且<code>asm</code>保留为关键字。</p>",
+          "<pre class=\"card-code\">   说明：关键字const、signed和volatile是 ANSI标准中新增加的；enum和void</pre>",
+          "<p>是第 1版后新增加的，现已被广泛应用；<code>entry</code>曾经被保留为关键字但从未被使用过，现在已经不是了。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.2.5",
+        "title": "常量",
+        "page": null,
+        "paragraphs": [
+          "<p>常量有多种类型。每种类型的常量都有一个数据类型。基本数据类型将在 A.4.2节讨论。</p>",
+          "<p>常量：</p>",
+          "<p>整型常量字符常量浮点常量枚举常量</p>",
+          "<p>1. 整型常量</p>",
+          "<p>整型常量由一串数字组成。如果它以数字 0开头，则为八进制数，否则为十进制数。八进制常量不包括数字 8和 9，以 0x和 0X开头的数字序列表示十六进制数，十六进制数包含从<code>a</code>（或<code>A</code>）到<code>f</code>（或<code>F</code>）的字母，它们分别表示数值 10到 15。</p>",
+          "<p>整型常量若以字母<code>u</code>或<code>U</code>为后缀，则表示它是一个无符号数；若以字母<code>l</code>或<code>L</code>为后缀，则表示它是一个长整型数；若以字母<code>UL</code>为后缀，则表示它是一个无符号长整型数。</p>",
+          "<p>整型常量的类型同它的形式、值和后缀有关（有关类型的讨论，参见 A.4节）。如果它没</p>",
+          "<pre class=\"card-code\">有后缀且是十进制表示，则其类型很可能是int、long int 或unsigned long int 。如</pre>",
+          "<p>果它没有后缀且是八进制或十六进制表示，则其类型很可能是<code>int</code>、<code>unsigned int</code>、<code>long</code></p>",
+          "<pre class=\"card-code\">int或unsigned long int。如果它的后缀为u或U，则其类型很可能是unsigned int\n或ungigned long int。如果它的后缀为l或L，则其类型很可能是long int或unsigned\nlong int。</pre>",
+          "<p>说明：ANSI 标准中，整型常量的类型比第 1版要复杂得多。在第 1版中，大的整型常量仅被看做是<code>long</code>类型。<code>U</code>后缀是新增加的。</p>",
+          "<p>2. 字符常量</p>",
+          "<p>字符常量是用单引号引起来的一个或多个字符构成的序列，如<code>'x'</code>。单字符常量的值是执行时机器字符集中此字符对应的数值，多字符常量的值由具体实现定义。</p>",
+          "<p>字符常量不包括字符'和换行符，可以使用以下转义字符序列表示这些字符以及其它一些字符：</p>",
+          "<pre class=\"card-code\">换行符 NL(LF) \\n                     反斜杠 \\ \\\\\n横向制表符 HT \\t                      问号 ? \\?\n纵向制表符 VT \\v                      单引号 &#x27; \\&#x27;\n回退符 BS \\b                         双引号 &quot; \\&quot;\n回车符 CR \\r                         八进制数 ooo \\ooo\n换页符 FF \\f                         十六进制数 hh \\xhh\n响铃符 BEL \\a</pre>",
+          "<p>转义序列<code>\\ooo</code>由反斜杠后跟 1个、2个或 3个八进制数字组成，这些八进制数字用来指定所期望的字符的值。\\0（其后没有数字）便是一个常见的例子，它表示字符 <code>NUL</code>。转义序列<code>\\xhh</code>中，反斜杠后面紧跟<code>x</code>以及十六进制数字，这些十六进制数用来指定所期望的字符的值。数字的个数没有限制，但如果字符值超过最大的字符值，该行为是未定义的。对于八进制或十六进制转义字符，如果实现中将类型<code>char</code>看做是带符号的，则将对字符值进行符号扩展，就好像它被强制转换为<code>char</code>类型一样。如果\\后面紧跟的字符不在以上指定的字符中，则其行为是未定义的。</p>",
+          "<p>在 C语言的某些实现中，还有一个扩展的字符集，它不能用 <code>char</code>类型表示。扩展集中的常量要以一个前导符<code>L</code>开头（例如<code>L'x'</code>。），称为宽字符常量。这种常量的类型为<code>wchar_t</code>。这是一种整型类型，定义在标准头文件<code>&lt;stddef.h&gt;</code>中。与通常的字符常量一样，宽字符常量可以使用八进制或十六进制转义字符序列；但是，如果值超过<code>wchar_t</code>可以表示的范围，则结果是未定义的。</p>",
+          "<p>说明：某些转义序列是新增加的，特别是十六进制字符的表示。扩展字符也是新增加的。通常情况下，美国和西欧所用的字符集可以用char类型进行编码，增加wchar_t的主要目的是为了表示亚洲的语言。</p>",
+          "<p>3. 浮点常量</p>",
+          "<p>浮点常量由整数部分、小数点、小数部分、一个<code>e</code>或<code>E</code>、一个可选的带符号整型类型的指数和一个可选的表示类型的后缀（即<code>f</code>、<code>F</code>、<code>l</code>或<code>L</code>之一）组成。整数和小数部分均由数字序列组成。可以没有整数部分或小数部分（但不能两者都没有），还可以没有小数点或者<code>e</code>和指数部分（但不能两者都没有）。浮点常量的类型由后缀确定，<code>F</code>或<code>f</code>后缀表示它是<code>float</code>类型；<code>l</code>或<code>L</code>后缀表明它是<code>long double</code> 类型；没有后缀则表明是<code>double</code>类型。</p>",
+          "<p>说明：浮点常量的后缀是新增加的。</p>",
+          "<p>4. 枚举常量</p>",
+          "<p>声明为枚举符的标识符是<code>int</code>类型的常量（参见 A.8.4节）。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.2.6",
+        "title": "字符串字面值",
+        "page": null,
+        "paragraphs": [
+          "<p>字符串字面值（string literal）也称为字符串常量，是用双引号引起来的一个字符序列，如“…” 。字符串的类型为“ 字符数组”，存储类为<code>static</code>（参见 A.4节），它使用给定的字符进行初始化。对相同的字符串字面值是否进行区分取决于具体的实现。如果程序试图修改字符串字面值，则行为是未定义的。</p>",
+          "<p>我们可以把相邻的字符串字面值连接为一个单一的字符串。执行任何连接操作后，都将在字符串的后面增加一个空字节<code>\\0</code>，这样，扫描字符串的程序便可以找到字符串的结束位置。字符串字面值不包含换行符和双引号字符，但可以用与字符常量相同的转义字符序列表示它们。</p>",
+          "<p>与字符常量一样，扩展字符集中的字符串字面值也以前导符 <code>L</code>表示，如 <code>L\"</code>… \"。宽字符字符串字面值的类型为“ <code>wchar_t</code>类型的数组”。将普通字符串字面值和宽字符字符串字面值进行连接的行为是未定义的。</p>",
+          "<p>说明：下列规定都是 ANSI标准中新增加的：字符串字面值不必进行区分、禁止修改字符串字面值以及允许相邻字符串字面值进行连接。宽字符字符串字面值也是 ANSI标准中新增加的。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.3",
+        "title": "语法符号",
+        "page": null,
+        "paragraphs": [
+          "<p>在本手册用到的语法符号中，语法类别用楷体及斜体字表示。文字和字符以打字型字体表不。多个候选类别通常列在不同的行中，但在一些情况下，一组字符长度较短的候选项可以放在一行中，并以短语“ one of” 标识。可选的终结符或非终结符带有下标“ opt”。例如：</p>",
+          "<p>{ 表达式 opt }</p>",
+          "<p>表示一个括在花括号中的表达式，该表达式是可选的。A.13节对语法进行了总结。</p>",
+          "<p>说明：与本书第 1版给出的语法所不同的是，此处给出的语法将表达式运算符的优先级和结合性显式表达出来了。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.4",
+        "title": "标识符的含义",
+        "page": null,
+        "paragraphs": [
+          "<p>标识符也称为名字，可以指代多种实体：函数、结构标记、联合标记和枚举标记；结构成员或联合成员；枚举常量；类型定义名；标号以及对象等。对象有时也称为变量，它是一个存储位置。对它的解释依赖于两个主要属性：存储类和类型。存储类决定了与该标识对象相关联的存储区域的生存期，类型决定了标识对象中值的含义。名字还具有一个作用域和一个连接。作用域即程序中可以访问此名字的区域，连接决定另一作用域中的同一个名字是否指向同一个对象或函数。作用域和连接将在 A.11节中讨论。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.4.1",
+        "title": "存储类",
+        "page": null,
+        "paragraphs": [
+          "<p>存储类分为两类：自动存储类（automatic）和静态存储类（static）。声明对象时使用的一些关键字和声明的上下文共同决定了对象的存储类。自动存储类对象对于一个程序块（参见A.9.3节）来说是局部的，在退出程序块时该对象将消失。如果没有使用存储类说明符，或者如果使用了<code>auto</code>限定符，则程序块中的声明生成的都是自动存储类对象。声明为<code>register</code>的对象也是自动存储类对象，并且将被存储在机器的快速寄存器中（如果可能的话）。</p>",
+          "<p>静态对象可以是某个程序块的局部对象，也可以是所有程序块的外部对象。无论是哪一种情况，在退出和再进入函数或程序块时其值将保持不变。在一个程序块（包括提供函数代码的程序块）内，静态对象用关键字 <code>static</code>声明。在所有程序块外部声明且与函数定义在同一级的对象总是静态的。可以通过 <code>static</code>关键字将对象声明为某个特定翻译单元的局部对象，这种类型的对象将具有内部连接。当省略显式的存储类或通过关键字 <code>extern</code>进行声明时，对象对整个程序来说是全局可访问的，并且具有外部连接。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.4.2",
+        "title": "基本类型",
+        "page": null,
+        "paragraphs": [
+          "<p>基本类型包括多种。附录 B中描述的标准头文件<code>&lt;limits.h&gt;</code>中定义了本地实现中每种类型的最大值和最小值。附录 B给出的数值表示最小的可接受限度。</p>",
+          "<p>声明为字符（<code>char</code>）的对象要大到足以存储执行字符集中的任何字符。如果字符集中的某个字符存储在一个<code>char</code>类型的对象中，则该对象的值等于字符的整型编码值，并且是非负值。其它类型的对象也可以存储在<code>char</code>类型的变量中，但其取值范围，特别是其值是否带符号，同具体的实现有关。</p>",
+          "<p>以 <code>unsigned char</code>声明的无符号字符与普通字符占用同样大小的空间，但其值总是非负的。以<code>signed char</code> 显式声明的带符号字符与普通字符也占用同样大小的空间。</p>",
+          "<p>说明：本书的第 1版中没有unsigned char类型，但这种用法很常见。signed char是新增加的。</p>",
+          "<p>除<code>char</code>类型外，还有 3种不同大小的整型类型：<code>short int</code>、<code>int</code>和<code>long int</code>。普通 <code>int</code>对象的长度与由宿主机器的体系结构决定的自然长度相同。其它类型的整型可以满足各种特殊的用途。较长的整数至少要占有与较短整数一样的存储空间；但是具体的实现可以使得一般整型（<code>int</code>）与短整型（<code>short int</code>）或长整型（<code>long int</code>）具有同样的大小。除非特别说明，<code>int</code>类型都表示带符号数。</p>",
+          "<p>n以关键字<code>unsigned</code>声明的无符号整数遵守算术模<code>2</code> 的规则，其中，n是表示相应整数的二进制位数，这样，对无符号数的算术运算永远不会溢出。可以存储在带符号对象中的非负值的集合是可以存储在相应的无符号对象中的值的子集，并且，这两个集合的重叠部分的表示是相同的。</p>",
+          "<p>单精度浮点数（<code>float</code>）、双精度浮点数（<code>double</code>）和多精度浮点数（<code>long double</code>）中的任何类型都可能是同义的，但精度从前到后是递增的。</p>",
+          "<p>说明：long double是新增加的类型。在第 1版中，long float与double类型等价，但现在是不相同的。</p>",
+          "<p>枚举是一个具有整型值的特殊的类型。与每个枚举相关联的是一个命名常量的集合（参见 A.8.4节）。枚举类型类似于整型。但是，如果某个特定枚举类型的对象的赋值不是其常量中的一个，或者赋值不是一个同类型的表达式，则编译器通常会产生警告信息。</p>",
+          "<p>因为以上这些类型的对象都可以被解释为数字，所以，可以将它们统称为算术类型。<code>char</code>类型、各种大小的<code>int</code>类型（无论是否带符号）以及枚举类型都统称为整型类型（integral type）。类型<code>float</code>、<code>double</code>和<code>long double</code> 统称为浮点类型（floating type）。</p>",
+          "<p><code>void</code>类型说明一个值的空集合，它常被用来说明不返回任何值的函数的类型。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.4.3",
+        "title": "派生类型",
+        "page": null,
+        "paragraphs": [
+          "<p>除基本类型外，我们还可以通过以下几种方法构造派生类型，从概念来讲，这些派生类型可以有无限多个：</p>",
+          "<p>• 给定类型对象的数组</p>",
+          "<p>• 返回给定类型对象的函数</p>",
+          "<p>• 指向给定类型对象的指针</p>",
+          "<p>• 包含一系列不同类型对象的结构</p>",
+          "<p>• 可以包含多个不同类型对象中任意一个对象的联合</p>",
+          "<p>一般情况下，这些构造对象的方法可以递归使用。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.4.4",
+        "title": "类型限定符",
+        "page": null,
+        "paragraphs": [
+          "<p>对象的类型可以通过附加的限定符进行限定。声明为<code>const</code>的对象表明此对象的值不可以修改；声明为 <code>volatile</code>的对象表明它具有与优化相关的特殊属性。限定符既不影响对象取值的范围，也不影响其算术属性。限定符将在 A.8.2节中讨论。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.5",
+        "title": "对象和左值",
+        "page": null,
+        "paragraphs": [
+          "<p>对象是一个命名的存储区域，左值（lvalue）是引用某个对象的表达式。具有合适类型与存储类的标识符便是左值表达式的一个明显的例子。某些运算符可以产生左值。例如，如果<code>E</code>是一个指针类型的表达式，<code>*E</code>则是一个左值表达式，它引用由<code>E</code>指向的对象。名字“ 左值”来源于赋值表达式<code>E1=E2</code>，其中，左操作数<code>E1</code>必须是一个左值表达式。对每个运算符的讨论需要说明此运算符是否需要一个左值操作数以及它是否产生一个左值。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.6",
+        "title": "转换",
+        "page": null,
+        "paragraphs": [
+          "<p>根据操作数的不同，某些运算符会引起操作数的值从某种类型转换为另一种类型。本节将说明这种转换产生的结果。A.6.5节将讨论大多数普通运算符所要求的转换，我们在讲解每个运算符时将做一些补充。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.6.1",
+        "title": "整型提升",
+        "page": null,
+        "paragraphs": [
+          "<p>在一个表达式中，凡是可以使用整型的地方都可以使用带符号或无符号的字符、短整型或整型位字段，还可以使用枚举类型的对象。如果原始类型的所有值都可用 <code>int</code>类型表示，则其值将被转换为 <code>int</code>类型；否则将被转换为 <code>unsigned int</code>类型。这一过程称为整型提升（integral promotion）。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.6.2",
+        "title": "整型转换",
+        "page": null,
+        "paragraphs": [
+          "<p>将任何整数转换为某种指定的无符号类型数的方法是：以该无符号类型能够表示的最大值加 1为模，找出与此整数同余的最小的非负值。在对二的补码表示中，如果该无符号类型的位模式较窄，这就相当于左截取；如果该无符号类型的位模式较宽，这就相当于对带符号值进行符号扩展和对无符号值进行 0填充。</p>",
+          "<p>将任何整数转换为带符号类型时，如果它可以在新类型中表示出来，则其值保持不变，否则它的值同具体的实现有关。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.6.3",
+        "title": "整数和浮点数",
+        "page": null,
+        "paragraphs": [
+          "<p>当把浮点类型的值转换为整型时，小数部分将被丢弃。如果结果值不能用整型表示，则其行为是未定义的。特别是，将负的浮点数转换为无符号整型的结果是没有定义的。</p>",
+          "<p>当把整型值转换为浮点类型时，如果该值在该浮点类型可表示的范围内但不能精确表示，则结果可能是下一个较高或较低的可表示值。如果该值超出可表示的范围，则其行为是未定义的。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.6.4",
+        "title": "浮点类型",
+        "page": null,
+        "paragraphs": [
+          "<p>将一个精度较低的浮点值转换为相同或更高精度的浮点类型时，它的值保持不变。将一个较高精度的浮点类型值转换为较低精度的浮点类型时，如果它的值在可表示范围内，则结果可能是下一个较高或较低的可表示值。如果结果在可表示范围之外，则其行为是未定义的。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.6.5",
+        "title": "算术类型转换",
+        "page": null,
+        "paragraphs": [
+          "<p>许多运算符都会以类似的方式在运算过程中引起转换，并产生结果类型。其效果是将所有操作数转换为同一公共类型，并以此作为结果的类型。这种方式的转换称为普通算术类型转换。</p>",
+          "<p>首先，如果任何一个操作数为 <code>long double</code> 类型，则将另一个操作数转换为 <code>long</code></p>",
+          "<pre class=\"card-code\">double类型。</pre>",
+          "<p>否则，如果任何一个操作数为<code>double</code>类型，则将另一个操作数转换为<code>double</code>类型。</p>",
+          "<p>否则，如果任何一个操作数为<code>float</code>类型，则将另一个操作数转换为<code>float</code>类型。</p>",
+          "<p>否则，同时对两个操作数进行整型提升；然后，如果任何一个操作数为<code>unsigned long</code></p>",
+          "<pre class=\"card-code\">int类型，则将另一个操作数转换为unsigned long int 类型。</pre>",
+          "<p>否则，如果一个操作数为 <code>long int</code> 类型且另一个操作数为 <code>unsigned int</code> 类型，则结果依赖于 <code>long int</code>类型是否可以表示所有的 <code>unsigned int</code>类型的值。如果可以，则将<code>unsigned int</code> 类型的操作数转换为<code>long int</code>；如果不可以，则将两个操作数都转换为</p>",
+          "<pre class=\"card-code\">unsigned long int 类型。</pre>",
+          "<p>否则，如果一个操作数为<code>long int</code> 类型，则将另一个操作数转换为<code>long int</code> 类型。</p>",
+          "<p>否则，如果任何一个操作数为<code>unsigned int</code>类型，则将另一个操作数转换为<code>unsigned</code></p>",
+          "<pre class=\"card-code\">int类型。</pre>",
+          "<p>否则，将两个操作数都转换为<code>int</code>类型。</p>",
+          "<p>说明：这里有两个变化。第一，对<code>float</code>类型操作数的算术运算可以只用单精度而不是双精度；而在第 1 版中规定，所有的浮点运算都是双精度。第二，当较短的无符号类型与较长的带符号类型一起运算时，不将无符号类型的属性传递给结果类型；而在第 1 版中，无符号类型总是处于支配地位。新规则稍微复杂一些，但减少了无符号数与带符号数混合使用情况下的麻烦，当一个无符号表达式与一个具有同样长度的带符号表达式相比较时，结果仍然是无法预料的。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.6.6",
+        "title": "指针和整数",
+        "page": null,
+        "paragraphs": [
+          "<p>指针可以加上或减去一个整型表达式。在这种情况下，整型表达式的转换按照加法运算符的方式进行（参见 A.7.7节）。</p>",
+          "<p>两个指向同一数组中同一类型的对象的指针可以进行减法运算，其结果将被转换为整型；转换方式按照减法运算符的方式进行（参见 A.7.7节）。</p>",
+          "<p>值为 0的整型常量表达式或强制转换为<code>void *</code>类型的表达式可通过强制转换、赋值或比较操作转换为任意类型的指针。其结果将产生一个空指针，此空指针等于指向同一类型的另一空指针，但不等于任何指向函数或对象的指针。</p>",
+          "<p>还允许进行指针相关的其它某些转换，但其结果依赖于具体的实现。这些转换必须由一个显式的类型转换运算符或强制类型转换来指定（参见 A.7.5节和 A.8.8节）。</p>",
+          "<p>指针可以转换为整型，但此整型必须足够大；所要求的大小依赖于具体的实现。映射函数也依赖于具体的实现。</p>",
+          "<p>整型对象可以显式地转换为指针。这种映射总是将一个足够宽的从指针转换来的整数转换为同一个指针，其它情况依赖于具体的实现。</p>",
+          "<p>指向某一类型的指针可以转换为指向另一类型的指针，但是，如果该指针指向的对象不满足一定的存储对齐要求，则结果指针可能会导致地址异常。指向某对象的指针可以转换为一个指向具有更小或相同存储对齐限制的对象的指针，并可以保证原封不动地再转换回来。“ 对齐”的概念依赖于具体的实现，但<code>char</code>类型的对象具有最小的对齐限制。我们将在 A.6.8节的讨论中看到，指针也可以转换为<code>void *</code>类型，并可原封不动地转换回来。</p>",
+          "<p>一个指针可以转换为同类型的另一个指针，但增加或删除了指针所指的对象类型的限定符（参见 A.4.4节和 A.8.2节）的情况除外。如果增加了限定符，则新指针与原指针等价，不同的是增加了限定符带来的限制。如果删除了限定符，则对底层对象的运算仍受实际声明中的限定符的限制。</p>",
+          "<p>最后，指向一个函数的指针可以转换为指向另一个函数的指针。调用转换后指针所指的函数的结果依赖于具体的实现。但是，如果转换后的指针被重新转换为原来的类型，则结果与原来的指针一致。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.6.7",
+        "title": "void",
+        "page": null,
+        "paragraphs": [
+          "<p><code>void</code>对象的（不存在的）值不能够以任何方式使用，也不能被显式或隐式地转换为任一非空类型。因为空（<code>void</code>）表达式表示一个不存在的值，这样的表达式只可以用在不需要值的地方，例如作为一个表达式语句（参见 A.9.2节）或作为逗号运算符的左操作数（参见 A.7.18节）。</p>",
+          "<p>可以通过强制类型转换将表达式转换为<code>void</code>类型。例如，在表达式语句中，一个空的强制类型转换将丢掉函数调用的返回值。</p>",
+          "<p>说明：<code>void</code>没有在本书的第 1版中出现，但是在本书第 1版出版后，它一直被广泛使用着。</p>",
+          "<p>A.6.8 指向 void的指针</p>",
+          "<p>指向任何对象的指针都可以转换为<code>void *</code>类型，且不会丢失信息。如果将结果再转换为初始指针类型，则可以恢复初始指针。我们在 A.6.6节中讨论过，执行指针到指针的转换时，一般需要显式的强制转换，这里所不同的是，指针可以被赋值为<code>void *</code>类型的指针，也可以赋值给<code>void *</code>类型的指针，并可与<code>void *</code>类型的指针进行比较。</p>",
+          "<p>说明：对<code>void *</code>指针的解释是新增加的。以前，<code>char *</code>指针扮演着通用指针的角色。ANSI 标准特别允许<code>void *</code>类型的指针与其它对象指针在赋值表达式和关系表达式中混用，而对其它类型指针的混用则要求进行显式强制类型转换。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7",
+        "title": "表达式",
+        "page": null,
+        "paragraphs": [
+          "<p>本节中各主要小节的顺序就代表了表达式运算符的优先级，我们将依次按照从高到低的优先级介绍。举个例子，按照这种关系，A.7.1至 A.7.6节中定义的表达式可以用作加法运算符+（参见 A.7.7节）的操作数。在每一小节中，各个运算符的优先级相同。每个小节中还将讨论该节涉及到的运算符的左、右结合性。A.13 节中给出的语法综合了运算符的优先级和结合性。</p>",
+          "<p>运算符的优先级和结合性有明确的规定，但是，除少数例外情况外，表达式的求值次序没有定义，甚至某些有副作用的子表达式也没有定义。也就是说，除非运算符的定义保证了其操作数按某一特定顺序求值，否则，具体的实现可以自由选择任一求值次序，甚至可以交换求值次序。但是，每个运算符将其操作数生成的值结合起来的方式与表达式的语法分析方式是兼容的。</p>",
+          "<p>说明：该规则废除了原先的一个规则，即：当表达式中的运算符在数学上满足交换律和结合律时，可以对表达式重新排序，但是，在计算时可能会不满足结合律。这个改变仅影响浮点数在接近其精度限制时的计算以及可能发生溢出的情况。</p>",
+          "<p>C 语言没有定义表达式求值过程中的溢出、除法检查和其它异常的处理。大多数现有 C语言的实现在进行带符号整型表达式的求值以及赋值时忽略溢出异常，但并不是所有的实现都这么做。对除数为 0 和所有浮点异常的处理，不同的实现采用不同的方式，有时候可以用非标准库函数进行调整。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.1",
+        "title": "指针生成",
+        "page": null,
+        "paragraphs": [
+          "<p>对于某类型 T，如果某表达式或子表达式的类型为“ T 类型的数组”，则此表达式的值是指向数组中第一个对象的指针，并且此表达式的类型将被转换为“ 指向 T类型的指针”。如果此表达式是一元运算符&amp;或 <code>sizeof</code>，则不会进行转换。类似地，除非表达式被用作&amp;运算符的操作数，否则，类型为“ 返回 T类型值的函数” 的表达式将被转换为“ 指向返回 T类型值的函数的指针” 类型。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.2",
+        "title": "初等表达式",
+        "page": null,
+        "paragraphs": [
+          "<p>初等表达式包括标识符、常量、字符串或带括号的表达式。</p>",
+          "<p>初等表达式：标识符常量字符串（表达式）</p>",
+          "<p>如果按照下面的方式对标识符进行适当的声明，该标识符就是初等表达式。其类型由其声明指定。如果标识符引用一个对象（参见 A.5节），并且其类型是算术类型、结构、联合或指针，那么它就是一个左值。</p>",
+          "<p>常量是初等表达式，其类型同其形式有关。更详细的信息，参见 A.2.5节中的讨论。</p>",
+          "<p>字符串字面值是初等表达式。它的初始类型为“ <code>char</code>类型的数组” 类型（对于宽字符字符串，则为“ <code>wchar_t</code>类型的数组” 类型），但遵循 A.7.1节中的规则。它通常被修改为“ 指向<code>char</code>类型（或<code>wchar_t</code>类型）的指针” 类型，其结果是指向字符串中第一个字符的指针。某些初始化程序中不进行这样的转换，详细信息，参见 A.8.7节。</p>",
+          "<p>用括号括起来的表达式是初等表达式，它的类型和值与无括号的表达式相同。此表达式是否是左值不受括号的影响。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.3",
+        "title": "后缀表达式",
+        "page": null,
+        "paragraphs": [
+          "<p>后缀表达式中的运算符遵循从左到右的结合规则。</p>",
+          "<p>后缀表达式：初等表达式后缀表达式[表达式]后缀表达式(参数表达式表 opt)后缀表达式.标识符后缀表达式-&gt;标识符后缀表达式++后缎表达式--参数表达式表：赋值表达式参数表达式表, 赋值表达式</p>",
+          "<p><code>1</code>数组引用</p>",
+          "<p>带下标的数组引用后缀表达式由一个后缀表达式后跟一个括在方括号中的表达式组成。方括号前的后缀表达式的类型必须为“ 指向 T类型的指针”，其中 T为某种类型；方括号中表达式的类型必须为整型。结果得到下标表达式的类型为 T。表达式 <code>E1[E2]</code>在定义上等同于<code>*((E1) + (E2))</code> 。有关数组引用的更多讨论，参见 A.8.6节。</p>",
+          "<p><code>2</code>函数调用</p>",
+          "<p>函数调用由一个后缀表达式（称为函数标志符，function designator）后跟由圆括号括起来的赋值表达式列表组成，其中的赋值表达式列表可能为空，并由逗号进行分隔，这些表达式就是函数的参数。如果后缀表达式包含一个当前作用域中不存在的标识符，则此标识符将被隐式地声明，等同于在执行此函数调用的最内层程序块中包含下列声明：</p>",
+          "<pre class=\"card-code\">   extern int 标识符()</pre>",
+          "<p>该后缀表达式（在可能的隐式声明和指针生成之后，参见 A.7.1节）的类型必须为“ 指向返回T类型的函数的指针”，其中 T为某种类型，且函数调用的值的类型为 T。</p>",
+          "<p>说明：在第 1版中，该类型被限制为“ 函数” 类型，并且，通过指向函数的指针调用函数时必须有一个显式的*运算符。ANSI 标准允许现有的一些编译器用同样的语法进行函数调用和通过指向函数的指针进行函数调用。旧的语法仍然有效。</p>",
+          "<p>通常用术语“ 实际参数” 表示传递给函数调用的表达式，而术语“形式参数” 则用来表示函数定义或函数声明中的输入对象（或标识符）。</p>",
+          "<p>在调用函数之前，函数的每个实际参数将被复制，所有的实际参数严格地按值传递。函数可能会修改形式参数对象的值（即实际参数表达式的副本），但这个修改不会影响实际参数的值。但是，可以将指针作为实际参数传递，这样，函数便可以修改指针指向的对象的值。</p>",
+          "<p>可以通过两种方式声明函数。在新的声明方式中，形式参数的类型是显式声明的，并且是函数类型的一部分，这种声明称为函数原型。在旧的方式中，不指定形式参数类型。有关函数声明的讨论，参见 A.8.6节和 A.10.1节。</p>",
+          "<p>在函数调用的作用域中，如果函数是以旧式方式声明的，则按以下方式对每个实际参数进行默认参数提升：对每个整型参数进行整型提升（参见 A.6.l节）；将每个<code>float</code>类型的参数转换为 <code>double</code>类型。如果调用时实际参数的数目与函数定义中形式参数的数目不等，或者某个实际参数的类型提升后与相应的形式参数类型不一致，则函数调用的结果是未定义的。类型一致性依赖于函数是以新式方式定义的还是以旧式方式定义的。如果是旧式的定义，则比较经提升后函数调用中的实际参数类型和提升后的形式参数类型；如果是新式的定义，则提升后的实际参数类型必须与没有提升的形式参数自身的类型保持一致。</p>",
+          "<p>在函数调用的作用域中，如果函数是以新式方式声明的，则实际参数将被转换为函数原型中的相应形式参数类型，这个过程类似于赋值。实际参数数目必须与显式声明的形式参数数目相同，除非函数声明的形式参数表以省略号（<code>, ...</code>）结尾。在这种情况下，实际参数的数目必须等于或超过形式参数的数目；对于尾部没有显式指定类型的形式参数，相应的实际参数要进行默认的参数提升，提升方法同前面所述。如果函数是以旧式方式定义的，那么，函数原型中每个形式参数的类型必须与函数定义中相应的形式参数类型一致（函数定义中的形式参数类型经过参数提升后）。</p>",
+          "<p>说明：这些规则非常复杂，因为必须要考虑新旧式函数的混合使用。应尽可能避免新旧式函数声明混合使用。</p>",
+          "<p>实际参数的求值次序没有指定。不同编译器的实现方式各不相同。但是，在进入函数前，实际参数和函数标志符是完全求值的，包括所有的副作用。对任何函数都允许进行递归调用。</p>",
+          "<p><code>3</code>结构引用</p>",
+          "<p>后缀表达式后跟一个圆点和一个标识符仍是后缀表达式。第一个操作数表达式的类型必须是结构或联合，标识符必须是结构或联合的成员的名字。结果值是结构或联合中命名的成员，其类型是对应成员的类型。如果第一个表达式是一个左值，并且第二个表达式的类型不是数组类型，则整个表达式是一个左值。</p>",
+          "<p>后缀表达式后跟一个箭头（由-和&gt;组成）和一个标识符仍是后缀表达式。第一个操作数表达式必须是一个指向结构或联合的指针，标识符必须是结构或联合的成员的名字。结果指向指针表达式指向的结构或联合中命名的成员，结果类型是对应成员的类型。如果该类型不是数组类型，则结果是一个左值。</p>",
+          "<p>因此，表达式<code>E1-&gt;MOS</code>与<code>(*E1).MOS</code>等价。结构和联合将在 A.8.3节中讨论。</p>",
+          "<p>说明：在本书的第 1版中，规定了这种表达式中成员的名字必须属于后缀表达式指定的结构或联合，但是，该规则并没有强制执行。最新的编译器和 ANSI标准强制执行了这一规则。</p>",
+          "<p><code>4</code>后缀自增运算符与后缀自减运算符</p>",
+          "<p>后缀表达式后跟一个++或--运算符仍是一个后缀表达式。表达式的值就是操作数的值。执行完该表达式后，操作数的值将加 1（++）或减 1（--）。操作数必须是一个左值。有关操作数的限制和运算细节的详细信息，参见加法类运算符（A.7.7节）和赋值类运算符（A.7.17节）中的讨论。其结果不是左值。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.4",
+        "title": "一元运算符",
+        "page": null,
+        "paragraphs": [
+          "<p>带一元运算符的表达式遵循从右到左的结合性。一元表达式：后缀表达式++一元表达式--一元表达式一元运算符 强制类型转换表达式</p>",
+          "<pre class=\"card-code\">       sizeoff一元表达式\n       sizeof(类型名)</pre>",
+          "<p>一元运算符：one of</p>",
+          "<pre class=\"card-code\">       &amp; * + - ~ !</pre>",
+          "<p><code>1</code>前缀自增运算符与前缀自减运算符</p>",
+          "<p>在一元表达式的前面添加运算符++或--后得到的表达式是一个一元表达式。操作数将被加 1（++）或减 1（--），表达式的值是经过加 1、减 1以后的值。操作数必须是一个左值。有关操作数的限制和运算细节的详细信息，参见加法类运算符（参见 A.7.7节）和赋值类运算符（参见 A.7.17节）。其结果不是左值。</p>",
+          "<p><code>2</code>地址运算符</p>",
+          "<p>一元运算符&amp;用于取操作数的地址。该操作数必须是一个左值（不指向位字段、不指向声明为<code>register</code>类型的对象），或者为函数类型。结果值是一个指针，指向左值指向的对象或函数。如果操作数的类型为 T，则结果的类型为指向 T类型的指针。</p>",
+          "<p><code>3</code>间接寻址运算符</p>",
+          "<p>一元运算符*表示间接寻址，它返回其操作数指向的对象或函数。如果它的操作数是一个指针且指向的对象是算术、结构、联合或指针类型，则它是一个左值。如果表达式的类型为“ 指向 T类型的指针”，则结果类型为 T。</p>",
+          "<p><code>4</code>一元加运算符</p>",
+          "<p>一元运算符+的操作数必须是算术类型，其结果是操作数的值。如果操作数是整型，则将进行整型提升，结果类型是经过提升后的操作数的类型。</p>",
+          "<p>说明：一元运算符+是 ANSI标准新增加的，增加该运算符是为了与一元运算符-对应。</p>",
+          "<p><code>5</code>一元减运算符</p>",
+          "<p>一元运算符-的操作数必须是算术类型，结果为操作数的负值。如果操作数是整型，则将进行整型提升。带符号数的负值的计算方法为：将提升后得到的类型能够表示的最大值减去提升后的操作数的值，然后加 1；但 0的负值仍为 0。结果类型为提升后的操作数的类型。</p>",
+          "<p><code>6</code>二进制反码运算符</p>",
+          "<p>一元运算符~的操作数必须是整型，结果为操作数的二进制反码。在运算过程中需要对操作数进行整型提升。如果操作数为无符号类型，则结果为提升后的类型能够表示的最大值减去操作数的值而得到的结果值。如果操作数为带符号类型，则结果的计算方式为：将提升后的操作数转换为相应的无符号类型，使用运算符~计算反码，再将结果转换为带符号类型。结果的类型为提升后的操作数的类型。</p>",
+          "<p><code>7</code>逻辑非运算符</p>",
+          "<p>运算符!的操作数必须是算术类型或者指针。如果操作数等于 0，则结果为 1，否则结果为 0。结果类型为<code>int</code>。</p>",
+          "<pre class=\"card-code\">   8 sizeof 运算符</pre>",
+          "<p><code>sizeof</code>运算符计算存储与其操作数同类型的对象所需的字节数。操作数可以为一个未求值的表达式，也可以为一个用括号括起来的类型名。将 <code>sizeof</code>应用于 <code>char</code>类型时，其结果值为 1；将它应用于数组时，其值为数组中字节的总数。应用于结构或联合时，结果为对象的字节数，包括对象中包含的数组所需要的任何填充空间：有 <code>n</code>个元素的数组的长度是一个数组元素长度的 <code>n</code>倍。此运算符不能用于函数类型和不完整类型的操作数，也不能用于位字段。结果是一个无符号整型常量，具体的类型由实现定义。在标准头文件<code>&lt;stddef.h&gt;</code>（参见附录 B）中，这一类型被定义为<code>size_t</code>类型。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.5",
+        "title": "强制类型转换",
+        "page": null,
+        "paragraphs": [
+          "<p>以括号括起来的类型名开头的一元表达式将导致表达式的值被转换为指定的类型。</p>",
+          "<p>强制类型转换表达式：一元表达式(类型名)强制类型转换表达式</p>",
+          "<p>这种结构称为强制类型转换。类型名将在 A.8.8节描述。转换的结果已在 A.6节讨论过。包含强制类型转换的表达式不是左值。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.6",
+        "title": "乘法类运算符",
+        "page": null,
+        "paragraphs": [
+          "<p>乘法类运算符&amp;、/和%遵循从左到右的结合性。</p>",
+          "<p>乘法类表达式：强制类型转换表达式乘法类表达式*强制类型转换表达式乘法类表达式/强制类型转换表达式乘法类表达式%强制类型转换表达式</p>",
+          "<p>运算符*和/的操作数必须为算术类型，运算符&amp;的操作数必须为整型。这些操作数需要进行普通的算术类型转换，结果类型由执行的转换决定。</p>",
+          "<p>二元运算符*表示乘法。</p>",
+          "<p>二元运算符/用于计算第一个操作数同第二个操作数相除所得的商，而运算符%用于计算两个操作数相除后所得的余数。如果第二个操作数为 0，则结果没有定义。并且，<code>(a/b)*b+a%b</code>等于 <code>a</code>永远成立。如果两个操作数均为非负，则余数为非负值且小于除数，否则，仅保证余数的绝对值小于除数的绝对值。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.7",
+        "title": "加法类运算符",
+        "page": null,
+        "paragraphs": [
+          "<p>加法类运算符+和-遵循从左到右的结合性。如果操作数中有算术类型的操作数，则需要进行普通的算术类型转换。每个运算符可能为多种类型。</p>",
+          "<p>加法类表达式：乘法类表达式加法类表达式+乘法类表达式加法类表达式-乘法类表达式</p>",
+          "<p>运算符+用于计算两个操作数的和。指向数组中某个对象的指针可以和一个任何整型的值相加，后者将通过乘以所指对象的长度被转换为地址偏移量。相加得到的和是一个指针，它与初始指针具有相同的类型，并指向同一数组中的另一个对象，此对象与初始对象之间具有一定的偏移量。因此，如果<code>P</code>是一个指向数组中某个对象的指针，则表达式<code>P+1</code>是指向数组中下一个对象的指针。如果相加所得的和对应的指针不在数组的范围内，且不是数组末尾元素后的第一个位置，则结果没有定义。</p>",
+          "<p>说明：允许指针指向数组末尾元素的下一个元素是 ANSI中新增加的特征，它使得我们可以按照通常的习惯循环地访问数组元素。</p>",
+          "<p>运算符-用于计算两个操作数的差值。可以从某个指针上减去一个任何整型的值，减法运算的转换规则和条件与加法的相同。</p>",
+          "<p>如果指向同一类型的两个指针相减，则结果是一个带符号整型数，表示它们指向的对象之间的偏移量。相邻对象间的偏移量为 1。结果的类型同具体的实现有关，但在标准头文件<code>&lt;stddef.h&gt;</code>中定义为<code>ptrdiff_t</code>。只有当指针指向的对象属于同一数组时，差值才有意义。但是，如果<code>P</code>指向数组的最后一个元素，则<code>(P+1)-P</code>的值为 1。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.8",
+        "title": "移位运算符",
+        "page": null,
+        "paragraphs": [
+          "<p>移位运算符&lt;&lt;和&gt;&gt;遵循从左到右的结合性。每个运算符的各操作数都必须为整型，并且遵循整型提升原则。结果的类型是提升后的左操作数的类型。如果右操作数为负值，或者大于或等于左操作数类型的位数，则结果没有定义。</p>",
+          "<p>移位表达式：加法类表达式移位表达式&lt;&lt;加法类表达式移位表达式&gt;&gt;加法类表达式</p>",
+          "<p><code>E1&lt;&lt;E2</code> 的值为 <code>E1</code>（按位模式解释）向左移 <code>E2</code>位得到的结果。如果不发生溢出，这个</p>",
+          "<pre class=\"card-code\">                           E2</pre>",
+          "<p>结果值等价于<code>E1</code>乘以<code>2</code> 。<code>E1&gt;&gt;E2</code>的值为<code>E1</code>向右移<code>E2</code>位得到的结果。如果<code>E1</code>为无符号</p>",
+          "<pre class=\"card-code\">                                            E2</pre>",
+          "<p>数或为非负值，则右移等同于<code>E1</code>除以<code>2</code> 。其它情况下的执行结果由具体实现定义。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.9",
+        "title": "关系运算符",
+        "page": null,
+        "paragraphs": [
+          "<p>关系运算符遵循从左到右的结合性，但这个规则没有什么作用。<code>a&lt;b&lt;c</code> 在语法分析时将被解释为<code>(a&lt;b)&lt;c</code>，并且<code>a&lt;b</code>的结果值只能为 0或 1。</p>",
+          "<p>关系表达式：移位表达式关系表达式&lt;移位表达式关系表达式&gt;移位表达式关系表达式&lt;=移位表达式关系表达式&gt;=移位表达式</p>",
+          "<p>当关系表达式的结果为假时，运算符&lt;（小于）、&gt;（大于）、&lt;=（小于等于）和&gt;=（大于等于）的结果值都为 0；当关系表达式的结果为真时，它们的结果值都为 1。结果的类型为<code>int</code>类型。如果操作数为算术类型，则要进行普通的算术类型转换。可以对指向同一类型的对象的指针进行比较（忽略任何限定符），其结果依赖于所指对象在地址空间中的相对位置。指针比较只对相同对象才有意义：如果两个指针指向同一个简单对象，则相等；如果指针指向同一个结构的不同成员，则指向结构中后声明的成员的指针较大；如果指针指向同一个联合的不同成员，则相等；如果指针指向一个数组的不同成员，则它们之间的比较等价于对应下标之间的比较。如果指针<code>P</code>指向数组的最后一个成员，尽管<code>P+1</code>已指向数组的界外，但<code>P+1</code>仍比<code>P</code>大。其它情况下指针的比较没有定义。</p>",
+          "<p>说明：这些规则允许指向同一个结构或联合的不同成员的指针之间进行比较，与第 1版比较起来放宽了一些限制。这些规则还使得与超出数组末尾的第一个指针进行比较合法化。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.10",
+        "title": "相等类运算符",
+        "page": null,
+        "paragraphs": [
+          "<p>相等类表达式：关系表达式相等类表达式==关系表达式相等类表达式!=关系表达式</p>",
+          "<p>运算符==（等于）和!=（不等于）与关系运算符相似，但它们的优先级更低。（只要<code>a&lt;b</code>与<code>c&lt;d</code>具有相同的真值，则<code>a&lt;b==c&lt;d</code>的值总为 1。）</p>",
+          "<p>相等类运算符与关系运算符具有相同的规则，但这类运算符还允许执行下列比较：指针可以与值为 0的常量整型表达式或指向<code>void</code>的指针进行比较。参见 A.6.6节。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.11",
+        "title": "按位与运算符",
+        "page": null,
+        "paragraphs": [
+          "<p>按位与表达式：相等类表达式按位与表达式&amp;相等类表达式</p>",
+          "<p>执行按位与运算时要进行普通的算术类型转换。结果为操作数经按位与运算后得到的值。该运算符仅适用于整型操作数。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.12",
+        "title": "按位异或运算符",
+        "page": null,
+        "paragraphs": [
+          "<p>按位异或表达式：按位与表达式按位异或表达式^按位与表达式</p>",
+          "<p>执行按位异或运算时要进行普通的算术类型转换，结果为操作数经按位异或运算后得到的值。该运算符仅适用于整型操作数。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.13",
+        "title": "按位或运算符",
+        "page": null,
+        "paragraphs": [
+          "<p>按位或表达式：按位异或表达式按位或表达式|按位异或表达式</p>",
+          "<p>执行按位或运算时要进行常规的算术类型转换，结果为操作数经按位或运算后得到的值。该运算符仅适用于整型操作数。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.14",
+        "title": "逻辑与运算符",
+        "page": null,
+        "paragraphs": [
+          "<p>逻辑与表达式：按位或表达式逻辑与表达式&amp;&amp;按位或表达式</p>",
+          "<p>运算符&amp;&amp;遵循从左到右的结合性。如果两个操作数都不等于 0，则结果值为 1，否则结果值 0。与运箅符&amp;不同的是，&amp;&amp;确保从左到右的求值次序：首先计算第一个操作数，包括所有可能的副作用；如果为 0，则整个表达式的值为 0；否则，计算右操作数，如果为 0，则整个表达式的值为 0，否则为 1。</p>",
+          "<p>两个操作数不需要为同一类型，但是，每个操作数必须为算术类型或者指针。其结果为</p>",
+          "<pre class=\"card-code\">int类型。</pre>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.15",
+        "title": "逻辑或运算符",
+        "page": null,
+        "paragraphs": [
+          "<p>逻辑或表达式：逻辑与表达式逻辑或表达式||逻辑与表达式</p>",
+          "<p>运算符||遵循从左到右的结合性。如果该运算符的某个操作数不为 0，则结果值为 1；否则结果值为 0。与运算符|不同的是，||确保从左到右的求值次序：首先计算第一个操作数，包括所有可能的副作用；如果不为 0，则整个表达式的值为 1；否则，计算右操作数，如果不为 0，则整个表达式的值为 1；否则结果为 0。</p>",
+          "<p>两个操作数不需要为同一类型，但是每个操作数必须为算术类型或者指针。其结果为<code>int</code>类型。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.16",
+        "title": "条件运算符",
+        "page": null,
+        "paragraphs": [
+          "<p>条件表达式：逻辑或表达式逻辑或表达式?表达式:条件表达式</p>",
+          "<p>首先计算第一个表达式（包括所有可能的副作用），如果该表达式的值不等于 0，则结果为第二个表达式的值，否则结果为第三个表达式的值。第二个和第三个操作数中仅有一个操作数会被计算。如果第二个和第三个操作数为算术类型，则要进行普通的算术类型转换，以使它们的类型相同，该类型也是结果的类型。如果它们都是<code>void</code>类型，或者是同一类型的结构或联合，或者是指向同一类型的对象的指针，则结果的类型与这两个操作数的类型相同。如果其中一个操作数是指针，而另一个是常量 0，则 0将被转换为指针类型，且结果为指针类型。如果一个操作数为指向<code>void</code>的指针，而另一个操作数为指向其它类型的指针，则指向其它类型的指针将被转换为指向<code>void</code>的指针，这也是结果的类型。</p>",
+          "<p>在比较指针的类型时，指针所指对象的类型的任何类型限定符（参见 A.8.2节）都将被忽略，但结果类型会继承条件的各分支的限定符。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.17",
+        "title": "赋值表达式",
+        "page": null,
+        "paragraphs": [
+          "<p>赋值运算符有多个，它们都是从左到右结合。</p>",
+          "<p>赋值表达式：条件表达式一元表达式 赋值运算符 赋值表达式赋值运算符：one of</p>",
+          "<pre class=\"card-code\">   = *= /= %= += -= &lt;&lt;= &gt;&gt;= &amp;= ^= !=</pre>",
+          "<p>所有这些运算符都要求左操作数为左值，且该左值是可以修改的：它不可以是数组、不完整类型或函数。同时其类型不能包括<code>const</code>限定符；如果它是结构或联合，则它的任意一个成员或递归子成员不能包括<code>const</code>限定符。赋值表达式的类型是其左操作数的类型，值是赋值操作执行后存储在左操作数中的值。</p>",
+          "<p>在使用运算符=的简单赋值中，表达式的值将替换左值所指向的对象的值。下面几个条件中必须有一个条件成立：两个操作数均为算术类型，在此情况下右操作数的类型通过赋值转换为左操作数的类型；两个操作数为同一类型的结构或联合；一个操作数是指针，另一个操作数是指向<code>void</code>的指针；左操作数是指针，右操作数是值为 0的常量表达式；两个操作数都是指向同一类型的函数或对象的指针，但右操作数可以没有<code>const</code>或<code>volatile</code>限定符。</p>",
+          "<p>形式为<code>E1 op= E2</code> 的表达式等价于<code>E1 = E1 op (E2)</code> ，惟一的区别是前者对<code>E1</code>仅求值一次。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.18",
+        "title": "逗号运算符",
+        "page": null,
+        "paragraphs": [
+          "<p>表达式：赋值表达式表达式, 赋值表达式</p>",
+          "<p>由逗号分隔的两个表达式的求值次序为从左到右，并且左表达式的值被丢弃。右操作数的类型和值就是结果的类型和值。在开始计算右操作数以前，将完成左操作数涉及到的副作用的计算。在逗号有特别含义的上下文中，如在函数参数表（参见 A.7.3节）和初值列表（A.8.7节）中，需要使用赋值表达式作为语法单元，这样，逗号运算符仅出现在圆括号中。例如，下列函数调用：</p>",
+          "<pre class=\"card-code\">   f(a, (t=3, t+2), c)</pre>",
+          "<p>包含 3个参数，其中第二个参数的值为 5。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.7.19",
+        "title": "常量表达式",
+        "page": null,
+        "paragraphs": [
+          "<p>从语法上看，常量表达式是限定于运算符的某一个子集的表达式：</p>",
+          "<p>常量表达式：条件表达式</p>",
+          "<p>某些上下文要求表达式的值为常量，例如，<code>switch</code>语句中<code>case</code>后面的数值、数组边界和位字段的长度、枚举常量的值、初值以及某些预处理器表达式。</p>",
+          "<p>除了作为 <code>sizeof</code>的操作数之外，常量表达式中可以不包含赋值、自增或自减运算符、函数调用或逗号运算符。如果要求常量表达式为整型，则它的操作数必须由整型、枚举、字符和浮点常量组成；强制类型转换必须指定为整型，任何浮点常量都将被强制转换为整型。此规则对数组、间接访问、取地址运算符和结构成员操作不适用。（但是，<code>sizeof</code> 可以带任何类型的操作数。）</p>",
+          "<p>初值中的常量表达式允许更大的范围：操作数可以是任意类型的常量，一元运算符&amp;可以作用于外部、静态对象以及以常量表达式为下标的外部或静态数组。对于无下标的数组或函数的情况，一元运算符&amp;将被隐式地应用。初值计算的结果值必须为下列二者之一：一个常量；前面声明的外部或静态对象的地址加上或减去一个常量。</p>",
+          "<p>允许出现在<code>#if</code> 后面的整型常量表达式的范围较小，它不允许 <code>sizeof</code>表达式、枚举常量和强制类型转换。详细信息参见 A.12.5节。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.8",
+        "title": "声明",
+        "page": null,
+        "paragraphs": [
+          "<p>声明（declaration）用于说明每个标识符的含义，而并不需要为每个标识符预留存储空间。预留存储空间的声明称为定义（definition）。声明的形式如下：</p>",
+          "<p>声明声明说明符 初始化声明符表<code>opt;</code></p>",
+          "<p>初始化声明符表中的声明符包含被声明的标识符；声明说明符由一系列的类型和存储类说明符组成。</p>",
+          "<p>声明说明符：</p>",
+          "<p>存储类说明符 声明说明符<code>opt</code></p>",
+          "<p>类型说明符 声明说明符<code>opt</code></p>",
+          "<p>类型限定符 声明说明符<code>opt</code></p>",
+          "<p>初姑化声明符表：</p>",
+          "<p>初始化声明符</p>",
+          "<p>初姑化声明符袁，初始化声明符</p>",
+          "<p>初始化声明符：</p>",
+          "<p>声明符</p>",
+          "<p>声明符 = 初值</p>",
+          "<p>声明符将在稍后部分讨论（参见 A.8.5节）。声明符包含了被声明的名字。一个声明中必须至少包含一个声明符，或者其类型说明符必须声明一个结构标记、一个联合标记或枚举的成员。不允许空声明。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.8.1",
+        "title": "存储类说明符",
+        "page": null,
+        "paragraphs": [
+          "<p>存储类说明符如下所示：</p>",
+          "<p>存储类说明符：</p>",
+          "<pre class=\"card-code\">       auto\n       register\n       static\n       extern\n       typedef</pre>",
+          "<p>有关存储类的意义，我们已在 A.4节中讨论过。</p>",
+          "<p>说明符 <code>auto</code>和 <code>register</code>将声明的对象说明为自动存储类对象，这些对象仅可用在函数中。这种声明也具有定义的作用，并将预留存储空间。带有 <code>register</code>说明符的声明等价于带有<code>auto</code>说明符的声明，所不同的是，前者暗示了声明的对象将被频繁地访问。只有很少的对象被真正存放在寄存器中，并且只有特定类型才可以。该限制同具体的实现有关。但是，如果一个对象被声明为<code>register</code>，则将不能对它应用一元运算符&amp;（显式应用或隐式应用都不允许）。</p>",
+          "<p>说明：对声明为<code>register</code>但实际按照<code>auto</code>类型处理的对象的地址进行计算是非法的。这是一个新增加的规则。</p>",
+          "<p>说明符 <code>static</code>将声明的对象说明为静态存储类。这种对象可以用在函数内部或函数外部。在函数内部，该说明符将引起存储空间的分配，具有定义的作用。有关该说明符在函数外部的作用参见 A.11.2节。</p>",
+          "<p>函数内部的 <code>extern</code>声明表明，被声明的对象的存储空间定义在其它地方。有关该说明符在函数外部的作用参见 A.11.2节。</p>",
+          "<p><code>typedef</code>说明符并不会为对象预留存储空间。之所以将它称为存储类说明符，是为了语法描述上的方便。我们将在 A.8.9节中讨论它。</p>",
+          "<p>一个声明中最多只能有一个存储类说明符。如果没有指定存储类说明符，则将按照下列规则进行：在函数内部声明的对象被认为是 <code>auto</code> 类型；在函数内部声明的函数被认为是<code>extern</code>类型；在函数外部声明的对象与函数将被认为是<code>static</code>类型，且具有外部连接。详细信息参见 A.10节和 A.11节。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.8.2",
+        "title": "类型说明符",
+        "page": null,
+        "paragraphs": [
+          "<p>类型说明符的定义如下：</p>",
+          "<p>类型说明符：</p>",
+          "<pre class=\"card-code\">       void\n       char\n       short\n       int\n       long\n       float\n       double\n       signed\n       unsigned</pre>",
+          "<p>结构或联合说明符</p>",
+          "<p>枚举说明符</p>",
+          "<p>类型定义名</p>",
+          "<p>其中，<code>long</code>和<code>short</code>这两个类型说明符中最多有一个可同时与<code>int</code>一起使用，并且，在这种情况下省略关键字 <code>int</code>的含义也是一样的。<code>long</code> 可与 <code>double</code>一起使用。<code>signed</code> 和</p>",
+          "<pre class=\"card-code\">unsigned这两个类型说明符中最多有一个可同时与int、int的short或long形式、char</pre>",
+          "<p>一起使用。<code>signed</code>和<code>unsigned</code>可以单独使用，这种情况下默认为<code>int</code>类型。<code>signed</code>说明符对于强制 <code>char</code>对象带符号位是非常有用的；其它整型也允许带 <code>signed</code>声明，但这是多余的。</p>",
+          "<p>除了上面这些情况之外，在一个声明中最多只能使用一个类型说明符。如果声明中没有类型说明符，则默认为<code>int</code>类型。</p>",
+          "<p>类型也可以用限定符限定，以指定被声明对象的特殊属性。</p>",
+          "<p>类型限定符：</p>",
+          "<pre class=\"card-code\">       const\n       volatile</pre>",
+          "<p>类型限定符可与任何类型说明符一起使用。可以对<code>const</code>对象进行初始化，但在初始化以后不能进行赋值。<code>volatile</code>对象没有与实现无关的语义。</p>",
+          "<p>说明：<code>const</code>和<code>volatile</code>属性是<code>ANSI</code>标准新增加的特性。<code>const</code>用于声明可以存放在只读存储器中的对象，并可能提高优化的可能性。<code>volatile</code> 用于强制某个实现屏蔽可能的优化。倒如，对于具有内存映像输入／输出的机器，指向设备寄存器的指针可以声明为指向 <code>volatile</code>的指针，目的是防止编译器通过指针删除明显多余的引用。除了诊断显式尝试修改<code>const</code>对象的情况外，编译器可能会忽略这些限定符。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.8.3",
+        "title": "结构和联合声明",
+        "page": null,
+        "paragraphs": [
+          "<p>结构是由不同类型的命名成员序列组成的对象。联合也是对象，在不同时刻，它包含多个不同类型成员中的任意一个成员。结构和联合说明符具有相同的形式。</p>",
+          "<p>结构或联合说明符：</p>",
+          "<p>结构或联合标识符<code>opt {</code>结构声明表}</p>",
+          "<p>结构或联合 标识符</p>",
+          "<p>结构或联合：</p>",
+          "<pre class=\"card-code\">       struct\n       union</pre>",
+          "<p>结构声明表是对结构或联合的成员进行声明的声明序列：</p>",
+          "<p>结构声明表</p>",
+          "<p>结构声明</p>",
+          "<p>结构声明表 结构声明</p>",
+          "<p>结构声明：</p>",
+          "<p>说明符限定符表 结构声明符表</p>",
+          "<p>说明符限定符表：类型说明符 说明符限定符表<code>opt</code></p>",
+          "<p>类型限定符 说明符限定符表<code>opt</code></p>",
+          "<p>结构声明符表：</p>",
+          "<p>结构声明符</p>",
+          "<p>结构声明符表, 结构声明符</p>",
+          "<p>通常，结构声明符就是结构或联合成员的声明符。结构成员也可能由指定数目的比特位组成，这种成员称为位字段，或仅称为字段，其长度由跟在声明符冒号之后的常量表达式指定。</p>",
+          "<p>结构声明符：</p>",
+          "<p>声明符</p>",
+          "<p>声明符<code>opt:</code> 常量表达式</p>",
+          "<p>下列形式的类型说明符将其中的标识符声明为结构声明表指定的结构或联合的标记：</p>",
+          "<p>结构或联合标识符 {结构声明表}</p>",
+          "<p>在同一作用域或内层作用域中的后续声明中，可以在说明符中使用标记（而不使用结构声明表）来引用同一类型，如下所示：</p>",
+          "<p>结构或联合 标识符</p>",
+          "<p>如果说明符中只有标记而无结构声明表，并且标记没有声明，则认为萁为不完整类型。具有不完整结构或联合类型的对象可在不需要对象大小的上下文中引用，比如，在声明中（不是定义中），它可用于说明一个指针或创建一个 <code>typedef</code>类型，其余情况则不允许。在引用之后，如果具有该标记的说明符再次出现并包含一个声明表，则该类型成为完整类型。即使是在包含结构声明表的说明符中，在该结构声明表内声明的结构或联合类型也是不完整的，一直到花括号“ }” 终止该说明符时，声明的类型才成为完整类型。</p>",
+          "<p>结构中不能包含不完整类型的成员。因此，不能声明包含自身实例的结构或联合。但是，除了可以命名结构或联合类型外，标记还可以用来定义自引用结构。由于可以声明指向不完整类型的指针，所以，结构或联合可包含指向自身实例的指针。</p>",
+          "<p>下列形式的声明适用一个非常特殊的规则：</p>",
+          "<p>结构或联合 标识符，</p>",
+          "<p>这种形式的声明声明了一个结构或联合，但它没有声明表和声明符。即使该标识符是外层作用域中已声明过的结构标记或联合的标记（参见 A.11.1节），该声明仍将使该标识符成为当前作用域内一个新的不完整类型的结构标记或联合的标记。</p>",
+          "<p>说明：这是<code>ANSI</code>中一个新的比较难理解的规则。它旨在处理内层作用域中声明的相互递归调用的结构，但这些结构的标记可能已在外层作用域中声明。</p>",
+          "<p>具有结构声明表而无标记的结构说明符或联合说明符用于创建一个惟一的类型，它只能被它所在的声明直接引用。</p>",
+          "<p>成员和标记的名字不会相互冲突，也不会与普通变量冲突。一个成员名字不能在同一结构或联合中出现两次，但相同的成员名字可用在不同的结构或联合中。</p>",
+          "<p>说明：在本书的第 <code>1</code>版中，结构或联合的成员名与其父辈无关联。但是，在 <code>ANSI</code>标准制定前，这种关联在编译器中普遍存在。</p>",
+          "<p>除字段类型的成员外，结构成员或联合成员可以为任意对象类型。字段成员（它不需要声明符，因此可以不命名）的类型为<code>int</code>、<code>unsigned int</code> 或<code>signed int</code>，并被解释为指定长度（用二进制位表示）的整型对象，<code>int</code> 类型的字段是否看作为有符号数同具体的实现有关。结构的相邻字段成员以某种力式（同具体的实现有关）存放在某些存储单元中（同具体的实现有关）。如果某字段之后的另一字段无法全部存入已被前面的字段部分占用的存储单元中，则它可能会被分割存放到多个存储单元中，或者是，存储单元中的剩余部分也可能被填充。我们可以用宽度为 <code>0</code>的无名字段来强制进行这种填充，从而使得下一字段从下一分配单元的边界开始存储。</p>",
+          "<p>说明：在字段处理方面，<code>ANSI</code>标准比第<code>1</code>版更依赖于具体的实现。如果要按照与实现相关的方式存储字段，建议阅读一下该语言规则。作为一种可移植的方法，带字段的结构可用来节省存储空间（代价是增加了指令空间和访问字段的时间），同时，它还可以用来在位层次上描述存储布局，但该方法不可移植，在这种情况下，必须了解本地实现的一些规则。</p>",
+          "<p>结构成员的地址值按它们声明的顺序递增。非字段类型的结构成员根据其类型在地址边界上对齐，因此，在结构中可能存在无名空穴。若指向某一结构的指针被强制转换为指向该结构第一个成员的指针类型，则结果将指向该结构的第一个成员。</p>",
+          "<p>联合可以被看作为结构，其所有成员起始偏移量都为<code>0</code>，并且其大小足以容纳任何成员。任一时刻它最多只能存储其中的一个成员。如果指向某一联合的指针被强制转换为指向一个成员的指针类型，则结果将指向该成员。</p>",
+          "<p>如下所示是结构声明的一个简单例子：</p>",
+          "<pre class=\"card-code\">   struct tnode {\n       char tword[20];\n       int count;\n       struct tnode *left;\n       struct tnode *right;\n   }</pre>",
+          "<p>该结构包含一个具有 20个字符的数组、一个整数以及两个指向类似结构的指针。在给出这样的声明后，下列说明：</p>",
+          "<pre class=\"card-code\">   struct tnode s, *sp;</pre>",
+          "<p>将把<code>s</code>声明为给定类型的结构，把<code>sp</code>声明为指向给定类型的结构的指针。在这些声明的基础上，表达式</p>",
+          "<pre class=\"card-code\">   sp-&gt;count</pre>",
+          "<p>引用<code>sp</code>指向的结构的<code>count</code>字段，而</p>",
+          "<pre class=\"card-code\">   s.left</pre>",
+          "<p>则引用结构的左子树指针，表达式</p>",
+          "<pre class=\"card-code\">   s.right-&gt;tword[0]</pre>",
+          "<p>引用<code>s</code>右子树中<code>tword</code>成员的第一个字符。</p>",
+          "<p>通常情况下，我们无法检查联合的某一成员，除非已用该成员给联合赋值。但是，有一个特殊的情况可以简化联合的使用：如果一个联合包含共享一个公共初始序列的多个结构，并且该联合当前包含这些结构中的某一个，则允许引用这些结构中任一结构的公共初始部分。例如，下面这段程序是合法的：</p>",
+          "<pre class=\"card-code\">   union {\n       struct {\n           int type;\n       } n;\n       struct {\n           int type;\n           int intnode;\n       } ni;\n       struct {\n           int type;\n           float floatnode;\n       } nf;\n   } u;\n   ...\n   u.nf.type = FLOAT;\n   u.nf.floatnode = 3.14;\n   ...\n   if (u.n.type == FLOAT)\n       ... sin(u.nf.floatnode) ...</pre>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.8.4",
+        "title": "枚举",
+        "page": null,
+        "paragraphs": [
+          "<p>枚举类型是一种特殊的类型，它的值包含在一个命名的常量集合中。这些常量称为枚举符。枚举说明符的形式借鉴了结构说明符和联合说明符的形式。</p>",
+          "<p>枚举说明符：</p>",
+          "<pre class=\"card-code\">       enum 标识符opt {枚举符表}\n       enum 标识符</pre>",
+          "<p>枚举符表：</p>",
+          "<p>枚举符</p>",
+          "<p>枚举符表, 枚举符</p>",
+          "<p>枚举符：</p>",
+          "<p>标识符</p>",
+          "<p>标识符 = 常量表达式</p>",
+          "<p>枚举符表中的标识符声明为 <code>int</code>类型的常量，它们可以用在常量可以出现的任何地方。如果其中不包括带有=的枚举符，则相应常量值从 0开始，且枚举常量值从左至右依次递增 1。如果其中包括带有=的枚举符，则该枚举符的值由该表达式指定，其后的标识符的值从该值开始依次递增。</p>",
+          "<p>同一作用域中的各枚举符的名字必须互不相同，也不能与普通变量名相同，但其值可以相同。</p>",
+          "<p>枚举说明符中标识符的作用与结构说明符中结构标记的作用类似，它命名了一个特定的枚举类型。除了不存在不完整枚举类型之外，枚举说明符在有无标记、有无枚举符表的情况下的规则与结构或联合中相应的规则相同。无枚举符表的枚举说明符的标记必须指向作用域中另一个具有枚举符表的说明符。</p>",
+          "<p>说明：相对于本书第 <code>1</code>版，枚举类型是一个新概念，但它作为 <code>C</code>语言的一部分已有好多年了。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.8.5",
+        "title": "声明符",
+        "page": null,
+        "paragraphs": [
+          "<p>声明符的语法如下所示</p>",
+          "<p>声明符：</p>",
+          "<p>指针<code>opt</code> 直接声明符</p>",
+          "<p>直接声明符</p>",
+          "<p>标识符</p>",
+          "<p>(声明符)</p>",
+          "<p>直接声明符 [常量表达式<code>opt]</code></p>",
+          "<p>直接声明符(形式参数类型表)</p>",
+          "<p>直接声明符(标识表<code>opt)</code>指针：</p>",
+          "<p>* 类型限定符表<code>opt</code></p>",
+          "<p>* 类型限定符表<code>opt</code> 指针</p>",
+          "<p>类型限定符表</p>",
+          "<p>类型限定符</p>",
+          "<p>类型限定符表 类型限定符</p>",
+          "<p>声明符的结构与间接指针、函数及数组表达式的结构类似，结合性也相同。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.8.6",
+        "title": "声明符的含义",
+        "page": null,
+        "paragraphs": [
+          "<p>声明符表出现在类型说明符和存储类说明符序列之后。每个声明符声明一个睢一的主标识符，该标识符是直接声明符产生式的第一个候选式。存储类说明符可直接作用于该标识符，但其类型由声明符的形式决定。当声明符的标识符出现在与该声明符形式相同的表达式中时，该声明符将被作为一个断言，其结果将产生一个指定类型的对象。</p>",
+          "<p>如果只考虑声明说明符（参见 A.8.2节）的类型部分及特定的声明符，则声明可以表示为“ <code>T D</code>” 的形式，其中<code>T</code>代表类型，<code>D</code>代表声明符。在不同形式的声明中，标识符的类型可用这种形式来表述。</p>",
+          "<p>在声明<code>T D</code> 中，如果<code>D</code>是一个不加任何限定的标识符，则该标识符的类型为<code>T</code>。</p>",
+          "<p>在声明<code>T D</code> 中，如果<code>D</code>的形式为：</p>",
+          "<pre class=\"card-code\">   (D1)</pre>",
+          "<p>则<code>D1</code>中标识符的类型与<code>D</code>的类型相同。圆括号不改变类型，但可改变复杂声明符之间的结合。</p>",
+          "<p><code>1</code>，指针声明符</p>",
+          "<p>在声明<code>T D</code> 中，如果<code>D</code>具有下列形式：</p>",
+          "<p>* 类型限定符表 <code>D1</code></p>",
+          "<p>且声明<code>T D1</code>中的标识符的类型为“ 类型修饰符<code>T</code>”，则<code>D</code>中标识符的类型为“ 类型修饰符 类型限定符表指向 <code>T</code>的指针”。星号*后的限定符作用于指针本身，而不是作用于指针指向的对象。</p>",
+          "<p>例如。考虑下列声明：</p>",
+          "<pre class=\"card-code\">   int *ap[];</pre>",
+          "<p>其中，<code>ap[]</code>的作用等价于<code>D1</code>，声明“ <code>int ap[]</code>” 将把<code>ap</code>的类型声明为“ <code>int</code>类型的数组”，类型限定符表为空，且类型修饰符为“…… 的数组”。因此，该声明实际上将把<code>ap</code>声明为“ 指向<code>int</code>类型的指针数组” 类型。</p>",
+          "<p>我们来看另外一个例子。下列声明：</p>",
+          "<pre class=\"card-code\">      int i, *pi, *const cpi = &amp;i;</pre>",
+          "<pre class=\"card-code\">      const int ci = 3, *pci;</pre>",
+          "<p>声明了一个整型<code>i</code>和一个指向整型的指针<code>pi</code>。不能修改常量指针<code>cpi</code>的值，该指针总是指向同一位置，但它所指之处的值可以改变。整型<code>ci</code>是常量，也不能修改（可以进行初始化，如本例中所示）。<code>pci</code> 的类型是“ 指向 <code>const int</code> 的指针”，<code>pci</code> 本身可以被修改以指向另一个地方，但它所指之处的值不能通过<code>pci</code>赋值来改变，</p>",
+          "<p><code>2</code>数组声明符</p>",
+          "<p>在声明<code>T D</code> 中，如果<code>D</code>具有下列形式：</p>",
+          "<pre class=\"card-code\">   D1[常量表达式opt]</pre>",
+          "<p>且声明<code>T D1</code> 中标识符的类型是“ 类型修饰符<code>T</code>”，则<code>D</code>的标识符类型为“ 类型修饰符<code>T</code>类型的数组”。如果存在常量表达式，则该常量表达式必须为整型且值大于 0。若缺少指定数组上界的常量表达式，则该数组类型是不完整类型。</p>",
+          "<p>数组可以由算术类型、指针类型、结构类型或联合类型构造而成，也可以由另一个数组构造而成（生成多维数组）。构造数组的类型必须是完整类型，绝对不能是不完整类型的数组或结构。也就是说，对于多维数组来说，只有第一维可以缺省。对于不完整数组类型的对象来说，其类型可以通过对该对象进行另一个完整声明（参见 A.10.2节）或初始化（参见 A.8.7节）来使其完整。例如：</p>",
+          "<pre class=\"card-code\">   float fa[17], *afp[17];</pre>",
+          "<p>声明了一个浮点数数组和一个指向浮点数的指针数组，而</p>",
+          "<pre class=\"card-code\">   static int x3d[3][5][7];</pre>",
+          "<p>则声明了一个静态的三维整型数组，其大小为 3×5×7。具体来说，<code>x3d</code>是一个由 3个项组成的数组，每个项都是由 5个数组组成的一个数组，5个数组中的每个数组又都是由 7个整型数组</p>",
+          "<pre class=\"card-code\">成的数组。x3d、x3d[i]、x3d[i][j]与 x3d[i][j][k]都可以合法地出现在一个表达式</pre>",
+          "<p>中。前三者是数组类型，最后一个是<code>int</code>类型。更准确地说，<code>x3d[i][j]</code>是一个有 7个整型元素的数组；<code>x3d[i]</code>则是有 5个元素的数组，而其中的每个元素又是一个具有 7个整型元素的数组。</p>",
+          "<p>根据数组下标运算的定义，<code>E1[E2]</code>等价于<code>*(E1+E2)</code>。因此，尽管表达式的形式看上去不对称，但下标运算是可交换的运算。根据适用于运算符+和数组的转换规则（参见 A.6.6节、A.7.1节与 A.7.7节），若<code>E1</code>是数组且<code>E2</code>是整数，则<code>E1[E2]</code>代表<code>E1</code>的第<code>E2</code>个成员。</p>",
+          "<pre class=\"card-code\">   在本例中，x3d[i][j][k]等价于*(x3d[i][j]+k)。第一个子表达式 x3d[i][j]将</pre>",
+          "<p>按照 A.7.1节中的规则转换为“指向整型数组的指针”类型，而根据 A.7.7节中的规则，这里的加法运算需要乘以整型类型的长度。它遵循下列规则：数组按行存储（最后一维下标变动最快），且声明中的第一维下标决定数组所需的存储区大小，但第一维下标在下标计算时无其它作用。</p>",
+          "<p><code>3</code>函数声明符</p>",
+          "<p>在新式的函数声明<code>T D</code> 中，如果<code>D</code>具有下列形式：</p>",
+          "<p><code>D1(</code>形式参数类型表)并且，声明<code>T D1</code> 中标识符的类型为“ 类型修饰符<code>T</code>”，则<code>D</code>的标识符类型是“ 返回<code>T</code>类型值且具有‘ 形式参数类型表’ 中的参数的‘ 类型修饰符’ 类型的函数”。</p>",
+          "<p>形式参数的语法定义为：</p>",
+          "<p>形式参数类型表：</p>",
+          "<p>形式参数表</p>",
+          "<p>形式参数表<code>, ...</code></p>",
+          "<p>形式参数表：</p>",
+          "<p>形式参数声明</p>",
+          "<p>形式参数表, 形式参数声明</p>",
+          "<p>形式参数声明：</p>",
+          "<p>声明说明符 声明符</p>",
+          "<p>声明说明符 抽象声明符<code>opt</code></p>",
+          "<p>在这种新式的声明中，形式参数表指定了形式参数的类型。这里有一个特例，按照新式方式声明的无形式参数函数的声明符也有一个形式参数表，该表仅包含关键字<code>void</code>。如果形式参数表以省略号“ <code>, ...</code> ” 结尾，则该函数可接受的实际参数个数比显式说明的形式参数个数要多。详细信息参见 A.7.3节。</p>",
+          "<p>如果形式参数类型是数组或函数，按照参数转换规则（参见 A.10.1节），它们将被转换为指针。形式参数的声明中惟一允许的存储类说明符是 <code>register</code>，并且，除非函数定义的开头包括函数声明符，否则该存储类说明符将被忽略。类似地，如果形式参数声明中的声明符包含标识符，且函数定义的开头没有函数声明符，则该标识符超出了作用域。不涉及标识符的抽象声明符将在 A.8.8节中讨论。</p>",
+          "<p>在旧式的函数声明<code>T D</code> 中，如果<code>D</code>具有下列形式：</p>",
+          "<pre class=\"card-code\">   D1(标识符表opt)</pre>",
+          "<p>并且声明<code>D1</code>中的标识符的类型是“ 类型修饰符<code>T</code>”，则<code>D</code>的标识符类型为“ 返回<code>T</code>类型值且未指定参数的‘ 类型修饰符’ 类型的函数”。形式参数（如果有的话）的形式如下：</p>",
+          "<p>标识符表：</p>",
+          "<p>标识符</p>",
+          "<p>标识符表, 标识符</p>",
+          "<p>在旧式的声明符中，除非在函数定义的前面使用了声明符，否则，标识符表必须空缺（参见A.10.1节）。声明不提供有关形式参数类型的信息。</p>",
+          "<p>例如，下列声明：</p>",
+          "<pre class=\"card-code\">   int f(), *fpi(), (*pfi)();</pre>",
+          "<p>声明了一个返回整型值的函数 <code>f</code>、一个返回指向整型的指针的函数 <code>fpi</code>以及一个指向返回整型的函数的指针<code>pfi</code>。它们都没有说明形式参数类型，因此都属于旧式的声明。</p>",
+          "<p>在下列新式的声明中：</p>",
+          "<pre class=\"card-code\">   int strcpy(char *dest, const char *source), rand(void);</pre>",
+          "<p><code>strcpy</code>是一个返回<code>int</code>类型的函数，它有两个实际参数，第一个实际参数是一个字符指针，第一个实际参数星一个指向常量字符的指针。其中的形式参数名字可以起到注释说明的作用。第二个函数<code>rand</code>不带参数，且返回类型为<code>int</code>。</p>",
+          "<p>说明：到目前为止，带形式参数原型的函数声明符是<code>ANSI</code>标准中引入的最重要的一个语言变化。它们优于第 <code>1</code>版中的“ 旧式” 声明符，因为它们提供了函数调用时的错误检查和参数强制转换，但引入的同时也带来了很多混乱和麻烦，而且还必须兼客这两种形式。为了保持兼容，就不得不在语法上进行一些处理，即采用<code>void</code>作为新式的无形式参数函数的显式标记。</p>",
+          "<p>采用省略号“ <code>, ...</code>” 表示函数变长参数表的做法也是<code>ANSI</code>标准中新引入的，并且，结合标准头文件<code>&lt;stdarg.h&gt;</code>中的一些宏，共同将这个机制正式化了。该机制在第 <code>1</code>版中是官方上禁止的，但可非正式地使用。</p>",
+          "<p>这些表示法起源于 C++。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.8.7",
+        "title": "初始化",
+        "page": null,
+        "paragraphs": [
+          "<p>声明对象时，对象的初始化声明符可为其指定一个初始值。初值紧跟在运算符=之后，它可以是一个表达式，也可以是嵌套在花括号中的初值序列。初值序列可以以逗号结束，这样可以使格式简洁美观。</p>",
+          "<p>初值：</p>",
+          "<p>赋值表达式</p>",
+          "<p>{初值表}</p>",
+          "<pre class=\"card-code\">       {初值表,}</pre>",
+          "<p>初值表：</p>",
+          "<p>初值</p>",
+          "<p>初值表, 初值</p>",
+          "<p>对静态对象或数组而言，初值中的所有表达式必须是 <code>A.7.19</code>节中描述的常量表达式。如果初值是用花括号括起来的初值表，则对 <code>auto</code>或 <code>register</code>类型的对象或数组来说，初值中的表达式也同样必须是常量表达式。但是，如果自动对象的初值是一个单个的表达式，则它不必是常量表达式，但必须符合对象赋值的类型要求。</p>",
+          "<p>说明：第 <code>1</code>版不支持自动结构、联合或数组的初始化。而 <code>ANSI</code>标准是允许的，但只能通过常量结构进行初始化，除非初值可以通过简单表达式表示出来。</p>",
+          "<p>未显式初始化的静态对象将被隐式初始化，其效果等同于它（或它的成员）被赋以常量<code>0</code>。未显式初始化的自动对象的初始值没有定义。</p>",
+          "<p>指针或算术类型对象的初值是一个单个的表达式，也可能括在花括号中。该表达式将赋值给对象。</p>",
+          "<p>结构的初值可以是类型相同的表达式，也可以是括在花括号中的按其成员次序排列的初值表。无名的位字段成员将被忽略，因此不被初始化。如果表中初值的数目比结构的成员数少，则后面余下的结构成员将被初始化为 0。初值的数目不能比成员数多。</p>",
+          "<p>数组的初值是一个括在花括号中的、由数组成员的初值构成的表。如果数组大小未知，则初值的数目将决定数组的大小，从而使数组类型成为完整类型。若数组大小固定，则初值的数目不能超过数组成员的数目。如果初值的数目比数组成员的数目少，则尾部余下的数组成员将被初始化为 0。</p>",
+          "<p>这里有一个特例：字符数组可用字符串字面值初始化。字符串中的各个字符依次初始化数组中的相应成员。类似地，宽字符字面值（参见 A.2.6节）可以初始化<code>wchar_t</code>类型的数组。若数组大小未知，则数组大小将由字符串中字符的数目（包括尾部的空字符）决定。若数组大小固定，则字符串中的字符数（不计尾部的空字符）不能超过数组的大小。</p>",
+          "<p>联合的初值可以是类型相同的单个表达式，也可以是括在花括号中的联合的第一个成员的初值。</p>",
+          "<p>说明：第<code>1</code>版不允许对联合进行和始化。“ 第一个成员” 规则并不很完美，但在没有新语法的情况下很难对它进行一般化。除了至少允许以一种简单方式对联合进行显式初始化外，<code>ANSI</code>规则还给出了非显式初始化的静态联合的精确语义。</p>",
+          "<p>聚集是一个结构或数组。如果一个聚集包含聚集类型的成员，则初始化时将递归使用初始化规则。在下列情况的初始化中可以省略括号：如果聚集的成员也足一个聚集，且该成员的初始化符以左花括号开头，则后续部分中用逗号隔开的初值表将初始化子聚集的成员。初值的数目不允许超过成员的数目。但是，如果子聚集的初值不以左花括号开头，则只从初值表中取出足够数目的元素作为于聚集的成员，其它剩余的成员将用来初始化该子聚集所在的聚集的下一个成员。</p>",
+          "<p>例如：</p>",
+          "<pre class=\"card-code\">   int x[] = { 1, 3, 5 };</pre>",
+          "<p>将 <code>x</code>声明并初始化为一个具有 3个成员的一维数组，这是因为，数组未指定大小且有 3个初值。下面的例子：</p>",
+          "<pre class=\"card-code\">   float y[4][3] = {\n       { 1, 3, 5 },\n       { 2, 4, 6 },\n       { 3, 5, 7 },\n   };</pre>",
+          "<p>是一个完全用花括号分隔的初始化：1、3和 5这 3个数初始化数组<code>y[0]</code>的第一行，即<code>y[0][0]</code>、<code>y[0][1]</code>和<code>y[0][2]</code>。类似地，另两行将初始化<code>y[1]</code>和<code>y[2]</code>。因为初值的数目不够，所以<code>y[3]</code>中的元素将被初始化为 0，完全相同的效果还可以通过下列声明获得：</p>",
+          "<pre class=\"card-code\">   float y[4][3] = {\n       1, 3, 5, 2, 4, 6, 3, 5, 7\n   };</pre>",
+          "<p><code>y</code> 的初值以左花括号开始，但 <code>y[0]</code>的初值则没有以左花括号开始，因此 <code>y[0]</code>的初始化将使用表中的 3个元素。同理，<code>y[1]</code>将使用后续的 3个元素进行初始化，<code>y[2]</code>依此类推。另外，下列声明：</p>",
+          "<pre class=\"card-code\">   float y[4][3] = {\n       { 1 }, { 2 }, { 3 }, { 4 }\n   };</pre>",
+          "<p>将初始化<code>y</code>的第一列（将<code>y</code>看成为一个二维数组），其余的元素将默认初始化为 0。</p>",
+          "<p>最后</p>",
+          "<pre class=\"card-code\">   char msg[] = &quot;Syntax error on line %s\\n&quot;;</pre>",
+          "<p>声明了一个字符数组，并用一个字符串字面值初始化该字符数组的元素。该数组的大小包括尾部的空字符。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.8.8",
+        "title": "类型名",
+        "page": null,
+        "paragraphs": [
+          "<p>在某些上下文中（例如，需要显式进行强制类型转换、需要在函数声明符中声明形式参数类型、作为<code>sizeof</code>的实际参数等），我们需要提供数据类型的名字。使用类型名可以解决这个问题，从语法上讲，也就是对某种类型的对象进行声明，只是省略了对象的名字而已。</p>",
+          "<p>类型名：</p>",
+          "<p>说明符限定符表 抽象声明符<code>opt</code></p>",
+          "<p>抽象声明符：</p>",
+          "<p>指针</p>",
+          "<p>指针<code>opt</code> 直接抽象声明符</p>",
+          "<p>直接抽象声明符</p>",
+          "<p>(抽象声明符)</p>",
+          "<p>直接抽象声明符<code>opt [</code>常量表达式<code>opt]</code></p>",
+          "<p>直接抽象声明符<code>opt (</code>形式参数类型表<code>opt)</code></p>",
+          "<p>如果该结构是声明中的一个声明符，就有可能惟一确定标识符在抽象声明符中的位置。命名的类型将与假设标识符的类型相同。例如：</p>",
+          "<pre class=\"card-code\">   int\n   int *</pre>",
+          "<pre class=\"card-code\">   int *[3]\n   int (*)[]\n   int *()\n   int (*[])(void)</pre>",
+          "<p>其中的 6个声明分别命名了下列类型：“整型”、“指向整型的指针”、“包含 3个指向整型的指针的数组”、“指向未指定元素个数的整型数组的指针”、“未指定参数、返回指向整型的指针的函数”、“一个数组，其长度未指定，数组的元素为指向函数的指针，该函数没有参数且返回一个整型值”。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.8.9",
+        "title": "typedef",
+        "page": null,
+        "paragraphs": [
+          "<p>存储类说明符为<code>typedef</code>的声明不用于声明对象，而是定义为类型命名的标识符。这些标识符称为类型定义名。</p>",
+          "<p>类型定义名：</p>",
+          "<p>标识符</p>",
+          "<p><code>typedef</code>声明按照普通的声明方式将个类型指派给其声明符中的每个名字（参见 A.8.6节）。此后，类型定义名在语法上就等价于相关类型的类型说明符关键字。</p>",
+          "<p>例如，在定义</p>",
+          "<pre class=\"card-code\">   typedef long Blockno, *Blockptr;\n   typedef struct { double r, theta; } Complex;</pre>",
+          "<p>之后，下述形式：</p>",
+          "<pre class=\"card-code\">   Blockno b;\n   extern Blockptr bp;\n   Complex z, *zp;</pre>",
+          "<p>都是合法的声明。<code>b</code>的类型为<code>long</code>，<code>bp</code>的类型为“ 指向<code>long</code>类型的指针”。<code>z</code>的类型为指定的结构类型，<code>zp</code>的类型为指向该结构的指针。</p>",
+          "<p><code>typedef</code>类型定义并没有引入新的类型，它只是定义了数据类型的同义词，这样，就可以通过另一种方式进行类型声明。在本侧中，<code>b</code>与其它任何<code>long</code>类型对象的类型相同。</p>",
+          "<p>类型定义名可在内层作用域中重新声明，但必须给出一个非空的类型说明符集合。例如，下列声明：</p>",
+          "<pre class=\"card-code\">   extern Blockno;</pre>",
+          "<p>并没有重新声明<code>Blockno</code>，但下列声明：</p>",
+          "<pre class=\"card-code\">   extern int Blockno;</pre>",
+          "<pre class=\"card-code\">则重新声明了Blockno。</pre>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.8.10",
+        "title": "类型等价",
+        "page": null,
+        "paragraphs": [
+          "<p>如果两个类型说明符表包含相同的类型说明符集合（需要考虑类型说明符之间的蕴涵关系，例如，单独的<code>long</code>蕴含了<code>long int</code>），则这两个类型说明符表是等价的。具有不同标记的结构、不同标记的联合和不同标记的枚举是不等价的，无标记的联合、无标记的结构或无标记的枚举指定的类型也是不等价的。</p>",
+          "<p>在展开其中的任何<code>typedef</code>类型并删除所有函数形式参数标识符后，如果两个类型的抽象声明符（参见 A.8.8节）相同，且它们的类型说明符表等价，则这两个类型是相同的。数组长度和函数形式参数类型是其中很重要的因素。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.9",
+        "title": "语句",
+        "page": null,
+        "paragraphs": [
+          "<p>如果不特别指明，语句都是顺序执行的。语句执行都有一定的结果，但没有值。语句可分为几种类型。</p>",
+          "<p>语句：</p>",
+          "<p>带标号语句</p>",
+          "<p>表达式语句</p>",
+          "<p>复合语句</p>",
+          "<p>选择语句</p>",
+          "<p>循环语句</p>",
+          "<p>跳转语句</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.9.1",
+        "title": "带标号语句",
+        "page": null,
+        "paragraphs": [
+          "<p>语句可带有标号前缀。</p>",
+          "<p>带标号语句：</p>",
+          "<p>标识符: 语句</p>",
+          "<p><code>case</code>常量表达式: 语句</p>",
+          "<pre class=\"card-code\">       default: 语句</pre>",
+          "<p>由标识符构成的标号声明了该标识符。标识符标号的惟一用途就是作为 <code>goto</code>语句的跳转目标。标识符的作用域是当前函数。因为标号有自己的名字空间，因此不会与其它标识符混淆，并且不能被重新声明。详细信息参见 A.11.1节。</p>",
+          "<p><code>case</code>标号和<code>default</code>标号用在<code>switch</code>语句中（参见 A.9.4节）。<code>case</code>标号中的常量表达式必须为整型。</p>",
+          "<p>标号本身不会改变程序的控制流。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.9.2",
+        "title": "表达式语句",
+        "page": null,
+        "paragraphs": [
+          "<p>大部分语句为表达式语句，其形式如下所示：</p>",
+          "<p>表达式语句：</p>",
+          "<pre class=\"card-code\">       表达式opt;</pre>",
+          "<p>大多数表达式语句为赋值语句或函数调用语句。表达式引起的所有副作用在下一条语句执行前结束。没有表达式的语句称为空语句。空语句常常用来为循环语句提供一个空的循环体或设置标号。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.9.3",
+        "title": "复合语句",
+        "page": null,
+        "paragraphs": [
+          "<p>当需要把若干条语句作为一条语句使用时，可以使用复合语句（也称为“ 程序块”）。函数定义中的函数体就是一个复合语句。</p>",
+          "<p>复合语句：</p>",
+          "<pre class=\"card-code\">       {声明表opt 语句表opt}</pre>",
+          "<p>声明表：</p>",
+          "<p>声明</p>",
+          "<p>声明表 声明</p>",
+          "<p>语自表</p>",
+          "<p>语句</p>",
+          "<p>语句表 语句</p>",
+          "<p>如果声明表中的标识符位于程序块外的作用域中，则外部声明在程序块内将被挂起（参见A.11.1节），在程序块之后再恢复其作用。在同一程序块中，一个标识符只能声明一次。此规则也适用于同一名字空间的标识符（参见 A.11节），不同名字空间的标识符被认为是不同的。</p>",
+          "<p>自动对象的初始化在每次进入程序块的顶端时执行，执行的顺序按照声明的顺序进行。如果执行跳转语句进入程序块，则不进行初始化。<code>Static</code>类型的对象仅在程序开始执行前初始化一次。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.9.4",
+        "title": "选择语句",
+        "page": null,
+        "paragraphs": [
+          "<p>选择语句包括下列几种控制流形式：</p>",
+          "<p>选择语句：<code>if (</code>表选式) 语句</p>",
+          "<pre class=\"card-code\">       if (表达式) 语句 else 语句\n       switch (表达式) 语句</pre>",
+          "<p>在两种形式的<code>if</code>语句中，表达式（必须为算术类型或指针类型）首先被求值（包括所有的副作用），如果不等于 0，则执行第一个子语句。在第二种形式中，如果表达式为 0，则执行第二个子语句，通过将<code>else</code>与同一嵌套层中碰到的最近的未匹配<code>else</code>的<code>if</code>相连接，可以解决<code>else</code>的歧义性问题。</p>",
+          "<p><code>switch</code>语句根据表达式的不同取值将控制转向相应的分支。关键字<code>switch</code>之后用圆括号括起来的表达式必须为整型，此语句控制的子语句一般是复合语句。子语句中的任何语句可带一个或多个<code>case</code>标号（参见 A.9.1节）。控制表达式需要进行整型提升（参见 A.6.1节），<code>case</code>常量将被转换为整型提升后的类型。同一<code>switch</code>语句中的任何两个<code>case</code>常量在转换后不能有相同的值。一个<code>switch</code>语句最多可以有一个<code>default</code>标号。<code>swltch</code>语句可以嵌</p>",
+          "<pre class=\"card-code\">套，case或default标号与包含它的最近的switch相关联。</pre>",
+          "<p><code>switch</code>语句执行时，首先计算表达式的值及其副作用，并将其值与每个<code>case</code>常量比较，如果某个<code>case</code>常量与表达式的值相同，则将控制转向与该<code>case</code>标号匹配的语句。如果没有<code>case</code> 常量与表达式匹配，并且有 <code>default</code>标号，则将控制转向 <code>default</code>标号的语句。如果没有<code>case</code>常量匹配，且没有<code>default</code>标号，则<code>switch</code>语句的所有子语句都不执行。</p>",
+          "<p>说明：在本书第<code>1</code>版中，<code>switch</code>语句的控制表达式与<code>case</code>常量都必须为<code>int</code>类型。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.9.5",
+        "title": "循环语句",
+        "page": null,
+        "paragraphs": [
+          "<p>循环语句用于指定程序段的循环执行。</p>",
+          "<p>循环语句</p>",
+          "<pre class=\"card-code\">       while (表达式) 语句\n       do 语句 while ( 表达式);\n       for (表达式opt; 表达式opt; 表达式opt) 语句</pre>",
+          "<p>在<code>while</code>语句和<code>do</code>语句中，只要表达式的值不为 0，其中的子语句将一直重复执行。表达式必须为算术类型或指针类型。<code>while</code> 语句在语句执行前测试表达式，并计算其副作用，而<code>do</code>语句在每次循环后测试表达式。</p>",
+          "<p>在 <code>for</code>语句中，第一个表达式只计算一次，用于对循环初始化。该表达式的类型没有限制。第二个表达式必须为算术类型或指针类型，在每次开始循环前计算其值。如果该表达式的值等于 0，则 <code>for</code>语句终止执行。第三个表达式在每次循环后计算，以重新对循环进行初始化，其类型没有限制。所有表达式的副作用在计算其值后立即结束。如果子语句中没有</p>",
+          "<pre class=\"card-code\">continue语句，则语句</pre>",
+          "<p><code>for (</code>表达式<code>1;</code> 表达式<code>2;</code> 表达式<code>3)</code> 语句</p>",
+          "<p>等价于</p>",
+          "<p>表达式<code>1</code>；</p>",
+          "<pre class=\"card-code\">   while (表达式2) {</pre>",
+          "<p>语句</p>",
+          "<p>表达式<code>3;</code></p>",
+          "<pre class=\"card-code\"> }</pre>",
+          "<p><code>for</code>语句中的<code>3</code>个表达式中都可以省略。第二个表达式省略时等价于测试一个非 0常量。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.9.6",
+        "title": "跳转语句",
+        "page": null,
+        "paragraphs": [
+          "<p>跳转语句用于无条件地转移控制。</p>",
+          "<p>跳转语句：</p>",
+          "<pre class=\"card-code\">       goto 标识符;\n       continue;\n       break;\n       return 表达式opt;</pre>",
+          "<p>在<code>goto</code>语句中，标识符必须是位于当前函数中的标号(参见 A.9.1节)。控制将转移到标号指定的语句。</p>",
+          "<p><code>continue</code> 语句只能出现在循环语句内，它将控制转向包含此语句的最内层循环部分。更准确地说，在下列任一语句中：</p>",
+          "<pre class=\"card-code\">   while (...) {       do {                 for (...) {\n     ...                 ...                  ...\n   contin: ;           contin: ;            contin: ;\n   }                   } while (...);       }</pre>",
+          "<p>如果<code>continuet</code>语句不包含在更小的循环语句中，则其作用与<code>goto contin</code> 语句等价。</p>",
+          "<p><code>break</code>语句只能用在循环语句或<code>switch</code>语句中，它将终止包含该语句的最内层循环语句的执行，并将控制转向被终止语句的下一条语句。</p>",
+          "<p><code>return</code>语句用于将控制从函数返回给调用者。当<code>return</code>语句后跟一个表达式时，表达式的值将返回给函数调用者。像通过赋值操作转换类型那样，该表达式将被转换为它所在的函数的返回值类型。</p>",
+          "<p>控制到达函数的结尾等价于一个不带表达式的 <code>return</code>语句。在这两种情况下，返回值都是没有定义的。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.10",
+        "title": "外部声明",
+        "page": null,
+        "paragraphs": [
+          "<p>提供给 C编译器处理的输入单元称为翻译单元。它由一个外部声明序列组成，这些外部声明可以是声明，也可以是函数定义。</p>",
+          "<p>翻译单元：</p>",
+          "<p>外部声明</p>",
+          "<p>翻译单元 外部声明</p>",
+          "<p>外部声明：</p>",
+          "<p>函数定义</p>",
+          "<p>声明</p>",
+          "<p>与程序块中声明的作用域持续到整个程序块的末尾类似，外部声明的作用域一直持续到其所在的翻译单元的末尾。外部声明除了只能在这一级上给出函数的代码外，其语法规则与其它所有声明相同。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.10.1",
+        "title": "函数定义",
+        "page": null,
+        "paragraphs": [
+          "<p>函数定义具有下列形式：</p>",
+          "<p>函数定义：</p>",
+          "<p>声明说明符<code>opt</code> 声明符 声明表<code>opt</code> 复合语句</p>",
+          "<p>声明说明符中只能使用存储类说明符<code>extern</code>或<code>static</code>。有关这两个存储类说明符之间的区别，参见 A.11.2节。</p>",
+          "<p>函数可返回算术类型、结构、联合、指针或<code>vold</code>类型的值，但不能返回函数或数组类型。函数声明中的声明符必须显式指定所声明的标识符具有函数类型，也就是说，必须包含下列两种形式之一（参见 A.8.6节）：</p>",
+          "<p>直接声明符(形式参数类型表)</p>",
+          "<p>直接声明符(标识符表<code>opt)</code></p>",
+          "<p>其中，直接声明符可以为标识符或用圆括号括起来的标识符。特别是，不能通过<code>typedef</code>定义函数类型。</p>",
+          "<p>第一种形式是一种新式的函数定义，其形式参数及类型都在形式参数类型表中声明，函数声明符后的声明表必须空缺。除了形式参数类型表中只包含<code>void</code>类型（表明该函数没有形式参数）的情况外，形式参数类型表中的每个声明符都必须包含一个标识符。如果形式参数类型表以“ <code>, ...</code>” 结束，则调用该函数时所用的实际参数数目就可以多于形式参数数目。<code>va_arg</code> 宏机制在标准头文件<code>&lt;stdarg.h</code>）中定义，必须使用它来引用额外的参数，我们将在附录 B中介绍。带有可变形式参数的函数必须至少有一个命名的形式参数。</p>",
+          "<p>第二种形式是一种旧式的函数定义：标识符表列出，形式参数的名字，这些形式参数的类型由声明表指定。对于未声明的形式参数，其类型默认为 <code>int</code>类型。声明表必须只声明标识符表中指定的形式参数，不允许进行初始化，并且仅可使用存储类说明符<code>register</code>。</p>",
+          "<p>在这两种方式的函数定义中，可以这样理解形式参数：在构成函数体的复合语句的开始处进行声明，并且在该复合语句中不能重复声明相同的标识符（但可以像其它标识符一样在该复合语句的内层程序块中重新声明）。如果某一形式参数声明的类型为“ <code>type</code>类型的数组”，则该声明将会被自动调整为“ 指向<code>type</code>类型的指针”。类似地，如果某一形式参数声明为“ 返回<code>type</code>类型值的函数”，则该声明将会被调整为“ 指向返回<code>type</code>类型值的函数的指针”。调用函数时，必要时要对实际参数进行类型转换，然后赋值给形式参数，详细信息参见 A.7.3节。</p>",
+          "<p>说明：新式函数定义是<code>ANSI</code>标准新引入的一个特征。有关提升的一些细节也有细微的变化。第<code>1</code>版指定，<code>float</code>类型的形式参数声明将被调整为<code>double</code>类型。当在函数内部生成一个指向形式参数的指针时，它们之间的区别就显而易见了。</p>",
+          "<p>下面是一个新式函数定义的完整例子：</p>",
+          "<pre class=\"card-code\">   int max(int a, int b, int c)\n   {\n       int m;</pre>",
+          "<pre class=\"card-code\">       m = (a &gt; b) ? a : b;\n       return (m &gt; c) ? m : c;\n   }\n   其中，int是声明说明符；max(int a, int b, int c) 是函数的声明符；{...}是</pre>",
+          "<p>函数代码的程序块。相应的旧式定义如下所示：</p>",
+          "<pre class=\"card-code\">   int max(a, b, c)\n   int a, b, c;\n   {\n       /* ... */\n   }\n   其中，int max(a, b, c) 是声明符，int a, b, c; 是形式参数的声明表。</pre>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.10.2",
+        "title": "外部声明",
+        "page": null,
+        "paragraphs": [
+          "<p>外部声明用于指定对象、函数及其它标识符的特性。术语“ 外部” 表明它们位于函数外部，并且不直接与关键字 <code>extern</code>连接。外部声明的对象可以不指定存储类，也可指定为</p>",
+          "<pre class=\"card-code\">extern或static。</pre>",
+          "<p>同一个标识符的多个外部声明可以共存于同一个翻译单元中，但它们的类型和连接必须保持一致，并且标识符最多只能有一个定义。</p>",
+          "<p>如果一个对象或函数的两个声明遵循 <code>A.8.10</code>节中所述的规则，则认为它们的类型是一致的。并且，如果两个声明之间的区别仅仅在于：其中一个的类型为不完整结构、联合或枚举类型（参见 A.8.3节），而另一个是对应的带同一标记的完整类型，则认为这两个类型是一致的。此外，如果一个类型为不完整数组类型（参见 A.8.6节），而另一个类型为完整数组类型，其它属性都相同，则认为这两个类型是一致的。最后，如果一个类型指定了一个旧式函数，而另一个类型指定了带形式参数声明的新式函数，二者之间其它方面都相同，则认为它们的类型也是一致的。</p>",
+          "<p>如果一个对象或函数的第一个外部声明包含<code>static</code>说明符，则该标识符具有内部连接，否则具有外部连接。有关连接的详细信息，参见 A.11.2节中的讨论。</p>",
+          "<p>如果一个对象的外部声明带有初值，则该声明就是一个定义。如果一个外部对象声明不带有初值，并且不包含 <code>extern</code>说明符，则它是一个临时定义。如果对象的定义出现在翻译单元中。则所有临时定义都将仅仪被认为是多余的声明；如果该翻译单元中不存在该对象的定义，则该临时定义将转变为一个初值为 0的定义。</p>",
+          "<p>每个对象都必须有且仅有一个定义。对于具有内部连接的对象，该规则分别适用于每个翻译单元，这是因为，内部连接的对象对每个翻译单元是惟一的。对于具有外部连接的对象，该规则适用于整个程序。</p>",
+          "<p>说明：虽然单一定义规则（<code>0ne-definition rule</code>）在表达上与本书第<code>1</code>版有所不同，但在效果上是等价的。某些实现通过将临时定义的概念一般化而放宽了这个限制。在另一种形式中，一个程序中所有翻译单元的外部连接对象的所有临时定义将集中进行考虑，而不是在各翻译单元中分别考虑，<code>UNIX</code>系统通常就采用这种方法，并且被认为是该标准的一般扩展。如果定义在程序中的某个地方出现，则临时定义仅被认为是声明，但如果没有定义出现，则所有临时定义将被转变为初值为<code>0</code>的定义。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.11",
+        "title": "作用域与连接",
+        "page": null,
+        "paragraphs": [
+          "<p>一个程序的所有单元不必同时进行编译。源文件文本可保存在若干个文件中，每个文件中可以包含多个翻译单元，预先编译过的例程可以从库中进行加载，程序中函数间的通信可以通过调用和操作外部数据来实现。</p>",
+          "<p>因此，我们需要考虑两种类型的作用域：第一种是标识符的词法作用域，它是体现标识符特性的程序文本区域；第二种是与具有外部连接的对象和函数相关的作用域，它决定各个单独编译的翻译单元中标识符之间的连接。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.11.1",
+        "title": "词法作用域",
+        "page": null,
+        "paragraphs": [
+          "<p>标识符可以在若干个名字空间中使用而互不影响。如果位于不同的名字空间中，即使是在同一作用域内，相同的标识符也可用于不同的目的。名字空间的类型包括：对象、函数、类型定义名和枚举常量；标号；结构标记、联合标记和枚举标记；各结构或联合自身的成员。</p>",
+          "<p>说明：这些规则与本手册第 <code>1</code>版中所述的内容有几点不同。以前标号没有自己的名字空间；结构标记和联合标记分别有各自的名字空间，在某些实现中杖举标记也有自己的名字空间；把不同种类的标记放在同一名字空间中是新增加的限制。与第<code>1</code>版之间最大的不同在于：每个结构和联合都为其成员建立不同的名字空间，因此同一名字可出现在多个不同的结构中。这一规则在最近几年使用得很多。</p>",
+          "<p>在外部声明中，对象或函数标识符的词法作用域从其声明结束的位置开始，到所在翻译单元结束为止。函数定义中形式参数的作用域从定义函数的程序块开始处开始，并贯穿整个函数；函数声明中形式参数的作用域到声明符的末尾处结束。程序块头部中声明的标识符的作用域是其所在的整个程序块。标号的作用域是其所在的函数。结构标记、联合标记、枚举标记或枚举常量的作用域从其出现在类型说明符中开始，到翻译单元结束为止（对外部声明而言）或到程序块结束为止（对函数内部声明而言）。</p>",
+          "<p>如果某一标识符显式地在程序块（包括构成函数的程序块）头部中声明，则该程序块外部中此标识符的任何声明都将被挂起，直到程序块结束再恢复其作用。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.11.2",
+        "title": "连接",
+        "page": null,
+        "paragraphs": [
+          "<p>在翻译单元中，具有内部连接的同一对象或函数标识符的所有声明都引用同一实体，并且，该对象或函数对这个翻译单元来说是惟一的。具有外部连接的同一对象或函数标识符的所有声明也引用同一实体，并且该对象或函数是被整个程序中共享的。</p>",
+          "<p>如 A.10.2节所述，如果使用了<code>static</code>说明符，则标识符的第一个外部声明将使得该标识符具有内部连接，否则，该标识符将具有外部连接。如果程序块中对一个标识符的声明不包含 <code>extern</code>说明符，则该标识符没有连接，并且在函数中是惟一的。如果这种声明中包含<code>extern</code>说明符，并且，在包含该程序块的作用域中有一个该标识符的外部声明，则该标识符与该外部声明具有相同的连接，并引用同一对象或函数。但是，如果没有可见的外部声明，则该连接是外部的。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.12",
+        "title": "预处理",
+        "page": null,
+        "paragraphs": [
+          "<p>预处理器执行宏替换、条件编译以及包含指定的文件，以#开头的命令行（“ #”前可以有空格）就是预处理器处理的对象。这些命令行的语法独立于语言的其它部分，它们可以出现在任何地方，其作用可延续到所在翻译单元的末尾（与作用域无关）。行边界是有实际意义的；每一行都将单独进行分析（有关如何将行连结起来的详细信息参见 A.12.4节）。对预处理器而言，记号可以是任何语言记号，也可以是类似于#include指令（参见 A.12.4节）中表示文件名的字符序列，此外，所有未进行其它定义的字符都将被认为是记号。但是，在预处理器指令行中，除空格、横向制表符外的其它空白符的作用是没有定义的。</p>",
+          "<p>预处理过程在逻辑上可以划分为几个连续的阶段（在某些特殊的实现中可以缩减）。</p>",
+          "<p><code>1</code>）首先，将<code>A.12.1</code>节所述的三字符序列替换为等价字符。如果操作系统环境需要，还要在源文件的各行之间插入换行符。</p>",
+          "<p><code>2</code>）将指令行中位于换行符前的反斜杠符\\删除掉，以把各指令行连接起来（参见<code>A.12.2</code>节）。</p>",
+          "<p><code>3</code>）将程序分成用空白符分隔的记号。注释将被替换为一个空白符。接着执行预处理指令，并进行宏扩展（参见<code>A.12.3</code>节～<code>A.12.10</code>节）。</p>",
+          "<p><code>4</code>）将字符常量和字符串字面值中的转义字符序列（参见<code>A.2.5</code>节与<code>A.2.6</code>节）替换为等价字符，然后把相邻的字符串字面值连接起来。</p>",
+          "<p><code>5</code>）收集必要的程序和数据，并将外部函数和对象的引用与其定义相连接，翻译经过以上处理得到的结果，然后与其它程序和库连接起来。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.12.1",
+        "title": "三字符序列",
+        "page": null,
+        "paragraphs": [
+          "<p>C 语育源程序的字符集是 7位 ASCII码的子集，但它是 ISO 646-1983不变代码集的超集。为了将程序通过这种缩减的字符集表示出来，下列所示的所有三字符序列都要用相应的单个字符替换，这种替换在进行所有它他处理之前进行。</p>",
+          "<pre class=\"card-code\">         ??=  #            ??(  [            ??&lt;  {\n         ??/  \\            ??)  ]            ??&gt;  }\n         ??&#x27;  ^            ??!  |            ??-  ~</pre>",
+          "<p>除此之外不进行其它替换。</p>",
+          "<p>说明：三字符序列是<code>ANSI</code>标准新引入的特征。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.12.2",
+        "title": "行连接",
+        "page": null,
+        "paragraphs": [
+          "<p>通过将以反斜杠\\结束的指令行末尾的反斜杠和其后的换行符删除掉。可以将若干指令行合并成一行。这种处理要在分隔记号之前进行。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.12.3",
+        "title": "宏定义和扩展",
+        "page": null,
+        "paragraphs": [
+          "<p>类似于下列形式的控制指令：</p>",
+          "<pre class=\"card-code\">   #define 标识符 记号序列</pre>",
+          "<p>将使得预处理器把该标识符后续出现的各个实例用给定的记号序列替换。记号序列前后的空白符都将被丢弃掉。第二次用<code>#define</code>指令定义同一标识符是错误的，除非第二次定义中的标记序列与第一次相同（所有的空白分隔符被认为是相同的）。</p>",
+          "<p>类似于下列形式的指令行：</p>",
+          "<pre class=\"card-code\">   #define 标识符(标识符表opt) 记号序列</pre>",
+          "<p>是一个带有形式参数（由标识符表指定）的宏定义，其中第一个标识符与圆括号（之间没有空格。同第一种形式一样，记号序列前后的空白符都将被丢弃掉。如果要对宏进行重定义，则必须保证其形式参数个数、拼写及记号序列都必须与前面的定义相同。</p>",
+          "<p>类似于下列形式的控制指令：</p>",
+          "<pre class=\"card-code\">   #undef 标识符</pre>",
+          "<p>用于取消标识符的预处理器定义。将<code>#undef</code>应用于未知标识符（即未用<code>#define</code>指令定义的标识符）并不会导致错误。</p>",
+          "<p>按照第二种形式定义宏时，宏标识符（后面可以跟一个空白符，空白符是可选的）及其后用一对圆括号括起来的、由逗号分隔的记号序列就构成了一个宏调用。宏调用的实际参数是用逗号分隔的记号序列，用引号或嵌套的括号括起来的逗号不能用于分隔实际参数。在处理过程中，实际参数不进行宏扩展。宏调用时，实际参数的数目必须与定义中形式参数的数目匹配。实际参数被分离后，前导和尾部的空白符将被删除。随后，由各实际参数产生的记号序列将替换未用引号引起来的相应形式参数的标识符（位于宏的替换记号序列中）。除非替换序列中的形式参数的前面有一个#符号，或者其前面或后面有一个##符号，否则，在插入前要对宏调用的实际参数记号进行检查，并在必要时进行扩展。</p>",
+          "<p>两个特殊的运算符会影响替换过程。首先，如果替换记号序列中的某个形式参数前面直接是一个#符号（它们之间没有空白符），相应形式参数的两边将被加上双引号（\"），随后，#和形式参数标识符将被用引号引起来的实际参数替换。实际参数中的字符串字面值、字符常量两边或内部的每个双引号（\"）或反斜杠（\\）前面都要插入一个反斜杠（\\）。</p>",
+          "<p>其次，无论哪种宏的定义记号序列中包含一个##运算符，在形式参数替换后都要把##及其前后的空白符都删除掉，以便将相邻记号连接起来形成一个新记号。如果这样产生的记号无效，或者结果依赖于##运算符的处理顺序，则结果没有定义。同时，##也可以不出现在替换记号序列的开头或结尾。</p>",
+          "<p>对这两种类型的宏，都要重复扫描替换记号序列以查找更多的已定义标识符。但是。当某个标识符在某个扩展中被替换后，再次扫描并再次遇到此标识符时不再对其执行替换，而是保持不变。</p>",
+          "<p>即使执行宏扩展后得到的最终结果以#打头，也不认为它是预处理指令。</p>",
+          "<p>说明：有关宏扩展处理的细节信息，<code>ANSI</code>标准比第<code>1</code>版描述得更详细。最重要的变化是加入了#和##运算符，这就使得引用和连接成为可能。某些新规则（特别是与连接有关的规则）比较独特（参见下面的例子）。</p>",
+          "<p>例如，这种功能可用来定义“ 表示常量”，如下例所示：</p>",
+          "<pre class=\"card-code\">   #define TABSIZE 100\n   int table[TABSIZE];</pre>",
+          "<p>定义</p>",
+          "<pre class=\"card-code\">   #define ABSDIFF(a, b)  ((a)&gt;(b) ? (a)-(b) : (b)-(a))</pre>",
+          "<p>定义了一个宏，它返回两个参数之差的绝对值。与执行同样功能的函数所不同的是，参数与返回值可以是任意算术类型，甚至可以是指针。同时，参数可能有副作用，而且需要计算两次，一次进行测试，另一次则生成值。</p>",
+          "<p>假定有下列定义：</p>",
+          "<pre class=\"card-code\">   #define tempfile(dir)    #dir &quot;%s&quot;\n宏调用tempfile(/usr/tmp)将生成</pre>",
+          "<pre class=\"card-code\">   &quot;/usr/tmp&quot; &quot;%s&quot;</pre>",
+          "<p>随后，该结果将被连接为一个单个的字符串。给定下列定义：</p>",
+          "<pre class=\"card-code\">   #define cat(x, y)       x ## y\n那么，宏调用 cat(var, 123)将生成 var123。但是，宏调用 cat(cat(1,2),3)没有定</pre>",
+          "<p>义：##阻止了外层调用的参数的扩展。因此，它将生成下列记号串：</p>",
+          "<pre class=\"card-code\">   cat  (  1  ,  2  )3</pre>",
+          "<p>并且，<code>)3 (</code>不是一个合法的记号，它由第一个参数的最后一个记号与第二个参数的第一个记号连接而成。如果再引入第二层的宏定义，如下所示：</p>",
+          "<pre class=\"card-code\">   #define xcat(x, y)      cat(x,y)\n我们就可以得到正确的结果。xcat(xcat(1, 2), 3) 将生成123，因为xcat自身的扩展</pre>",
+          "<p>不包含##运算符。</p>",
+          "<pre class=\"card-code\">   类似地，ABSDIFF(ABSDIFF(a,b),c)将生成所期望的经完全扩展后的结果。</pre>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.12.4",
+        "title": "文件包含",
+        "page": null,
+        "paragraphs": [
+          "<p>下列形式的控制指令：</p>",
+          "<pre class=\"card-code\">   #include &lt;文件名&gt;</pre>",
+          "<p>将把该行替换为文件名指定的文件的内容。文件名不能包含&gt;或换行符。如果文件名中包含字符\"、'、\\、或/*，则其行为没有定义。预处理器将在某些特定的位置查找指定的文件，查找的位置与具体的实现相关。</p>",
+          "<p>类似地，下列形式的控制指令：</p>",
+          "<pre class=\"card-code\">   #include &quot;文件名&quot;</pre>",
+          "<p>首先从源文件的位置开始搜索指定文件（搜索过程与具体的实现相关），如果没有找到指定的文件，则按照第一种定义的方式处理。如果文件名中包含字符'、\\、或/*，其结果仍然是没有定义的，但可以使用字符&gt;。</p>",
+          "<p>最后，下列形式的指令行：</p>",
+          "<pre class=\"card-code\">   #include 记号序列</pre>",
+          "<p>同上述两种情况都不同，它将按照扩展普通文本的方式扩展记号序列进行解释。记号序列必须被解释为<code>&lt;...&gt;</code>或<code>\"...\"</code>两种形式之一，然后再按照上述方式进行相应的处理。</p>",
+          "<pre class=\"card-code\">   #include文件可以嵌套。</pre>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.12.5",
+        "title": "条件编译",
+        "page": null,
+        "paragraphs": [
+          "<p>对一个程序的某些部分可以进行条件编译，条件编译的语法形式如下：预处理器条件：</p>",
+          "<pre class=\"card-code\">       if 行文本 elif 部分opt else 部分opt #endif\n   if行：</pre>",
+          "<p><code>#if</code> 常量表达式</p>",
+          "<pre class=\"card-code\">       #ifdef 标识符\n       #ifndef 标识符\n   elif部分：\n       elif行 文本 elif 部分opt\n   elif行：\n       #elif 常量表达式\n   else 部分：\n       else行 文本\n   else行：\n       #else</pre>",
+          "<p>其中，每个条件编译指令（<code>if</code>行、<code>elif</code>行、<code>else</code>行以及<code>#endif</code>）在程序中均单独占一行。预处理器依次对<code>#if</code> 以及后续的<code>#elif</code>行中的常量表达式进行计算，直到发现某个指令的常量表达式为非 0值为止，这时将放弃值为 0的指令行后面的文本。常量表达式不为 0的<code>#if</code>和<code>#elif</code>指令之后的文本将按照其它普通程序代码一样进行编译。在这里，“ 文本” 是指任何不属于条件编译指令结构的程序代码，它可以包含预处理指令，也可以为空。一旦预处理器发现某个<code>#if</code> 或<code>#elif</code> 条件编译指令中的常量表达式的值不为 0，并选择其后的文本供以后的编译阶段使用时，后续的<code>#elif</code>和<code>#else</code>条件编译指令及相应的文本将被放弃。如果所有常量表达式的值都为 0，并且该条件编译指令链中包含一条<code>#else</code>指令。则将选择<code>#else</code>指令之后的文本。除了对条件编译指令的嵌套进行检查之外，条件编译指令的无效分支（即条件值为假的分支）控制的文本都将被忽略。</p>",
+          "<p><code>#if</code>和<code>#elif</code>中的常量表达式将执行通常的宏替换。并且，任何下列形式的表达式：</p>",
+          "<pre class=\"card-code\">   defined 标识符</pre>",
+          "<p>或</p>",
+          "<pre class=\"card-code\">   Defined(标识符)</pre>",
+          "<p>都将在执行宏扫描之前进行替换，如果该标识符在预处理器中已经定义，则用 <code>1</code>替换它，否则，用 0替换。预处理器进行宏扩展之后仍然存在的任何标识符都将用 0来替换。最后，每个整型常量都被预处理器认为其后面跟有后缀<code>L</code>，以便把所有的算术运算都当作是在长整型或无符号长整型的操作数之间进行的运算。</p>",
+          "<p>进行上述处理之后的常量表达式（参见 A.7.19节）满足下列限制条件：它必须是整型，并且其中不包含<code>sizeof</code>、强制类型转换运算符或枚举常量。</p>",
+          "<p>下列控制指令：</p>",
+          "<pre class=\"card-code\">       #ifdef 标识蒋\n       #ifndef 标识符</pre>",
+          "<p>分别等价于：</p>",
+          "<pre class=\"card-code\">       #if defined 标识符\n       #if !defined 标识符</pre>",
+          "<p>说明：<code>#elif</code> 是 <code>ANSI</code>中新引入的条件编译指令，但此前它已经在某些预处理器中实现了。<code>defined</code>预处理器运算符也是<code>ANSI</code>中新引入的特征。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.12.6",
+        "title": "行控制",
+        "page": null,
+        "paragraphs": [
+          "<p>为了便于其它预处理器生成<code>C</code>语言程序，下列形式的指令行：</p>",
+          "<pre class=\"card-code\">   #line 常量 &quot;文件名&quot;\n   #line 常量</pre>",
+          "<p>将使编译器认为（出于错误诊断的目的）：下一行源代码的行号是以十进制整型常量的形式给出的，并且，当前的输入文件是由该标识符命名的。如果缺少带双引号的文件名部分，则将不改变当前编译的源文件的名字。行中的宏将先进行扩展，然后再进行解释。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.12.7",
+        "title": "错误信息生成",
+        "page": null,
+        "paragraphs": [
+          "<p>下列形式的预处理器控制指令：</p>",
+          "<pre class=\"card-code\">   #error 记号序列opt</pre>",
+          "<p>将使预处理器打印包含该记号序列的诊断信息。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.12.8",
+        "title": "pragma",
+        "page": null,
+        "paragraphs": [
+          "<p>下列形式的控制指令：</p>",
+          "<pre class=\"card-code\">   #pragma 记号序列opt</pre>",
+          "<p>将使预处理器执行一个与具体实现相关的操作。无法识别的<code>pragma</code>（编译指示）将被忽略掉。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.12.9",
+        "title": "空指令",
+        "page": null,
+        "paragraphs": [
+          "<p>下列形式的预处理器行不执行任何操作：</p>",
+          "<pre class=\"card-code\">   #</pre>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.12.10",
+        "title": "预定义名字",
+        "page": null,
+        "paragraphs": [
+          "<p>某些标识符是预定义的，扩展后将生成特定的信息。它们同预处理器表达式运算符<code>defined</code>一样，不能取消定义或重新进行定义。</p>",
+          "<p><code>__LINE__</code> 包含当前源文件行数的十进制常量。<code>__FILE__</code> 包含正在被编译的源文件名字的字符串字面值。<code>__DATE__</code> 包含编译日期的字符串字面值，其形式为“ <code>Mmm dd yyyy</code> ”。<code>__TIME__</code> 包含编译时间的字符串字面值，其形式为“ <code>hh:mm:ss</code>”。<code>__STDC__</code> 整型常量<code>1</code>。只有在遵循标准的实现中该标识符才被定义为<code>1</code>。</p>",
+          "<p>说明：<code>#error</code>与<code>#pragma</code>是 <code>ANSI</code>标准中新引入的特征。这些预定叉的预处理器宏也是新引入的，其中的一些宏先前已经在某些编译器中实现。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "A.13",
+        "title": "语法",
+        "page": null,
+        "paragraphs": [
+          "<p>这一部分的内容将简要概述本附录前面部分中讲述的语法。它们的内容完全相同，但顺序有一些调整。</p>",
+          "<p>本语法没有定义下列终结符：整型常量、字符常量、浮点常量、标识符、字符串和枚举常量。以打字字体形式表示的单词和符号是终结符。本语法可以直接转换为自动语法分析程序生成器可以接受的输入。除了增加语法记号说明产生式中的候选项外，还需要扩展其中的“ one of”结构，并（根据语法分析程序生成器的规则）复制每个带有<code>opt</code>符号的产生式：一个带有 <code>opt</code>符号，一个没有 <code>opt</code>符号。这里还有一个变化，即删除了产生式“ 类型定义名:标识符”，这样就使得其中的类型定义名成为个终结符。该语法可被<code>YACC</code>语法分析程序生成器接受，但由于<code>if-else</code>的歧义性问题，还存在一处冲突。</p>",
+          "<p>翻译单元</p>",
+          "<p>外部声明</p>",
+          "<p>翻译单元 外部声明</p>",
+          "<p>外部声明：</p>",
+          "<p>函数定义</p>",
+          "<p>声明</p>",
+          "<p>函数定义：</p>",
+          "<p>声明说明符<code>opt</code> 声明符声明表<code>opt</code> 复合语句</p>",
+          "<p>声明：</p>",
+          "<p>声明说明符 初始化声明符表<code>opt;</code></p>",
+          "<p>声明表：</p>",
+          "<p>声明声明表 声明</p>",
+          "<p>声明说明符：</p>",
+          "<p>存储类说明符 声明说明符<code>opt</code></p>",
+          "<p>类型说明符 声明说明符<code>opt</code></p>",
+          "<p>类型限定符 声明说明符<code>opt</code></p>",
+          "<p>存储类说明符：one of</p>",
+          "<pre class=\"card-code\">   auto register static extern tyedef</pre>",
+          "<p>类型说明符：one of</p>",
+          "<pre class=\"card-code\">   void char short int long float double signed</pre>",
+          "<p><code>unsigned</code>结构或联合说明符 枚举说明符 类型定义名</p>",
+          "<p>类型限定符：one of</p>",
+          "<pre class=\"card-code\">    const volatile</pre>",
+          "<p>结构或联合说明符：</p>",
+          "<p>结构或联合 标识符<code>opt {</code>结构声明表}</p>",
+          "<p>结构或联合 标识符</p>",
+          "<p>结构或联合：one of</p>",
+          "<pre class=\"card-code\">   struct union</pre>",
+          "<p>结构声明表：</p>",
+          "<p>结构声明</p>",
+          "<p>结构声明表 结构声明</p>",
+          "<p>初始化声明符表</p>",
+          "<p>初始化声明符</p>",
+          "<p>初始化声明符表, 初始化声明符</p>",
+          "<p>初始化声明符：</p>",
+          "<p>声明符</p>",
+          "<p>声明符=初始化符</p>",
+          "<p>结构声明：</p>",
+          "<p>说明符限定符表 结构声明符表;</p>",
+          "<p>说明符限定符表：</p>",
+          "<p>类型说明符 说明符限定符表<code>opt</code>类型限定符 说明符限定符表<code>opt</code></p>",
+          "<p>结构声明符表：</p>",
+          "<p>结构声明符</p>",
+          "<p>结构声明符表, 结构声明符</p>",
+          "<p>结构声明符：</p>",
+          "<p>声明符</p>",
+          "<p>声明符<code>opt:</code> 常量表达式</p>",
+          "<p>敉举说明符</p>",
+          "<pre class=\"card-code\">   enum 标识符opt {枚举符表}\n   enum 标识符</pre>",
+          "<p>枚举符表：</p>",
+          "<p>枚举符</p>",
+          "<p>枚举符表, 枚举符</p>",
+          "<p>枚举符</p>",
+          "<p>标识符</p>",
+          "<p>标识符=常量表达式</p>",
+          "<p>声明符</p>",
+          "<p>指针<code>opt</code> 直接声明符</p>",
+          "<p>直接声明符：</p>",
+          "<p>标识符</p>",
+          "<p>(声明符)</p>",
+          "<p>直接声明符[常量表达式]</p>",
+          "<p>直接声明符(形式参数类型表)</p>",
+          "<p>直接声明符(标识符表<code>opt)</code></p>",
+          "<p>指针：</p>",
+          "<p>* 类型限定符表<code>opt</code></p>",
+          "<p>* 类型限定符表<code>opt</code> 指针</p>",
+          "<p>类型限定符表：</p>",
+          "<p>类型限定符</p>",
+          "<p>类型限定符表 类型限定符形式参数类型表：</p>",
+          "<p>形式参数表</p>",
+          "<p>形式参数表<code>, ...</code></p>",
+          "<p>形式参数表：</p>",
+          "<p>形式参数表声明</p>",
+          "<p>形式参数表, 形式参数声明</p>",
+          "<p>形式参数声明：</p>",
+          "<p>声明说明符 声明符</p>",
+          "<p>声明说明符 抽象声明符<code>opt</code></p>",
+          "<p>标识符表：</p>",
+          "<p>标识符</p>",
+          "<p>标识符表, 标识符</p>",
+          "<p>初值：</p>",
+          "<p>赋值表达式</p>",
+          "<p>{初值表}</p>",
+          "<pre class=\"card-code\">   {初值表, }</pre>",
+          "<p>初值表：</p>",
+          "<p>初值</p>",
+          "<p>初值表, 初值</p>",
+          "<p>类型名：</p>",
+          "<p>说明符限定符表 抽象声明符<code>opt</code></p>",
+          "<p>抽象声明符：</p>",
+          "<p>指针</p>",
+          "<p>指针<code>opt</code> 直接抽象声明符</p>",
+          "<p>直接抽象声明符：</p>",
+          "<p>(抽象声明符)</p>",
+          "<p>直接抽象声明符<code>opt [</code>常量表达式]</p>",
+          "<p>直接抽象声明符<code>opt (</code>形式参数类型表<code>opt)</code></p>",
+          "<p>类型定义名：</p>",
+          "<p>标识符语句：</p>",
+          "<p>带标号语句</p>",
+          "<p>表达式语句</p>",
+          "<p>复合语句</p>",
+          "<p>选择语句</p>",
+          "<p>循环语句</p>",
+          "<p>跳转语句</p>",
+          "<p>带标号语句：</p>",
+          "<p>标识符: 语句</p>",
+          "<p><code>case</code> 常量表达式语句</p>",
+          "<pre class=\"card-code\">   dafault: 语句</pre>",
+          "<p>表达式语句；</p>",
+          "<pre class=\"card-code\">   表达式opt;</pre>",
+          "<p>复合语句：</p>",
+          "<pre class=\"card-code\">   {声明表opt 语句表opt}</pre>",
+          "<p>语句表：</p>",
+          "<p>语句</p>",
+          "<p>语句表 语句</p>",
+          "<p>选择语句：</p>",
+          "<p><code>if (</code>表达式) 语句</p>",
+          "<pre class=\"card-code\">   if (表达式) 语句 else 语句\n   switch (表达式) 语句</pre>",
+          "<p>循环语句</p>",
+          "<pre class=\"card-code\">   while (表达式) 语句\n   do 语句 while ( 表达式);\n   for (表达式opt; 表达式opt; 表达式opt) 语句</pre>",
+          "<p>跳转语句：</p>",
+          "<pre class=\"card-code\">   goto 标识符;\n   continue;\n   break;</pre>",
+          "<pre class=\"card-code\">   return 表达式opt;</pre>",
+          "<p>表达式：</p>",
+          "<p>赋值表达式</p>",
+          "<p>表达式, 赋值表选式</p>",
+          "<p>赋值表达式：</p>",
+          "<p>条件表达式</p>",
+          "<p>一元表达式 赋值运算符 赋值表达式</p>",
+          "<p>赋值运算符：one of</p>",
+          "<pre class=\"card-code\">   = *= /= %= += -= &lt;&lt;= &gt;&gt;= &amp;= ^= |=</pre>",
+          "<p>条件表达式：</p>",
+          "<p>逻辑或表达式</p>",
+          "<p>或表达式?表达式:条件表达式</p>",
+          "<p>常量表达式：</p>",
+          "<p>条件表达式</p>",
+          "<p>逻辑或表达式：</p>",
+          "<p>逻辑与表达式</p>",
+          "<p>逻辑或表达式||逻辑与表达式</p>",
+          "<p>逻辑与表达式</p>",
+          "<p>接位或表达式</p>",
+          "<p>逻辑与表达式&amp;&amp;按位或表达式</p>",
+          "<p>按位或表达式：</p>",
+          "<p>按位异或表达式</p>",
+          "<p>按位或表达式|按位异或表达式</p>",
+          "<p>接位异或表达式：</p>",
+          "<p>按位与表达式</p>",
+          "<p>接位异或表达式^按位与表达式</p>",
+          "<p>按位与表达式：</p>",
+          "<p>相等类表达式</p>",
+          "<p>按位与表达式&amp;相等类表达式</p>",
+          "<p>相等类表达式：关系表达式</p>",
+          "<p>相等类表达式==关系表达式</p>",
+          "<p>相等类表达式!=关系表达式</p>",
+          "<p>关系表达式：</p>",
+          "<p>移位表达式</p>",
+          "<p>关系表达式&lt;移位表达式</p>",
+          "<p>关系表达式&gt;移位表达式</p>",
+          "<p>关系表达式&lt;=移位表达式</p>",
+          "<p>关系表达式&gt;=移位表达式</p>",
+          "<p>移位表达式</p>",
+          "<p>加法类表达式</p>",
+          "<p>移位表达式&lt;&lt;加法类表达式</p>",
+          "<p>移位表达式&gt;&gt;加法类表达式</p>",
+          "<p>加法类表达式：</p>",
+          "<p>乘法类表达式</p>",
+          "<p>加法类表达式+乘法类表达式</p>",
+          "<p>加法类表达式-乘法类表达式</p>",
+          "<p>乘法类表达式：</p>",
+          "<p>强制类型转换表达式</p>",
+          "<p>类表达式*强制类型转换表达式</p>",
+          "<p>乘法类表达点/强制类型转换表达式</p>",
+          "<p>乘法类表达式%强制类型转换表达式</p>",
+          "<p>强制类型转换表达式：</p>",
+          "<p>一元表达式</p>",
+          "<p>(类型名)强制类型转换表达式</p>",
+          "<p>一元表达式：</p>",
+          "<p>后缀一元式</p>",
+          "<p>++一元表达式</p>",
+          "<p>--一元表达式</p>",
+          "<p>一元运算符强制类型转换表达式</p>",
+          "<pre class=\"card-code\">       sizeof一元表达式\n       sizeof(类型名)</pre>",
+          "<p>一元运算符：one of</p>",
+          "<pre class=\"card-code\">       &amp; * + - ~ !</pre>",
+          "<p>后缀表达式：</p>",
+          "<p>初等表达式</p>",
+          "<p>后缀表达式[表达式]</p>",
+          "<p>后缀表达式(参数表达式表<code>opt)</code></p>",
+          "<p>后缀表达式.标识符</p>",
+          "<p>后缀表达式-&gt;标识符</p>",
+          "<p>后缀表达式++</p>",
+          "<p>后缀表达式--</p>",
+          "<p>初等表达式：</p>",
+          "<p>标识符</p>",
+          "<p>常量</p>",
+          "<p>字符串</p>",
+          "<p>(表达式)</p>",
+          "<p>参数表达式表：</p>",
+          "<p>赋值表达式</p>",
+          "<p>参数表达式表, 赋值表达式</p>",
+          "<p>常量：</p>",
+          "<p>整型常量</p>",
+          "<p>字符常量</p>",
+          "<p>浮点常量</p>",
+          "<p>枚举常量</p>",
+          "<p>下列预处理器语法总结了控制指令的结构，但不适合于机械化的语法分析。其中包含符号“ 文本”（即通常的程序文本）、非条件预处理器控制指令或完整的预处理器条件结构。</p>",
+          "<p>控制指令：</p>",
+          "<pre class=\"card-code\">       =define 标识符 记号序列\n       =define 标识符(标识符表opt) 记号序列</pre>",
+          "<pre class=\"card-code\">   #undef 标识符\n   #include &lt;文件名&gt;\n   #include &quot;文件名&quot;\n   #include 记号序列\n   #line常量 &quot;文件名&quot;\n   #line 常量\n   #error 记号序列。\n   #pragma 记号序列。\n   #</pre>",
+          "<p>预处理器条件指令</p>",
+          "<p>预处理器条件指令：</p>",
+          "<pre class=\"card-code\">   if行 文本elif 部分opt else 部分opt #endif\nif行：</pre>",
+          "<p><code>#if</code> 常量表达式</p>",
+          "<pre class=\"card-code\">   #ifdef 标识符\n    #ifndef 标识符\nelif部分：\n   elif行 文本 elif 部分opt\nelif行：\n   #elif 常量表达式\nelse部分：\n   else行 文本\nelse行：\n   #else</pre>"
+        ],
+        "theory": []
+      }
+    ]
+  },
+  {
+    "meta": {
+      "kicker": "APPENDIX B · STANDARD LIBRARY",
+      "chapter": "附录B 标准库",
+      "kind": "appendix",
+      "blurb": "本附录总结了 ANSI标准定义的函数库。标准库不是 C语言本身的构成部分，但是支持标准 C的实现会提供该函数库中的函数声明、类型以及宏定义。在这部分内容中，我们省略了一些使用比较受限的函数以及一些可以通过其它函数简单合成的函数，也省略了多字节字符的内容，同时，也不准备讨论与区域相关的一些属性，也就星与本地语言、国籍或文化相关的属性。"
+    },
+    "sections": [],
+    "bookExercises": [],
+    "tutorials": [
+      {
+        "number": "B.1",
+        "title": "输入与输出：<stdio.h>",
+        "page": null,
+        "paragraphs": [
+          "<p>本附录总结了 ANSI标准定义的函数库。标准库不是 C语言本身的构成部分，但是支持标准 C的实现会提供该函数库中的函数声明、类型以及宏定义。在这部分内容中，我们省略了一些使用比较受限的函数以及一些可以通过其它函数简单合成的函数，也省略了多字节字符的内容，同时，也不准备讨论与区域相关的一些属性，也就星与本地语言、国籍或文化相关的属性。</p>",
+          "<p>标准库中的函数，类型以及宏分别在下面的标准头文件中定义：</p>",
+          "<pre class=\"card-code\">   &lt;assert.h&gt;  &lt;float.h&gt;   &lt;math.h&gt;    &lt;stdarg.h&gt;  &lt;stdlib.h&gt;\n   &lt;ctype.h&gt;   &lt;limits.h&gt;  &lt;setjmp.h&gt;  &lt;stddef.h&gt;  &lt;string.h&gt;\n   &lt;errno.h&gt;   &lt;locale.h&gt;  &lt;signal.h&gt;  &lt;stdio.h&gt;   &lt;time.h&gt;</pre>",
+          "<p>可以通过下列方式访问头文件：</p>",
+          "<pre class=\"card-code\">   #include &lt;头文件&gt;</pre>",
+          "<p>头文件的包含顺序是任意的，并可包含任意多次。头文件必须被包含在任何外部声明或定义之外，并且，必须在使用头文件中的任何声明之前包含头文件。头文件不一定是一个源文件。</p>",
+          "<p>以下划线开头的外部标识符保留给标准库使用，同时，其它所有以一个下划线和一个大写字母开头的标识符以及以两个下划线开头的标识符也都保留给标准库使用。</p>",
+          "<p>头文件<code>&lt;stdio.h&gt;</code>中定义的输入和输出函数、类型以及宏的数目几乎占整个标准库的三分之一。</p>",
+          "<p>流（stream）是与磁盘或其它外围设备关联的数据的源或目的地。尽管在某些系统中（如在著名的 UNIX 系统中），文本流和二进制流是相同的，但标准库仍然提供了这两种类型的流。文本流是由文本行组成的序列，每一行包含 0个或多个字符，并以<code>'\\n'</code> 结尾。在某些环境中，可能需要将文本流转换为其它表示形式（例如把<code>'\\n'</code>映射成回车符和换行符），或从其它表示形式转换为文本流。二进制流是由未经处理的字节构成的序列，这些字节记录着内部数据，并具有下列性质：如果在同一系统中写入二进制流，然后再读取该二进制流，则读出和写入的内容完全相同。</p>",
+          "<p>打开一个流，将把该流与一个文件或设备连接起来，关闭流将断开这种连接，打开一个文件将返回一个指向<code>FILE</code>类型对象的指针，该指针记录了控制该流的所有必要信息，在不引起歧义的情况下，我们在下文中将不再区分“ 文件指针” 和“ 流”。</p>",
+          "<p>程序开始执行时，<code>stdin</code>、<code>stdout</code>和<code>stderr</code>这 3个流已经处于打开状态。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "B.1.1",
+        "title": "文件操作",
+        "page": null,
+        "paragraphs": [
+          "<p>下列函数用于处理与文件有关的操作。其中，类型<code>size_t</code>是由运算符 <code>sizeof</code>生成的无符号整型。</p>",
+          "<pre class=\"card-code\">FILE *fopen(const char *filename, const char *mode)</pre>",
+          "<p><code>fopen</code>函数打开<code>filename</code>指定的文件，并返回一个与之相关联的流。如果打开操作失败，则返回<code>NULL</code>。</p>",
+          "<p>访问模式<code>mode</code>可以为下列合法值之一：</p>",
+          "<pre class=\"card-code\">   &quot;r&quot;       打开文本文件用于读\n   &quot;w&quot;       创建文本文件用于写，并删除已存在的内容（如果有的话）\n   &quot;a&quot;       追加；打开或创建文本文件，并向文件末尾追加内容</pre>",
+          "<p><code>\"r+\"</code> 打开文本文件用于更新（即读和写）<code>\"w+\"</code> 创建文本文件用于更新，并删除已存在的内容（如果有的话）<code>\"a+\"</code> 追加；打开或创建文本文件用于更新，写文件时追加到文件末尾</p>",
+          "<p>后 3 种方式（更新方式）允许对同一文件进行读和写。在读和写的交叉过程中，必须调用<code>fflush</code>函数或文件定位函数。如果在上述访问模式之后再加上<code>b</code>，如“ <code>rb</code>” 或“ <code>w+b</code>” 等，则表示对二进制文件进行操作。文件名 <code>filename</code>限定最多为 <code>FILENAME_MAX</code>个字符。一次最多可打开<code>FOPEN_MAX</code>个文件。</p>",
+          "<pre class=\"card-code\">FILE *freopen(const char *filename, const char *mode, FILE *stream)</pre>",
+          "<p><code>freopen</code> 函数以 <code>mode</code>指定的模式打开 <code>filename</code>指定的文件，并将该文件关联到<code>stream</code> 指定的流。它返回 <code>stream</code>；若出错则返回 <code>NULL</code>。<code>Freopen</code> 函数一般用于改变与</p>",
+          "<pre class=\"card-code\">stdin、stdout和stderr相关联的文件。\nint fflush(FILE *stream)</pre>",
+          "<p>对输出流来说，<code>fflush</code>函数将已写到缓冲区但尚未写入文件的所有数据写到文件中。对输入流来说，其结果是未定义的。如果在写的过程中发生错误，则返回 <code>EOF</code>，否则返回 0。</p>",
+          "<pre class=\"card-code\">fflush(NULL)将清洗所有的输出流。\nint fclose(FILE *stream)</pre>",
+          "<p><code>fclose</code>函数将所有未写入的数据写入<code>stream</code>中，丢弃缓冲区中的所有未读输入数据，并释放自动分配的全部缓冲区，最后关闭流。若出错则返回<code>EOF</code>，否则返回 0。</p>",
+          "<pre class=\"card-code\">int remove(const char *filename)</pre>",
+          "<p><code>remove</code> 函数删除 <code>filename</code>指定的文件，这样，后续试图打开该文件的操作将失败。如果删除操作失败，则返回一个非 0值。</p>",
+          "<pre class=\"card-code\">int rename(const char *oldname, const char *newname)</pre>",
+          "<p><code>rename</code>函数修改文件的名字。如果操作失败，则返回一个非 0值。</p>",
+          "<pre class=\"card-code\">FILE *tmpfile(void)</pre>",
+          "<p><code>tmpfile</code>函数以模式<code>\"wb+\"</code>创建一个临时文件，该文件在被关闭或程序正常结束时将被自动删除。如果创建操作成功，该函数返回一个流；如果创建文件失败，则返回<code>NULL</code>。</p>",
+          "<pre class=\"card-code\">char *tmpnam(char s[L_tmpnam])</pre>",
+          "<p><code>tmpnam(NULL)</code>函数创建一个与现有文件名不同的字符串，并返回一个指向一内部静态数组的指针。<code>tmpnam(S)</code>函数把创建的字符串保存到数组 <code>s</code>中，并将它作为函数值返回。<code>s</code>中至少要有 <code>L_tmpnam</code>个字符的空间。<code>Tmpnam</code> 函数在每次被调用时均生成不同的名字。在程序执行的过程中，最多只能确保生成<code>TMP_MAX</code>个不同的名字。注意，<code>tmpnam</code>函数只是用于创建一个名字，而不是创建一个文件。</p>",
+          "<pre class=\"card-code\">int setvbuf(FILE *stream, char *buf, int mode, size_t size)</pre>",
+          "<p><code>setvbuf</code>函数控制流<code>stream</code>的缓冲。在执行读、写以及其它任何操作之前必须调用此函数。当<code>mode</code>的值为<code>_IOFBF</code>时，将进行完全缓冲。当<code>mode</code>的值为<code>_IOLBF</code>时，将对文本文件进行行缓冲，当<code>mode</code>的值为<code>_IONBF</code>时，表示不设置缓冲。如果<code>buf</code>的值不是<code>NULL</code>，则<code>setvbuf</code>函数将<code>buf</code>指向的区域作为流的缓冲区，否则将分配一个缓冲区。<code>size</code>决定缓冲区的长度。如果<code>setvbuf</code>函数出错，则返回个一非 0值。</p>",
+          "<pre class=\"card-code\">void setbuf(FILE *stream, char *buf)</pre>",
+          "<p>如果 <code>buf</code> 的值为 <code>NULL</code>，则关闭流 <code>stream</code> 的缓冲；否则 <code>setbuf</code> 函数等价于</p>",
+          "<pre class=\"card-code\">(void)setvbuf(stream, buf, _IOFBF, BUFSIZ) 。</pre>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "B.1.2",
+        "title": "格式化输出",
+        "page": null,
+        "paragraphs": [
+          "<p><code>printf</code>函数提供格式化输出转换。</p>",
+          "<pre class=\"card-code\">int fprintf(FILE *stream, const char *format, ...)</pre>",
+          "<p><code>fprintf</code>函数按照<code>format</code>说明的格式对输出进行转换，并写到<code>stream</code>流中。返回值是实际写入的字符数。若出错则返回一个负值。</p>",
+          "<p>格式串由两种类型的对象组成：普通字符（将被复制到输出流中）与转换说明（分别决定下一后续参数的转换和打印）。每个转换说明均以字符%开头，以转换字符结束。在%与转换字符之间可以依次包括下列内容：</p>",
+          "<p>• 标志（可以以任意顺序出现），用于修改转换说明- 指定被转换的参数在其字段内左对齐+  指定在输出的数前面加上正负号空格 如果第一个字符不是正负号，则在其前面加上一个空格0 对于数值转换，当输出长度小于字段宽度时，添加前导 0进行填充# 指定另一种输出形式。如果为<code>o</code>转换，则第一个数字为零；如果为<code>x</code>或<code>X</code>转换，则指定在输出的非 0值前加<code>0x</code>或<code>0X</code>；对于<code>e</code>、<code>E</code>、<code>f</code>、<code>g</code>或<code>G</code>转换，指定输出总包括一个小数点；对于<code>g</code>或<code>G</code>转换，指定输出值尾部无意义的 0将被保留</p>",
+          "<p>• 一个数值，用于指定最小字段宽度。转换后的参数输出宽度至少要达到这个数值。如果参数的字符数小于此数值，则在参数宽边（如果要求左对齐的话则为右边）填充一些字符。填充字符通常为空格，但是，如果设置了 0填充标志，则填充字符为 0。</p>",
+          "<p>• 点号，用于分隔字段宽度和精度。</p>",
+          "<p>• 表示精度的数。对于字符串，它指定打印的字符的最大个数；对于<code>e</code>、<code>E</code>或<code>f</code>转换，它指定打印的小数点后的数字位数；对于<code>g</code>或<code>G</code>转换，它指定打印的有效数字位数；对于整型数，它指定打印的数字位数（必要时可加填充位 0以达到要求的宽度）。</p>",
+          "<pre class=\"card-code\">   • 长度修饰符h、l或L。h表示将相应的参数按short或unsigned short类型输</pre>",
+          "<p>出。<code>l</code>表示将相应的参数按<code>long</code>或<code>unsigned long</code>类型输出；<code>L</code>表示将相应的参</p>",
+          "<pre class=\"card-code\">       数按long double 类型输出。</pre>",
+          "<p>宽度和精度中的任何一个或两者都可以用*指定，这种情况下，该值将通过转换下一个参数计算得到（下一个参数必须为<code>int</code>类型）。</p>",
+          "<p>表 B-1中列出了这些转换字符及其意义。如果%后面的字符不是转换字符，则其行为没有定义。</p>",
+          "<p><strong>表 B-1  printf函数的转换字符</strong></p>",
+          "<pre class=\"card-code\">   转换字符                                      参数类型；转换结果\nd, i int           ；有符号十进制表示\no unsigned int              ；无符号八进制表示\nx, X unsigned int            ；无符号十六进制表示（没有前导 0x或 0X），如果是0x，则使用 abcdef，如果是 0X，则使</pre>",
+          "<p>用 ABCDEF</p>",
+          "<pre class=\"card-code\">u int              ；无符号十进制表示\nc int              ；转换为unsigned char 类型后为一个字符\ns char *              ；打印字符串中的字符，直到遇到&#x27;\\0&#x27;或已打印了由精度指定的字符数\nf double              ；形式为[-]mmm.ddd的十进制表示，其中，d的数目由精度确确定，默认精度为 6。精度为 0时不输</pre>",
+          "<p>出小数点</p>",
+          "<pre class=\"card-code\">e, E double           ；形式为[-]m.dddddd e ±xx或[-]m.dddddd E ±xx。d的数目由精度确定，默认精度为 6。精度为 0时不</pre>",
+          "<p>输出小数点</p>",
+          "<pre class=\"card-code\">g, G double           ；当指数小于-4或大于等于精度时，采用%e 或%E 的格式，否则采用%f 的格式。尾部的 0和小数点</pre>",
+          "<p>不打印</p>",
+          "<pre class=\"card-code\">p void *              ；打印指针值（具体表示方式与实现有关）\nn int *              ；到目前为止，此printf 调用输出的字符的数目将被写入到相应参数中。不进行参数转换\n%               不进行参数转换；打印一个符号%</pre>",
+          "<pre class=\"card-code\">int printf(const char *format, ...)\n   printf(...)函数等价于fprintf(stdout, … )。\nint sprintf(char *s, const char *format, ...)</pre>",
+          "<p><code>sprintf</code> 函数与 <code>printf</code>函数基本相同，但其输出将被写入到字符串 <code>s</code>中，并以<code>'\\0'</code>结束。<code>s</code>必须足够大，以足够容纳下输出结果。该函数返回实际输出的字符数，不包括<code>'\\0'</code>。</p>",
+          "<pre class=\"card-code\">int vprintf(const char *format, va_list arg)\nint vfprintf(FILE *stream, const char *format, va_list arg)\nint vsprintf(char *s, const char *format, va_list arg)\n   vprintf、vfprintf、vsprintf这 3个函数分别与对应的 printf函数等价，但它</pre>",
+          "<p>们用<code>arg</code>代替了可变参数表。<code>arg</code>由宏<code>va_start</code>初始化，也可能由<code>va_arg</code>调用初始化。详细信息参见 B.7节中对<code>&lt;stdarg.h&gt;</code>头文件的讨论。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "B.1.3",
+        "title": "格式化输入",
+        "page": null,
+        "paragraphs": [
+          "<p><code>scanf</code>函数处理格式化输入转换。</p>",
+          "<pre class=\"card-code\">int fscanf(FILE *stream, const char *format, ...)</pre>",
+          "<p><code>fscanf</code>函数根据格式串 <code>format</code>从流 <code>stream</code>中读取输入，并把转换后的值赋值给后续各个参数，其中的每个参数都必须是一个指针。当格式串 <code>format</code>用完时，函数返回。如果到达文件的末尾或在转换输入前出错，该函数返回 <code>EOF</code>；否则，返回实际被转换并赋值的输入项的数目。</p>",
+          "<p>格式串 <code>format</code>通常包括转换说明，它用于指导对输入进行解释。格式字符串中可以包含下列项目：</p>",
+          "<p>• 空格或制表符</p>",
+          "<p>• 普通字符（%除外），它将与输入流中下一个非空白字符进行匹配</p>",
+          "<p>• 转换说明，由一个%、一个赋值屏蔽字符*（可选）、一个指定最大字段宽度的数（可选）、一个指定目标字段宽度的字符（<code>h</code>、<code>l</code>或<code>L</code>）（可选）以及一个转换字符组成。</p>",
+          "<p>转换说明决定了下一个输入字段的转换方式。通常结果将被保存在由对应参数指向的变量中。但是，如果转换说明中包含赋值屏蔽字符*，例如<code>%*s</code>，则将跳过对应的输入字段，并不进行赋值。输入字段时一个由非空白符字符组成的字符串，当遇到下一个空白符或达到最大字段宽度（如果有的话）时，对当前输入字段的读取结束。这意味着，<code>scanf</code> 函数可以跨越行的边界读取输入，因为换行符也是空白符（空白符包括空格、横向制表符、纵向制表符、换行符、回车符和换页符）。</p>",
+          "<p>转换字符说明了对输入字段的解释方式。对应的参数必须是指针。合法的转换字符如表B-2所示。</p>",
+          "<p>如果参数是指向<code>short</code>类型而非<code>int</code>类型的指针，则在转换字符<code>d</code>、<code>i</code>、<code>n</code>、<code>o</code>、<code>u</code>和<code>x</code>之前可以加上前缀<code>h</code>。如果参数是指向<code>long</code>类型的指针，则在这几个转换字符前可以加上字母<code>l</code>。如果参数是指向<code>double</code>类型而非<code>float</code>类型的指针，则在转换字符<code>e</code>、<code>f</code>和<code>g</code>前可以加上字母<code>l</code>。如果参数是指向<code>long double</code>类型的指针，则在转换字符<code>e</code>、<code>f</code>和<code>g</code>前可以加上字母<code>L</code>。</p>",
+          "<p><strong>表 B-2  scanf 函数的转换宇符</strong></p>",
+          "<pre class=\"card-code\">   转换字符                                      输入数据；参数类型\nd               十进制整数；int *\ni               整型数；int * 。该整型数可以是八进制（以 0开头）或十六进制（以 0x或 0X开头）\no               八进制整型数（可以带或不带前导 0）；int *\nu               无符号十进制整型数；unsigned int *\nx               十六进制整型数（可以带或不带前导 0x或 0X）；int *\nc               字符；char *，按照字段宽度的大小把读取的字符保存到制定的数组中，不增加&#x27;\\0&#x27;字段宽度的默认值为 1。</pre>",
+          "<p>在这种情况下，读取输入时将不跳过空白符。如果需要读入下一个非空白符，可以使用<code>%1s</code></p>",
+          "<pre class=\"card-code\">s               由非空白符组成的字符串（不包含引号）；char * ，它指向一个字符数组，该字符数组必须有足够空间，以</pre>",
+          "<p>保存该字符串以及在尾部添加的<code>'\\0'</code>字符</p>",
+          "<pre class=\"card-code\">e, f, g          浮点数，float * 。Float类型浮点数的输入格式为：一个可选的正负号、一个可能包含小数点的数字串，</pre>",
+          "<p>一个可选的指数字段（字母<code>e</code>或<code>E</code>后跟一个可能带正负号的整型数）</p>",
+          "<pre class=\"card-code\">p printf(&quot;%p&quot;)              函数调用打印的指针值；void *\nn               将到目前为止该函数调用读取的字符数写入对应的参数中；int * 。部读取输入字符。不增加已转换的项目</pre>",
+          "<p>计数</p>",
+          "<pre class=\"card-code\">[...]           与方括号中的字符集合匹配的输入字符中最长的非空字符串；char *。末尾将添加&#x27;\\0&#x27;。[]...]表示集合</pre>",
+          "<p>中包含字符“ ]”</p>",
+          "<pre class=\"card-code\">[^...]          与方括号中的字符集合不匹配的输入字符中最长的非空字符串；char * 。末尾将添加&#x27;\\0&#x27;。[^]...]表示</pre>",
+          "<p>集合中不包含字符“ ]”</p>",
+          "<pre class=\"card-code\">%               表示“ %”，不进行赋值</pre>",
+          "<pre class=\"card-code\">int scanf(const char *format, ...)\n   scanf(...)函数与fscanf(stdin, ...)相同。\nint sscanf(const char *s, const char *format, ...)</pre>",
+          "<p><code>sscanf(s, ...)</code>函数与<code>scanf(...)</code>等价，所不同的是，前者的输入字符来源于字符串<code>s</code>。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "B.1.4",
+        "title": "字符输入／输出函数",
+        "page": null,
+        "paragraphs": [
+          "<pre class=\"card-code\">int fgetc(FILE *stream)\n   fqetc函数返回stream流的下一个字符，返回类型为unsigned char（被转换为int</pre>",
+          "<p>类型）。如果到达文件末尾或发生错误，则返回<code>EOF</code>。</p>",
+          "<pre class=\"card-code\">char *fgets(char *s, int n, FILE *stream)</pre>",
+          "<p><code>fgets</code>函数最多将下<code>n-1</code>个字符读入到数组<code>s</code>中。当遇到换行符时，把换行符读入到数组<code>s</code>中，读取过程终止。数组<code>s</code>以<code>'\\0'</code>结尾。<code>fgets</code>函数返回数组<code>s</code>。如果到达文件的末尾或发生错误，则返回<code>NULL</code>。</p>",
+          "<pre class=\"card-code\">int fputc(int c, FILE *stream)\n   fputc函数把字符c（转换为unsigned char 类型）输出到流stream中。它返回写</pre>",
+          "<p>入的字符，若出错则返回<code>EOF</code>。</p>",
+          "<pre class=\"card-code\">int fputs(const char *s, FILE *stream)</pre>",
+          "<p><code>fputs</code>函数把字符串<code>s</code>（不包含字符<code>'\\n'</code>）输出到流<code>Btream</code>中；它返回一个非负值，若出错则返回<code>EOF</code>。</p>",
+          "<pre class=\"card-code\">int getc(FILE *stream)</pre>",
+          "<p><code>getc</code> 函数等价于 <code>fgetc</code>，所不同的是，当 <code>getc</code>函数定义为宏时，它可能多次计算</p>",
+          "<pre class=\"card-code\">stream的值。\nint getchar(void)\n   getchar函数等价于getc(stdin)。</pre>",
+          "<pre class=\"card-code\">char *gets(char *s)</pre>",
+          "<p><code>gets</code> 函数把下一个输入行读入到数组 <code>s</code>中，并把末尾的换行符替换为字符<code>'\\0'</code>。它返回数组<code>s</code>，如果到达文件的末尾或发生错误，则返回<code>NULL</code>。</p>",
+          "<pre class=\"card-code\">int putc(int c, FILE *stream)</pre>",
+          "<p><code>putc</code> 函数等价于 <code>fputc</code>，所不同的是，当 <code>putc</code>函数定义为宏时，它可能多次计算</p>",
+          "<pre class=\"card-code\">stream的值。\nint putchar(int c)\n   putchar(c)函数等价于putc(c, stdout)。\nint puts(const char *s)</pre>",
+          "<p><code>puts</code>函数把字符串<code>s</code>和一个换行符输出到<code>stdout</code>中。如果发生错误，则返回<code>EOF</code>；否则返回一个非负值。</p>",
+          "<pre class=\"card-code\">int ungetc(int c, FILE *stream)\n   ungetc函数把 c（转换为 unsigned char类型）写回到流 stream中，下次对该流</pre>",
+          "<p>进行读操作时，将返回该字符。对每个流只能写回一个字符，且此字符不能是<code>EOF</code>。<code>ungetc</code>函数返回被写回的字符，如果发生错误，则返回<code>EOF</code>。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "B.1.5",
+        "title": "直接输入／输出函数",
+        "page": null,
+        "paragraphs": [
+          "<pre class=\"card-code\">size_t fread(void *ptr, size_t size, size_t nobj, FILE *stream)</pre>",
+          "<p><code>fread</code>函数从流<code>stream</code>中读取最多<code>nobj</code>个长度为<code>size</code>的对象，并保存到<code>ptr</code>指向的数组中。它返回读取的对象数目，此返回值可能小于<code>nobj</code>。必须通过函数<code>feof</code>和<code>ferror</code>获得结果执行状态。</p>",
+          "<pre class=\"card-code\">size_t fwrite(const void *ptr, size_t size, size_t nobj, FILE *stream)</pre>",
+          "<p><code>fwrite</code>函数从<code>ptr</code>指向的数组中读取<code>nobj</code>个长度为<code>size</code>的对象，并输出到流<code>stream</code>中。它返回输出的对象数目。如果发生错误，返回值会小于<code>nobj</code>的值。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "B.1.6",
+        "title": "文件定位函数",
+        "page": null,
+        "paragraphs": [
+          "<pre class=\"card-code\">int fseek(FILE *stream, long offset, int origin)</pre>",
+          "<p><code>fseek</code>函数设置流<code>stream</code>的文件位置，后续的读写操作将从新位置开始。对于二进制</p>",
+          "<pre class=\"card-code\">文件，此位置被设置为从origin开始的第offset个字符处。Origin的值可以为SEEK_SET</pre>",
+          "<p>（文件开始处）、<code>SEEK_CUR</code>（当前位置）或<code>SEEK_END</code>（文件结束处）。对于文本流，<code>offset</code>必须设置为 0，或者是由函数<code>ftell</code>返回的值（此时<code>origin</code>的值必须是<code>SEEK_SET</code>）。<code>fseek</code>函数在出错时返回一个非 0值。</p>",
+          "<pre class=\"card-code\">long ftell(FILE *stream)</pre>",
+          "<p><code>ftell</code>函数返回<code>stream</code>流的当前文件位置，出错时该函数返回<code>-lL</code>。</p>",
+          "<pre class=\"card-code\">void rewind(FILE *stream)\n   rewind(fp)函数等价于语句 fseek(fp, 0L, SEEK_SET)；clearerr(fp)的执行</pre>",
+          "<p>结果。</p>",
+          "<pre class=\"card-code\">int fgetpos(FILE *stream, fpos_t *ptr)\n   fgetpos函数把stream流的当前位置记录在*ptr中，供随后的fsetpos函数调用使</pre>",
+          "<p>用。若出错则返回一个非 0值。</p>",
+          "<pre class=\"card-code\">int fsetpos(FILE *stream, const fpos_t *ptr)\n   fsetpos函数将流stream的当前位置设置为fgetpos记录在*ptr中的位置。若出错</pre>",
+          "<p>则返回一个非 0值。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "B.1.7",
+        "title": "错误处理函数",
+        "page": null,
+        "paragraphs": [
+          "<p>当发生错误或到达文件末尾时，标准库中的许多函数都会设置状态指示符。这些状态指示符可被显式地设置和测试。另外，整型表达式<code>errno</code>（在<code>&lt;errno.h&gt;</code>中声明）可以包含一个错误编号，据此可以进一步了解最近一次出错的信息。</p>",
+          "<pre class=\"card-code\">void clearerr(FILE *stream)</pre>",
+          "<p><code>clearerr</code>函数清除与流<code>stream</code>相关的文件结束符和错误指示符。</p>",
+          "<pre class=\"card-code\">int feof(FILE *stream)</pre>",
+          "<p>如果设置了与<code>stream</code>流相关的文件结束指示符，<code>feof</code>函数将返回一个非 0值，</p>",
+          "<pre class=\"card-code\">int ferror(FILE *stream)</pre>",
+          "<p>如果设置了与<code>stream</code>流相关的错误指示符，<code>ferror</code>函数将返回一个非 0值。</p>",
+          "<pre class=\"card-code\">void perror(const char *s)</pre>",
+          "<p><code>perror(s)</code>函数打印字符串 <code>s</code>以及与 <code>errno</code>中整型值相应的错误信息，错误信息的具体内容与具体的实现有关。该函数的功能类似于执行下列语句：</p>",
+          "<pre class=\"card-code\">   fprintf(stderr, &quot;%s: %s\\n&quot;, s, &quot;error message&quot;);</pre>",
+          "<p>有关函数<code>strerror</code>的信息，参见 B.3节中的介绍。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "B.2",
+        "title": "字符类别测试：<ctype.h>",
+        "page": null,
+        "paragraphs": [
+          "<p>头文件<code>&lt;ctype.h&gt;</code>中声明了一些测试字符的函数。每个函数的参数均为<code>int</code>类型，参数的值必须是<code>EOF</code>或可用<code>unsigned char</code>类型表示的字符，函数的返回值为<code>int</code>类型。如果参数<code>c</code>满足指定的条件，则函数返回非 0值（表示真），否则返回 0（表示假）。这些函数包括：</p>",
+          "<pre class=\"card-code\">isalnum(c) 函数isalpha(c)或isdigit(c)为真</pre>",
+          "<pre class=\"card-code\">isalpha(c) 函数isupper(c)或islower(c)为真\niscntrl(c) c 为控制字符\nisdigit(c) c 为十进制数字\nisgraph(c) c 是除空格外的可打印字符\nislower(c) c 是小写字母\nisprint(c) c 是包括空格的可打印字符</pre>",
+          "<p><code>ispunct(c) c</code> 是除空格、字母和数字外的可打印字符<code>isspace(c) c</code> 是空格、换页符、换行符、回车符、横向制表符或纵向制表符</p>",
+          "<pre class=\"card-code\">isupper(c) c 是大写字母\nisxdigit(c) c 是十六进制数字</pre>",
+          "<p>在<code>7</code>位<code>ASCII</code>字符集中，可打印字符是从<code>0x20</code>（<code>' '</code>）到<code>0x7E</code>（<code>'~'</code>）之间的字符；控制字符是从 0（<code>NUL</code>）到<code>0xlF</code>（<code>US</code>）之间的字符以及字符<code>0x7F</code>（<code>DEL</code>）。</p>",
+          "<p>另外，下面两个函数可用于字母的大小写转换：</p>",
+          "<pre class=\"card-code\">   int tolower(int c)    将c转换为小写字母\n   int toupper(int c)    将c转换为大写字母</pre>",
+          "<p>如果<code>c</code>是大写字母，则<code>tolower(c)</code>返回相应的小写字母，否则返回<code>c</code>。如果<code>c</code>是小写字母，则<code>toupper(c)</code>返回相应的大写字母，否则返回<code>c</code>。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "B.3",
+        "title": "字符串函数：<string.h>",
+        "page": null,
+        "paragraphs": [
+          "<p>头文件<code>&lt;string.h&gt;</code>中定义了两组字符串函数。第一组函数的名字以 <code>str</code>开头；第二组函数的名字以<code>mem</code>开头。除函数<code>memmove</code>外，其它函数都没有定义重叠对象间的复制行为。比较函数将把参数作为<code>unsigned char</code> 类型的数组看待。</p>",
+          "<pre class=\"card-code\">   在下表中，变量s和t的类型为char *；cs和ct的类型为const char * ；n的类</pre>",
+          "<p>型为<code>size_t</code>；<code>c</code>的类型为<code>int</code>（将被转换为<code>char</code>类型）。</p>",
+          "<pre class=\"card-code\">char *strcpy(s,ct)            将字符串ct（包括&#x27;\\0&#x27;）复制到字符串s中，并返\n                             回s\nchar *strncpy(s,ct,n)         将字符串ct中最多n个字符复制到字符串s中，并</pre>",
+          "<p>返回<code>s</code>。如果<code>ct</code>中少于<code>n</code>个字符，则用<code>'\\0'</code>填充</p>",
+          "<pre class=\"card-code\">char *strcat(s,ct)            将字符串ct连接到s的尾部，并返回s\nchar *strncat(s,ct,n)         将字符串ct中最多前n个字符连接到字符串s的尾</pre>",
+          "<p>部，并以<code>'\\0'</code>结束；该函数返回<code>s</code></p>",
+          "<pre class=\"card-code\">int strcmp(cs,ct)             比较字符串cs和ct；当cs&lt;ct时，返回一个负数；</pre>",
+          "<p>当 <code>cs==ct</code>时，返回 0；当 <code>cs&gt;ct</code>时，返回一个正数</p>",
+          "<pre class=\"card-code\">int strncmp(cs,ct,n)          将字符串cs中至多前n个字符与字符串ct相比较。</pre>",
+          "<p>当<code>cs&lt;ct</code>时，返回一个负数：当<code>cs==ct</code>时，返回0；当<code>cs&gt;ct</code>时，返回一个正数</p>",
+          "<pre class=\"card-code\">char *strchr(cs,c)            返回指向字符c在字符串cs中第一次出现的位置的</pre>",
+          "<p>指针；如果<code>cs</code>中不包含<code>c</code>，则该函数返回<code>NULL</code></p>",
+          "<pre class=\"card-code\">char *strrchr(cs,c)           返回指向字符c在字符串cs中最后一次出现的位置</pre>",
+          "<p>的指针；如果<code>cs</code>中不包含<code>c</code>，则该函数返回<code>NULL</code></p>",
+          "<pre class=\"card-code\">size_t strspn(cs,ct)          返回字符串cs中包含ct中的字符的前缀的长度\nsize_t strcspn(cs,ct)         返回字符串cs中不包含ct中的字符的前缀的长度\nchar *strpbrk(cs,ct)          返回一个指针，它指向字符串 ct中的任意字符第一</pre>",
+          "<p>次出现在字符串<code>cs</code>中的位置；如果<code>cs</code>中没有与<code>ct</code>相同的字符，则返回<code>NULL</code></p>",
+          "<pre class=\"card-code\">char *strstr(cs,ct)           返回一个指针，它指向字符串 ct第一次出现在字符</pre>",
+          "<p>串<code>cs</code>中的位置；如果<code>cs</code>中不包含字符串<code>ct</code>，则返</p>",
+          "<pre class=\"card-code\">                             回NULL\nsize_t strlen(cs)             返回字符串cs的长度\nchar *strerror(n)             退回一个指针，它指向与错误编号n对应的错误信息</pre>",
+          "<p>字符串（错误信息的具体内容与具体实现相关）</p>",
+          "<pre class=\"card-code\">char *strtok(s,ct) strtok            函数在s中搜索由ct中的字符界定的记号。</pre>",
+          "<p>详细信息参见下面的讨论</p>",
+          "<p>对<code>strtok(s, ct)</code>进行一系列调用，可以把字符串<code>s</code>分成许多记号，这些记号以<code>ct</code>中的字符为分界符。第一次调用时，<code>s</code>为非空。它搜索<code>s</code>，找到不包含<code>ct</code>中字符的第一个记号，将<code>s</code>中的下一个字符替换为<code>'\\0'</code>，并返回指向记号的指针。随后，每次调用<code>strtok</code>函数时（由<code>s</code>的值是否为<code>NULL</code>指示），均返回下一个不包含<code>ct</code>中字符的记号。当<code>s</code>中没有这样的记号时，返回<code>NULL</code>。每次调用时字符串<code>ct</code>可以不同。</p>",
+          "<p>以 <code>mem</code>开头的函数按照字符数组的方式操作对象，其主要目的是提供一个高效的函数接口。在下表列出的函数中，<code>s</code>和<code>t</code>的类型均为<code>void *</code>，<code>cs</code>和<code>ct</code>的类型均为<code>const void *</code>，</p>",
+          "<pre class=\"card-code\">n的类型为size_t，c的类型为int（将被转换为unsigned char 类型）。\nvoid *memcpy(s,ct,n) 将字符串ct中的n个字符拷贝到s中，并返回s\nvoid *memmove(s,ct,n) 该函数的功能与 memcpy相似，所不同的是，当对象重叠</pre>",
+          "<p>时，该函数仍能正确执行</p>",
+          "<pre class=\"card-code\">int memcmp(cs,ct,n)       将cs的前n个字符与ct进行比较，其返回值与strcmp</pre>",
+          "<p>的返回值相同<code>void *memchr(cs,c,n)</code> 返回一个指针，它指向<code>c</code>在<code>cs</code>中第一次出现的位置。如果</p>",
+          "<p><code>cs</code>的前<code>n</code>个字符中找不到匹配，则返回<code>NULL</code></p>",
+          "<pre class=\"card-code\">void *memset(s,c,n)       将s中的前n个字符替换为c，并返回s</pre>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "B.4",
+        "title": "数学函数：<math.h>",
+        "page": null,
+        "paragraphs": [
+          "<p>头文件<code>&lt;math.h&gt;</code>中声明了一些数学函数和宏。</p>",
+          "<p>宏 <code>EDOM</code>和 <code>ERANGE</code>（在头文件<code>&lt;error.h&gt;</code>中声明）是两个非 0整型常量，用于指示函数的定义域错误和值域错误；<code>HUGE_VAL</code>是一个 <code>double</code>类型的正数。当参数位于函数定义的作用域之外时，就会出现定义域错误。在发生定义域错误时，全局变量<code>errno</code>的值将被设置为<code>EDOM</code>，函数的返回值与具体的实现相关。如果函数的结果不能用<code>double</code>类型表示，则会发生值域错误。当结果上溢时，函数返回 <code>HUGE_VAL</code>，并带有正确的正负号，<code>errpo</code>的值将被设置为<code>ERANGE</code>。当结果下溢时，函数返回 0，而<code>errno</code>是否设置为<code>ERANGE</code>要视具体的实现而定。</p>",
+          "<p>在下表中，<code>x</code> 和 <code>y</code>的类型为 <code>double</code>，<code>n</code> 的类型为 <code>int</code>，所有函数的返回值的类型均为<code>double</code>。三角函数的角度用弧度表示。</p>",
+          "<pre class=\"card-code\">sin(x) x               的正弦值\ncos(x) x               的余弦值\ntan(x) x               的正切值\n                                    -1\nasin(x) sin               (x)，值域为[-π /2, π /2]，其中x∈ [-1, 1]\n                                    -1\nacos(x) cos               (x)，值域为[0, π ]，其中x∈ [-1, 1]\n                                    -1\natan(x) tan               (x)，值域为[-π /2, π /2]\n                                    -1\natan2(y,x) tan            (y/x)，值域为[-π , π ]\nsinh(x) x              的双曲正弦值\ncosh(x) x              的双曲余弦值\ntanh(x) x              的双曲正切值\n                                         x\nexp(x)               幂函数e\nlog(x)               自然对数ln(x)，其中x&gt;0\nlog10(x)             以10为底的对数log10(x)，其中x&gt;0\n                                 y\npow(x,y) x             。如果x=0且y≤ 0，或者x&lt;0且y不是整型数，将产生定义</pre>",
+          "<p>域错误</p>",
+          "<pre class=\"card-code\">sqrt(x) x              的平方根，其中x≥ 0\nceil(x)              不小于x的最小整型数，其中x的类型为double\nfloor(x)             不大于x的最大整型数，其中x的类型为double\nfabs(x) x              的绝对值|x|</pre>",
+          "<p>n</p>",
+          "<pre class=\"card-code\">ldexp(x,n)           计算x.2 的值\nfrexp(x, int *ip) 把x分成一个在[1/2, 1]区间内的真分数和一个 2的幂数。结</pre>",
+          "<p>果将返回真分数部分，并将幂数保存在<code>*exp</code> 中。如果 <code>x</code>为 0，则这两部分均为 0<code>modf(x, double *ip)</code> 把<code>J</code>分成整数和小数两部分，两部分的正负号均与<code>x</code>相同。该函</p>",
+          "<p>数返回小数部分，整数部分保存在‘ <code>ip</code>中</p>",
+          "<pre class=\"card-code\">fmod(x,y)            求JJy的浮点余数，符号与j相同。如果y为0，则结果与具体</pre>",
+          "<p>的实现相关</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "B.5",
+        "title": "实用函数：<stdlib.h>",
+        "page": null,
+        "paragraphs": [
+          "<p>头文件<code>&lt;stdlib.h&gt;</code>中声明了一些执行数值转换、内存分配以及其它类似工作的函数。</p>",
+          "<pre class=\"card-code\">double atof(const char *s)\n   atof 函数将字符串 s 转换为 double 类型。 该函数等 价于 strtod（s,\n(char**)NULL）。\nint atoi(const char *s)\n   atoi 函数将字符串 s 转换为 int 类型。 该函数等 价于(int)strtol(s,\n(char**)NULL, 10)。</pre>",
+          "<pre class=\"card-code\">long atol(const char *s)\n   atol函数将字符串s转换为long类型。该函数等价于strtol(s, (char**)NULL,\n10)。\ndouble strtod(const char *s, char **endp)</pre>",
+          "<p><code>strtod</code>函数将字符串<code>s</code>的前缀转换为<code>double</code>类型，并在转换时跳过<code>s</code>的前导空白符。除了<code>endp</code>为<code>NULL</code>，否则该函数将把指向<code>s</code>中未转换部分（<code>s</code>的后缀部分）的指针保存在<code>*endp</code>中。如果结果上溢，则函数返回带有适当符号<code>HUGE_VAL</code>；如果结果下溢，则返回 0。在这两种情况下，<code>errno</code>都将被设置为<code>ERANGE</code>。</p>",
+          "<pre class=\"card-code\">long strtol(const char *s, char **endp, int base)</pre>",
+          "<p><code>strtol</code>函数将字符串<code>s</code>的前缀转换为<code>long</code>类型，并在转换时跳过<code>s</code>的前导空白符。除非<code>endp</code>为<code>NULL</code>，否则该函数将把指向<code>s</code>中末转换部分（<code>s</code>的后辍部分）的指针保存在<code>*endp</code>中。如果<code>base</code>的取值在 2～36之间，则假定输入是以该数为基底的；如果<code>base</code>的取值为 0，则基底为八进制、十进制或十六进制。以 0为前缀的是八进制，以 0x或 0X为前缀的是十六进制。无论在哪种情况下。字母均表示 10～<code>base-</code>1之间的数字。如果 <code>base</code>值是 16，则可以加上前导 0x或 0X。如果结果上溢，则函数根据结果的符号返回<code>LONG_MAX</code>或<code>LONG_MIN</code>，</p>",
+          "<pre class=\"card-code\">同时将errno的值设置为ERANGE。\nunsigned long strtoul(const char *s, char **endp, int base)\n   strtoul函数的功能与strtol函数相同，但其结果为unsigned long类型，错误值\n为ULONG_MAX。\nint rand(void)</pre>",
+          "<p><code>rand</code>函数产生一个 0～<code>RAND_MAX</code>之间的伪随机整数。<code>RAND_MAX</code>的取值至少为 32767。</p>",
+          "<pre class=\"card-code\">void srand(unsigned int seed)</pre>",
+          "<p><code>srand</code>函数将<code>seed</code>作为生成新的伪随机数序列的种子数。种子数<code>seed</code>的初值为 1。</p>",
+          "<pre class=\"card-code\">void *calloc(size_t nobj, size_t size)</pre>",
+          "<p><code>calloc</code>函数为由<code>nobj</code>个长度为<code>size</code>的对象组成的数组分配内存，并返回指向分配区域的指针；若无法满足要求，则返回<code>NULL</code>。该空间的初始长度为 0字节。</p>",
+          "<pre class=\"card-code\">void *malloc(size_t size)</pre>",
+          "<p><code>malloc</code>函数为长度为<code>size</code>的对象分配内存，并返回指向分配区域的指针；若无法满足要求，则返回<code>NULL</code>。该函数不对分配的内存区域进行初始化。</p>",
+          "<pre class=\"card-code\">void *realloc(void *p, size_t size)</pre>",
+          "<p><code>realloc</code>函数将<code>p</code>指向的对象的长度修改为<code>size</code>个字节。如果新分配的内存比原内存大，则原内存的内容保持不变，增加的空间不进行初始化。如果新分配的内存比原内存小，则新分配内存单元不被初始化：<code>realloc</code>函数返回指向新分配空间的指针；若无法满足要求，则返回<code>NULL</code>。在这种情况下，原指针<code>p</code>指向的单元内容保持不变。</p>",
+          "<pre class=\"card-code\">void free(void *p)</pre>",
+          "<p><code>free</code>函数释放<code>p</code>指向的内存空间。当<code>p</code>的值为<code>NULL</code>时，该函数不执行任何操作。<code>P</code>必须指向先前使用动态分配函数<code>malloe</code>、<code>realloc</code>或<code>calloc</code>分配的空间。</p>",
+          "<pre class=\"card-code\">void abort(void)\n   abort函数使程序非正常终止。其功能与raise(SIGABRT)类似。\nvoid exit(int status)</pre>",
+          "<p><code>exit</code>函数使程序正常终止。<code>atexit</code>函数的调用顺序与登记的顺序相反，这种情况下，所有已打开的文件缓冲区将被清洗，所有已打开的流将被关闭，控制也将返回给环境。<code>status</code>的值如何返回给环境要视具体的实现而定，但 0值表示终止成功。也可使用值<code>EXIT_SUCCESS</code></p>",
+          "<pre class=\"card-code\">和EXIT_FAILURE作为返回值。\nint atexit(void (*fcn)(void))</pre>",
+          "<p><code>atexit</code>函数登记函数<code>fcn</code>，该函数将在程序正常终止时被调用。如果登记失败，则返回非 0值。</p>",
+          "<pre class=\"card-code\">int system(const char *s)</pre>",
+          "<p><code>system</code>函数将字符串<code>s</code>传递给执行环境。如果<code>s</code>的值为<code>NULL</code>，并且有命令处理程序，则该函数返回非 0值。如果<code>s</code>的值不是<code>NULL</code>，则返回值与具体的实现有关。</p>",
+          "<pre class=\"card-code\">char *getenv(const char *name)</pre>",
+          "<p><code>getenv</code>函数返回与<code>name</code>有关的环境字符串。如果该字符串不存在，则返回<code>NULL</code>。其细节与具体的实现有关。</p>",
+          "<pre class=\"card-code\">void *bsearch(const void *key, const void *base,\n    size_t n, size_t size,\n    int (*cmp)(const void *keyval, const void *datum))\n   bsearch函数在base[0]...base[n-1]之间查找与*key匹配的项。在函数cmp中，</pre>",
+          "<p>如果第一个参数（查找关键字）小于第二个参数（表项），它必须返回一个负值；如果第一个参数等于第二个参数，它必须返回零；如果第一个参数大于第二个参数，它必须返回一个正值。数组<code>base</code>中的项必须按升序排列。<code>bsearch</code>函数返回一个指针，它指向一个匹配项，如果不存在匹配项，则返回<code>NULL</code>。</p>",
+          "<pre class=\"card-code\">void qsort(void *base, size_t n, size_t size,\n    int (*cmp)(const void *, const void *))\n   qsort函数对base[0]...base[n-1]数组中的对象进行升序排序，数组中每个对象的</pre>",
+          "<p>长度为<code>size</code>。比较函数<code>cmp</code>与<code>bsearch</code>函数中的描述相同。</p>",
+          "<pre class=\"card-code\">int abs(int n)</pre>",
+          "<p><code>abs</code>函数返回<code>int</code>类型参数<code>n</code>的绝对值。</p>",
+          "<pre class=\"card-code\">long labs(long n)</pre>",
+          "<p><code>labs</code>函数返回<code>long</code>类型参数<code>n</code>的绝对值。</p>",
+          "<pre class=\"card-code\">div_t div(int num, int denom)</pre>",
+          "<p><code>div</code>函数计算<code>num/denom</code>的商和余数，并把结果分别保存在结构类型<code>div_t</code>的两个<code>int</code>类型的成员<code>quot</code>和<code>rem</code>中。</p>",
+          "<pre class=\"card-code\">ldiv_t ldiv(long num, long denom)</pre>",
+          "<p><code>idiv</code>函数计算<code>num/denom</code>的商和余数，并把结果分别保存在结构类型<code>idiv_t</code>的两个</p>",
+          "<pre class=\"card-code\">long类型的成员quot和rem中。</pre>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "B.6",
+        "title": "诊断：<assert.h>",
+        "page": null,
+        "paragraphs": [
+          "<p><code>assert</code>宏用于为程序增加诊断功能。其形式如下：</p>",
+          "<pre class=\"card-code\">void assert(int expression)</pre>",
+          "<p>如果执行语句</p>",
+          "<pre class=\"card-code\">assert(expression)</pre>",
+          "<p>时，表达式的值为 0，则<code>assert</code>宏将在<code>stderr</code>中打印一条消息，比如：</p>",
+          "<pre class=\"card-code\">   Assertion failed: 表连式, file 源文件名, line 行号</pre>",
+          "<p>打印消息后，该宏将调用<code>abort</code>终止程序的执行。其中的源文件名和行号来自于预处理器宏</p>",
+          "<pre class=\"card-code\">__FILE__及__LINE__。</pre>",
+          "<p>如果定义了宏<code>NDEBUG</code>，同时又包含了头文件<code>&lt;assert.h&gt;</code>，则<code>assert</code>宏将被忽略。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "B.7",
+        "title": "可变参数表：<stdarg.h>",
+        "page": null,
+        "paragraphs": [
+          "<p>头文件<code>&lt;stdarg.h&gt;</code>提供了遍历未知数目和类型的函数参数表的功能。</p>",
+          "<p>假定函数<code>f</code>带有可变数目的实际参数，<code>lastarg</code>是它的最后一个命名的形式参数。那么，在函数<code>f</code>内声明一个类型为<code>va_list</code>的变量<code>ap</code>，它将依次指向每个实际参数：</p>",
+          "<pre class=\"card-code\">va_list ap;</pre>",
+          "<p>在访问任何未命名的参数前，必须用<code>va</code>— <code>start</code>宏初始化<code>ap</code>一次：</p>",
+          "<pre class=\"card-code\">va_start(va_list ap, lastarg);</pre>",
+          "<p>此后，每次执行宏 <code>va_arg</code>都将产生一个与下一个未命名的参数具有相同类型和数值的值，它同时还修改<code>ap</code>，以使得下一次执行<code>va_arg</code>时返回下一个参数：</p>",
+          "<pre class=\"card-code\">   type va_arg(va_list ap, type);</pre>",
+          "<p>在所有的参数处理完毕之后，且在退出函数<code>f</code>之前，必须调用宏<code>va_end</code>一次，如下所示：</p>",
+          "<pre class=\"card-code\">void va_end(va_list ap);</pre>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "B.8",
+        "title": "非局部跳转：<setjmp.h>",
+        "page": null,
+        "paragraphs": [
+          "<p>头文件<code>&lt;setjmp.h&gt;</code>中的声明提供了一种不同于通常的函数调用和返回顺序的方式，特别是，它允许立即从一个深层嵌套的函数调用中返回。</p>",
+          "<pre class=\"card-code\">int setjmp(jmp_buf env)</pre>",
+          "<p><code>setjmp</code>宏将状态信息保存到<code>env</code>中，供<code>longjmp</code>使用。如果直接调用<code>setjmp</code>，则返回值为 0；如果是在<code>longjmp</code>中调用<code>setjmp</code>，则返回值为非 0。<code>Setjmp</code>只能用于某些上下文中，如用于<code>if</code>语句、<code>switch</code>语句、循环语句的条件测试中以及一些简单的关系表达式中。例如：</p>",
+          "<pre class=\"card-code\">      if (setjmp(env) == 0)\n          /* get here on direct call */\n      else\n          /* get here by calling longjmp */\nvoid longjmp(jmp_buf env, int val)</pre>",
+          "<p><code>longjmp</code>通过最近一次调用<code>setjmp</code>时保存到<code>env</code>中的信息恢复状态，同时，程序重新恢复执行，其状态等同于<code>setjmp</code>宏调用刚刚执行完并返回非 0值<code>val</code>。包含<code>setjmp</code>宏调用的函数的执行必须还没有终止。除下列情况外，可访问对象的值同调用<code>longjmp</code>时的值相同：在调用<code>setjmp</code>宏后，如果调用<code>setjmp</code>宏的函数中的非<code>volatile</code>自动变量改变了，则它们将变成未定义状态。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "B.9",
+        "title": "信号：<signal.h>",
+        "page": null,
+        "paragraphs": [
+          "<p>头文件<code>&lt;signal.h&gt;</code>提供了一些处理程序运行期间引发的各种异常条件的功能，比如来源于外部的中断信号或程序执行错误引起的中断信号。</p>",
+          "<pre class=\"card-code\">void (*signal(int sig, void (*handler)(int)))(int)</pre>",
+          "<p><code>signal</code> 决定了如何处理后续的信号。如果 <code>handler</code>的值是 <code>SIG_DFL</code>，则采用由实现定义的默认行为；如果<code>handler</code>的值是<code>SIG_IGN</code>，则忽略该信号；否则，调用<code>handler</code>指向的函数(以信号作为参数)。有效的信号包括：</p>",
+          "<p><code>SIGABRT</code> 异常终止，例如由<code>abort</code>引起的终止<code>SIGFPE</code> 算术运算出错，如除数为 0或溢出<code>SIGILL</code> 非法函数映像，如非法指令<code>SIGINT</code> 用于交互式目的信号，如中断<code>SIGSEGV</code> 非法存储器访问，如访问不存在的内存单元<code>SIGTERM</code> 发送给程序的终止请求</p>",
+          "<p>对于特定的信号，<code>signal</code>将返回<code>handler</code>的前一个值；如果出现错误，则返回值<code>SIG_ERR</code>。</p>",
+          "<p>当随后碰到信号 <code>sig</code>时，该信号将恢复为默认行为，随后调用信号处理程序，就好像由<code>(*handler)(sig)</code>调用的一样。信号处理程序返回后，程序将从信号发生的位置重新开始执行。</p>",
+          "<p>信号的初始状态由具体的实现定义。</p>",
+          "<pre class=\"card-code\">int raise(int sig)</pre>",
+          "<p><code>raise</code>向程序发送信号<code>sig</code>。如果发送不成功，则返回一个非 0值。</p>"
+        ],
+        "theory": []
+      },
+      {
+        "number": "B.10",
+        "title": "日期与时间函数：<time.h>",
+        "page": null,
+        "paragraphs": [
+          "<p>头文件<code>&lt;time.h&gt;</code>中声明了一些处理日期与时间的类型和函数。其中的一些函数用于处理当地时间，因为时区等原同，当地时间与日历时间可能不相同。<code>clock_t</code>和<code>time_t</code>是两个表示时间的算术类型，<code>struct tm</code> 用于保存日历时间的各个构成部分。结构<code>tm</code>中各成员的用途及取值范围如下所示：</p>",
+          "<pre class=\"card-code\">int tm_sec;                从当前分钟开始经过的秒数(0, 61)\nint tm_min;                从当前小时开始经过的分钟数(0, 59)\nint tm_hour;               从午夜开始经过的小时数(0, 23)\nint tm_mday;               当月的天数(1, 31)\nint tm_mon;                从1月起经过的月数(0, 11)\nint tm_year;               从1900年起经过的年数\nint tm_wday;               从星期天起经过的天数(0, 6)\nint tm_yday;               从1月1日起经过的天数(0, 365)\nint tm_isdst;              夏令时标记</pre>",
+          "<p>使用令时，<code>tm_isdst</code>的值为正，否则为 0。如果该信息无效，则其值为负。</p>",
+          "<pre class=\"card-code\">clock_t clock(void)</pre>",
+          "<p><code>clock</code> 函数返回程序开始执行后占用的处理器时间。如果无法获取处理器时间，则返回</p>",
+          "<pre class=\"card-code\">值为-1。clock()/CLOCKS_PER_SEC是以秒为单位表示的时间。\ntime_t time(time_t *tp)</pre>",
+          "<p><code>time</code>函数返回当前日历时间。如果无法获取日历时间，则返回值为-1。如果<code>tp</code>不是<code>NULL</code>，则同时将返回值赋给<code>*tp</code>。</p>",
+          "<pre class=\"card-code\">double difftime(time_t time2, time_t time1)\n   difftime函数返回time2-time1的值（以秒为单位）。\ntime_t mktime(struct tm *tp)</pre>",
+          "<p><code>mktime</code>函数将结构<code>*tp</code>中的当地时间转换为与<code>time</code>表示方式相同的日历时间，结构中各成员的值位于上面所示范围之内。<code>mktime</code>函数返回转换后得到的日历时间；如果该时间不能表示，则返回-1。</p>",
+          "<p>下面<code>4</code>个函数返回指向可被其它调用覆盖的静态对象的指针。</p>",
+          "<pre class=\"card-code\">char *asctime(const struct tm *tp)</pre>",
+          "<p><code>asctime</code>函数将结构<code>*tp</code>中的时间转换为下列所示的字符串形式：</p>",
+          "<pre class=\"card-code\">   Sun Jan 3 15:14:13 1988\\n\\0\nchar *ctime(const time_t *tp)</pre>",
+          "<p><code>ctime</code>函数将结构<code>*tp</code>中的日历时间转换为当地时间。它等价于下列函数调用：</p>",
+          "<pre class=\"card-code\">   asctime(localtime(tp))\nstruct tm *gmtime(const time_t *tp)</pre>",
+          "<p><code>gmtime</code>函数将<code>*tp</code>中的日历时间转换为协调世界时（<code>UTC</code>）。如果无法获取 <code>UTC</code>，则该函数返回<code>NULL</code>。函数名字<code>gmtime</code>有一定的历史意义。</p>",
+          "<pre class=\"card-code\">struct tm *localtime(const time_t *tp)</pre>",
+          "<p><code>localtime</code>函数将结构<code>*tp</code>中的日历时间转换为当地时间。</p>",
+          "<pre class=\"card-code\">size_t strftime(char *s, size_t smax, const char *fmt, const struct tm\n*tp)</pre>",
+          "<p><code>strftime</code>函数根据<code>fmt</code>中的格式把结构<code>*tp</code>中的日期与时间信息转换为指定的格式，并存储到<code>s</code>中，其中<code>fmt</code>类似于<code>printf</code>函数中的格式说明。普通字符（包括终结符<code>'\\0'</code>）将复制到<code>s</code>中。每个<code>%c</code>将按照下面描述的格式替换为与本地环境相适应的值。最多<code>smax</code>个字符写到 <code>s</code>中。<code>strftime</code>函数返回实际写到 <code>s</code>中的字符数（不包括字符<code>'\\0'</code>）；如果字符数多于<code>smax</code>，该函数将返回值 0。</p>",
+          "<p><code>fmt</code>的转换说明及其含义如下所示：</p>",
+          "<pre class=\"card-code\">   %a        一星期中各天的缩写名\n   %A        一星期中各天的全名\n   %b        缩写的月份名\n   %B        月份全名\n   %c        当地时间和日期表示\n   %d        一个月中的某一天（01-31）\n   %H        小时（24小时表示）（00-23）\n   %I        小时（12小时表示）（01-12）\n   %j        一年中的各天（001— 366）\n   %m        月份（01-12）\n   %M        分钟（00-59）\n   %p        与AM与PM相应的当地时间等价表示方法\n   %S        秒（00-61）\n   %U        一年中的星期序号（00-53，将星期日看作是每周的第一天）\n   %w        一周中的各天（0-6，星期日为0）\n   %W        一年中的星期序号（00-53，将星期一看作是每周的第一天）\n   %x        当地日期表示\n   %X        当地时间表示\n   %y        不带世纪数目的年份（00-99）\n   %Y        带世纪数目的年份\n   %Z        时区名（如果有的话）\n   %% %       本身</pre>",
+          "<p>B.11 与具体实现相关的限制：&lt;limits.h&gt;和&lt;float.h&gt;</p>",
+          "<p>头文件<code>&lt;limits.h&gt;</code>定义了一些表示整型大小的常量。以下所列的值是可接受的最小值，在实际系统中可以使用更大的值。</p>",
+          "<pre class=\"card-code\">CHAR_BIT 8                         char类型的位数\nCHAR_MAX UCHAR_MAX 或SCHAR_MAX char 类型的最大值\nCHAR_MIN 0或SCHAR_MIN              char类型的最小值\nINT_MAX       32767                      int类型的最大值\nINT_MIN       -32767                     int类型的最小值\nLONG_MAX 2147483647                 long类型的最大值\nLONG_MIN -2147483647                 long类型的最小值</pre>",
+          "<pre class=\"card-code\">SCHAR_MAX +127                       signed char 类型的最大值\nSCHAR_MIN -127                       signed char 类型的最小值\nSHRT_MAX +32767                     short类型的最大值\nSHRT_MIN -32767                     short类型的最小值\nUCHAR_MAX 255                       unsigned char 类型的最大值\nUINT_MAX 65535                      unsigend int 类型的最大值\nULONG_MAX 4294967295                 unsigned long 类型的最大值\nUSHRT_MAX 65535                      unsigned short 类型的最大值</pre>",
+          "<p>下表列出的名字是<code>&lt;float.h&gt;</code>的一个子集，它们是与浮点算术运算相关的一些常量。给出的每个值代表相应量的最小取值。各个实现可以定义适当的值。</p>",
+          "<pre class=\"card-code\">FLT_RADIX        2              指数表示的基数，例如 2、16\nFLT_ROUNDS                      加法的浮点舍入模式\nFLT_DIG          6              表示精度的十进制数字\nFLT_EPSILON 1E-5           最小的数 x，x满足：1.0 + x ≠ 1.0\nFLT_MANT_DIG                尾数中的数（以FLT_RADIX为基数）\nFLT_MAX          1E+37          最大的浮点数</pre>",
+          "<p>n</p>",
+          "<pre class=\"card-code\">FLT_MAX_EXP                最大的数 n，n满足FLT_RADIX-1仍是可表示的\nFLT_MIN          1E-37          最小的规格化浮点数</pre>",
+          "<p>n</p>",
+          "<pre class=\"card-code\">FLT_MIN_EXP                最小的数 n，n满足：10 是一个规格化数\nDBL_DIG          10             表示精度的十进制数字\nDBL_EPSILON 1E-9           最小的数 x，x满足：1.0 + x ≠ 1.0\nDBL_MANT_DIG                尾数中的数（以FLT_RADIX为基数）\nDBL_MAX          1E+37          最大的双精度浮点数</pre>",
+          "<p>n</p>",
+          "<pre class=\"card-code\">DBL_MAX_EXP                最大的数 n，n满足FLT_RADIX-1仍是可表示的\nDBL_MIN          1E-37          最小的规格化双精度浮点数</pre>",
+          "<p>n</p>",
+          "<pre class=\"card-code\">DBL_MIN_EXP                最小的数 n，n满足：10 是一个规格化数</pre>"
+        ],
+        "theory": []
+      }
+    ]
+  },
+  {
+    "meta": {
+      "kicker": "APPENDIX C · CHANGES",
+      "chapter": "附录C 变更小结",
+      "kind": "appendix",
+      "blurb": "自本书第 1版出版以来，C 语言的定义已经发生了一些变化。几乎每次变化都是对原语言的一次扩充，同时每次扩充都是经过精心设计的，并保持了与现有版本的兼容性；其中的一些修改修正了原版本中的歧义性描述；某些修改是对已有版本的变更。许多新增功能都是随AT&T 提供的编译器的文档一同发布的，并被此后的其它 C编译器供应商采纳。前不久，ANSI标准化协会在对 C语言进行标准化时采纳了其中绝大部分的修改，并进行了其它一些重要修正。甚至在正式的 C标准发布之前，ANSI 的报告就已经被一些编译器提供商部分地先期采用了。"
+    },
+    "sections": [],
+    "bookExercises": [],
+    "tutorials": [
+      {
+        "number": "C.1",
+        "title": "变更小结",
+        "page": null,
+        "paragraphs": [
+          "<p>自本书第 1版出版以来，C 语言的定义已经发生了一些变化。几乎每次变化都是对原语言的一次扩充，同时每次扩充都是经过精心设计的，并保持了与现有版本的兼容性；其中的一些修改修正了原版本中的歧义性描述；某些修改是对已有版本的变更。许多新增功能都是随AT&amp;T 提供的编译器的文档一同发布的，并被此后的其它 C编译器供应商采纳。前不久，ANSI标准化协会在对 C语言进行标准化时采纳了其中绝大部分的修改，并进行了其它一些重要修正。甚至在正式的 C标准发布之前，ANSI 的报告就已经被一些编译器提供商部分地先期采用了。</p>",
+          "<p>本附录总结了本书第 1版定义的 C语言与 ANSI新标准之间的差别。我们在这里仅讨论语言本身，不涉及环境和库。尽管环境和库也是标准的重要组成部分，但它们与第 1 版几乎无可比之处，因为第 1版并没有试图规定一个环境或库。</p>",
+          "<p>• 与第 1版相比，标准 C中关于预处理的定义更加细致，并进行了扩充：明确以记号为基础；增加了连接记号的运算符（##）和生成字符串的运算符（#）；增加了新的控制指令（如<code>#elif</code>和<code>#pragma</code>）；明确允许使用相同记号序列重新声明宏；字符串中的形式参数不再被替换。允许在任何地方使用反斜杠字“ \\”进行行的连接，而不仅仅限于在字符串和宏定义中。详细信息参见 A.12节。</p>",
+          "<p>• 所有内部标识符的最小有效长度增加为 31个字符；具有外部连接的标识符的最小有效长度仍然为 6个字符（很多实现中允许更长的标识符）。</p>",
+          "<p>• 通过双问号” ??” 引入的三字符序列可以表示某些字符集中缺少的字符。定义了#、\\、^、[、]、{、}、|、~等转义字符，参见 A.12.1节。注意，三字符序列的引入可能会改变包含“ ??” 的字符串的含义。</p>",
+          "<pre class=\"card-code\">   • 引入了一些新关键字（void、const、volatile、signed和enum）。关键字entry</pre>",
+          "<p>将不再使用。</p>",
+          "<p>• 定义了字符常量和字符串字面值中使用的新转义字符序列。如果\\及其后字符构成的不是转义序列，则其结果是未定义的。参见 A.2.5节。</p>",
+          "<p>• 所有人都喜欢的一个小变化：8和 9不用作八进制数字。</p>",
+          "<p>• 新标准引入了更大的后缀集合，使得常量的类型更加明确：<code>U</code>或<code>L</code>用于整型，<code>F</code>或<code>L</code>用于浮点数。它同时也细化了无后缀常量类型的相关规则（参见 A.2.5节）。</p>",
+          "<p>• 相邻的字符串将被连接在一起。</p>",
+          "<p>• 提供了宽字符字符串字面值和字符常量的表示方法，参见 A.2.6节。</p>",
+          "<p>• 与其它类型一样，对字符类型也可以使用关键字<code>signed</code>或<code>unsigned</code>显式声明为带符号类型或无符号类型。放弃了将<code>long float</code> 作为<code>double</code>的同义词这种独特的用法，但可以用<code>long double</code> 声明更高精度的浮点数。</p>",
+          "<p>• 有段时间，C 语言中可以使用<code>unsigned char</code>类型。新标准引入了关键字<code>signed</code>，用来显式表示字符和其它整型对象的符号。</p>",
+          "<p>• 很多编译器在几年前就实现了<code>void</code>类型。新标准引入了<code>void *</code>类型，并作为一种通用指针类型；在此之前<code>char *</code>扮演着这一角色。同时，明确地规定了在不进行强制类型转换的情况下，指针与整型之间以及不同类型的指针之间运算的规则。</p>",
+          "<p>• 新标准明确指定了算术类型取值范围的最小值，并在两个头文件（<code>&lt;limits.h&gt;</code>和<code>&lt;float.h&gt;</code>）中给出了各种特定实现的特性。</p>",
+          "<p>• 新增加的枚举类型是第 1版中所没有的。</p>",
+          "<p>• 标准采用了 C++中的类型限定符的概念，如<code>const</code>（参见 A.8.2节）。</p>",
+          "<p>• 字符串不再是可以修改的，因此可以放在只读内存区中。</p>",
+          "<p>• 修改了“ 普通算术类型转换”，特别地，“ 整型总是转换为 <code>unsigned</code>类型，浮点数总是转换为<code>double</code>类型” 已更改为“ 提升到最小的足够大的类型”。参见 A.6.5节。</p>",
+          "<p>• 旧的赋值类运算符（如=+）已不再使用。同时，赋值类运算符现在是单个记号；而在第 1版中，它们是两个记号，中间可以用空白符分开。</p>",
+          "<p>• 在编译器中，不再将数学上可结合的运算符当做计算上也是可结合的。</p>",
+          "<p>• 为了保持与一元运算符-的对称，引入了一元运算符+。</p>",
+          "<p>• 指向函数的指针可以作为函数的标志符，而不需要显式的*运算符。参见 A.7.3节。</p>",
+          "<p>• 结构可以被赋值、传递给函数以及被函数返回。</p>",
+          "<p>• 允许对数组应用地址运算符，其结果为指向数组的指针。</p>",
+          "<p>• 在第 1版中，<code>sizeof</code>运算符的结果类型为<code>int</code>，但随后很多编译器的实现将此结果作为 <code>unsigned</code>类型。标准明确了该运算符的结果类型与具体的实现有关，但要求将其类型 <code>size_t</code>在标准头文件<code>&lt;stddef.h&gt;</code>中定义。关于两个指针的差的结果类型（<code>ptrdiff_t</code>）也有类似的变化。参见 A.7.4节与 A.7.7节。</p>",
+          "<p>• 地址运算符&amp;不可应用于声明为<code>register</code>的对象，即使具体的实现未将这种对象存放在寄存器中也不允许使用地址运算符。</p>",
+          "<p>• 移位表达式的类型是其左操作数的类型，右操作数不能提升结果类型。参见 A.7.8节。</p>",
+          "<p>• 标准允许创建一个指向数组最后一个元素的下一个位置的指针，并允许对其进行算术和关系运算。参见 A.7.7节。</p>",
+          "<p>• 标准（借鉴于 C++）引入了函数原型声明的表示法，函数原型中可以声明变元的类型。同时，标准中还规定了显式声明带可变变元表的函数的方法，并提供了一种被认可的处理可变形式参数表的方法。参见 A.7.3节、A.8.6节和 B.7节。旧式声明的函数仍然可以使用，但有一定限制。</p>",
+          "<p>• 标准禁止空声明，即没有声明符，且没有至少声明一个结构，联合或枚举的声明。另一方面，仅仅只带结构标记或联合标记的声明是对该标记的重新声明，即使该标记声明在外层作用域中也是这样。</p>",
+          "<p>• 禁止没有任何说明符或限定符（只是一个空的声明符）的外部数据说明。</p>",
+          "<p>• 在某些实现中，如果内层程序块中包含一个 <code>extern</code>声明，则该声明对该文件的其它部分可见。ANSI 标准明确规定，这种声明的作用域仅为该程序块。</p>",
+          "<p>• 形式参数的作用域扩展到函数的复合语句中，因此，函数中最顶层的变量声明不能与形式参数冲突。</p>",
+          "<p>• 标识符的名字空间有一些变化。ANSI 标准将所有的标号放在个单独的名字空间中，同时也为标号引入了一个单独的名字空问，参见 A.1.1节。结构或联合的成员名将与其所属的结构或联合相关联（这已经是许多实现的共同做法了）。</p>",
+          "<p>• 联合可以进行初始化，初值引用其第一个成员。</p>",
+          "<p>• 自动结构、联合和数组可以进行初始化，但有一些限制。</p>",
+          "<p>• 显式指定长度的字符数组可以用与此长度相同的字符串字面值初始化（不包括字符</p>",
+          "<pre class=\"card-code\">   \\0）。</pre>",
+          "<p>• <code>switch</code>语句的控制表达式和<code>case</code>标号可以是任意整型。</p>"
+        ],
+        "theory": []
       }
     ]
   }
