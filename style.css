@@ -303,7 +303,7 @@ a { color: var(--seal); text-decoration-thickness: 1px; text-underline-offset: 3
 
 /* ============================ 左：教程 ============================ */
 
-/* 章节列表 (位于目录侧栏, 纵向排列; 瀑布式: 每章条目内嵌该章小节) */
+/* 章节列表 (位于目录侧栏, 纵向排列; 瀑布式: 每章条目内嵌该章小节, 带子节的小节再内嵌三级抽屉) */
 .chapter-nav {
   display: flex;
   flex-direction: column;
@@ -371,24 +371,79 @@ a { color: var(--seal); text-decoration-thickness: 1px; text-underline-offset: 3
   padding-left: 9px;
   border-left: 1px solid var(--paper-line);
 }
-.chapter-secs > .chips > .chip:first-child { margin-top: 5px; }
-.chapter-secs > .chips > .chip:last-child { margin-bottom: 7px; }
+.chapter-secs > .chips > :first-child { margin-top: 5px; }
+.chapter-secs > .chips > :last-child { margin-bottom: 7px; }
 
-/* 展开时小节逐条下落淡入; 延迟按顺序递增, 形成瀑布层叠 */
-.chapter-item.is-open .chapter-secs .chip { animation: chipdrop 0.24s ease both; }
-.chapter-item.is-open .chapter-secs .chip:nth-child(1)  { animation-delay: 0.02s; }
-.chapter-item.is-open .chapter-secs .chip:nth-child(2)  { animation-delay: 0.04s; }
-.chapter-item.is-open .chapter-secs .chip:nth-child(3)  { animation-delay: 0.06s; }
-.chapter-item.is-open .chapter-secs .chip:nth-child(4)  { animation-delay: 0.08s; }
-.chapter-item.is-open .chapter-secs .chip:nth-child(5)  { animation-delay: 0.1s; }
-.chapter-item.is-open .chapter-secs .chip:nth-child(6)  { animation-delay: 0.12s; }
-.chapter-item.is-open .chapter-secs .chip:nth-child(7)  { animation-delay: 0.14s; }
-.chapter-item.is-open .chapter-secs .chip:nth-child(8)  { animation-delay: 0.16s; }
-.chapter-item.is-open .chapter-secs .chip:nth-child(9)  { animation-delay: 0.18s; }
-.chapter-item.is-open .chapter-secs .chip:nth-child(10) { animation-delay: 0.2s; }
-.chapter-item.is-open .chapter-secs .chip:nth-child(11) { animation-delay: 0.22s; }
-.chapter-item.is-open .chapter-secs .chip:nth-child(12) { animation-delay: 0.24s; }
-.chapter-item.is-open .chapter-secs .chip:nth-child(n+13) { animation-delay: 0.24s; }
+/* ---- 三级：带子节的小节分组 (.chip-group) 与三级抽屉 (.chip-subs) ---- */
+
+/* 分组容器：父 chip 与其下可开合的三级抽屉同属一个 .chip-group */
+.chip-group { display: block; }
+
+/* 父 chip：标题居左、开合箭头靠右；分组展开时箭头旋转 */
+.chip.has-subs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.chip.has-subs .chip-label { min-width: 0; }
+.chip-caret {
+  margin-left: auto;
+  flex: 0 0 auto;
+  font-size: 10px;
+  line-height: 1;
+  opacity: 0.7;
+  transition: transform 0.24s ease;
+}
+.chip-group.is-open > .chip.has-subs .chip-caret { transform: rotate(180deg); }
+
+/* 三级抽屉：与章抽屉同款 0fr → 1fr 过渡；内层裁剪溢出，左竖线示意隶属关系 */
+.chip-subs {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.28s ease;
+}
+.chip-group.is-open > .chip-subs { grid-template-rows: 1fr; }
+.chip-subs > .chips {
+  overflow: hidden;
+  min-height: 0;
+  margin-left: 20px;
+  padding-left: 8px;
+  border-left: 1px solid var(--paper-line);
+}
+.chip-subs > .chips > .chip:first-child { margin-top: 3px; }
+.chip-subs > .chips > .chip:last-child { margin-bottom: 5px; }
+
+/* 展开时条目逐条下落淡入; 延迟按顺序递增, 形成瀑布层叠。
+   二级条目随章抽屉开合级联, 三级条目随所属父组开合再级联一次;
+   两条链都只按直接子代选择, 互不串扰 */
+.chapter-item.is-open .chapter-secs > .chips > *,
+.chapter-item.is-open .chip-group.is-open > .chip-subs > .chips > * { animation: chipdrop 0.24s ease both; }
+.chapter-item.is-open .chapter-secs > .chips > :nth-child(1),
+.chapter-item.is-open .chip-group.is-open > .chip-subs > .chips > :nth-child(1) { animation-delay: 0.02s; }
+.chapter-item.is-open .chapter-secs > .chips > :nth-child(2),
+.chapter-item.is-open .chip-group.is-open > .chip-subs > .chips > :nth-child(2) { animation-delay: 0.04s; }
+.chapter-item.is-open .chapter-secs > .chips > :nth-child(3),
+.chapter-item.is-open .chip-group.is-open > .chip-subs > .chips > :nth-child(3) { animation-delay: 0.06s; }
+.chapter-item.is-open .chapter-secs > .chips > :nth-child(4),
+.chapter-item.is-open .chip-group.is-open > .chip-subs > .chips > :nth-child(4) { animation-delay: 0.08s; }
+.chapter-item.is-open .chapter-secs > .chips > :nth-child(5),
+.chapter-item.is-open .chip-group.is-open > .chip-subs > .chips > :nth-child(5) { animation-delay: 0.1s; }
+.chapter-item.is-open .chapter-secs > .chips > :nth-child(6),
+.chapter-item.is-open .chip-group.is-open > .chip-subs > .chips > :nth-child(6) { animation-delay: 0.12s; }
+.chapter-item.is-open .chapter-secs > .chips > :nth-child(7),
+.chapter-item.is-open .chip-group.is-open > .chip-subs > .chips > :nth-child(7) { animation-delay: 0.14s; }
+.chapter-item.is-open .chapter-secs > .chips > :nth-child(8),
+.chapter-item.is-open .chip-group.is-open > .chip-subs > .chips > :nth-child(8) { animation-delay: 0.16s; }
+.chapter-item.is-open .chapter-secs > .chips > :nth-child(9),
+.chapter-item.is-open .chip-group.is-open > .chip-subs > .chips > :nth-child(9) { animation-delay: 0.18s; }
+.chapter-item.is-open .chapter-secs > .chips > :nth-child(10),
+.chapter-item.is-open .chip-group.is-open > .chip-subs > .chips > :nth-child(10) { animation-delay: 0.2s; }
+.chapter-item.is-open .chapter-secs > .chips > :nth-child(11),
+.chapter-item.is-open .chip-group.is-open > .chip-subs > .chips > :nth-child(11) { animation-delay: 0.22s; }
+.chapter-item.is-open .chapter-secs > .chips > :nth-child(12),
+.chapter-item.is-open .chip-group.is-open > .chip-subs > .chips > :nth-child(12) { animation-delay: 0.24s; }
+.chapter-item.is-open .chapter-secs > .chips > :nth-child(n+13),
+.chapter-item.is-open .chip-group.is-open > .chip-subs > .chips > :nth-child(n+13) { animation-delay: 0.24s; }
 
 @keyframes chipdrop {
   from { opacity: 0; transform: translateY(-7px); }

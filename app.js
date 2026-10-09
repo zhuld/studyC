@@ -2,7 +2,7 @@
  * app.js — 课程页面主逻辑（IIFE，无构建步骤，浏览器直接执行）
  *
  * 职责：
- *   1. 渲染教程：按 lessons.js 提供的课程数据生成章节目录、PDF 小节正文、示例/练习卡片
+ *   1. 渲染教程：按 lessons.js 提供的课程数据生成三级章节目录（章 / 小节 / 三级小节）、PDF 小节正文、示例/练习卡片
  *   2. 教材正文代码块：借 code-blocks.js 的判定规则，给可编译的完整程序加「载入 / 运行」入口
  *   3. 代码工作台：可拖动、缩放、关闭的浮层编辑器（行号 + C 语法高亮 + Tab 缩进）
  *   4. 在线编译：调用 Wandbox 的 list.json（编译器列表）与 compile.json（编译并执行），
@@ -653,9 +653,19 @@
 
   /* ============================ 渲染教程 ============================ */
 
+  /* 开合某个小节分组的三级抽屉，并同步父 chip 的 aria-expanded */
+  function setGroupOpen(group, open) {
+    group.classList.toggle("is-open", open);
+    var tab = group.querySelector(".chip.has-subs");
+    if (tab) tab.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
   /*
-   * 渲染侧栏「小节」列表：PDF 目录小节 → 目录外的补充专题 → 章末习题入口。
-   * 瀑布式目录把小节嵌在所属章节条目内，故这里只填当前章节的抽屉；
+   * 渲染侧栏「小节」列表（三级瀑布目录的第二、三级）：
+   *   二级小节（编号两段，如 1.5）直接作为 chip 挂在当前章抽屉下；
+   *   三级小节（编号三段，如 1.5.1）按编号前缀收进父节的 .chip-group，
+   *   点父节在跳转正文的同时开合其三级抽屉，点三级 chip 直接跳转；
+   * 随后追加目录外的补充专题与章末习题入口。
    * 每个 chip 都带 data-outline-topic（供滚动高亮定位），
    * 带练习的还会带 data-practice-sec（供进度标记）。
    */
@@ -670,10 +680,17 @@
     nav.setAttribute("aria-label",
       (isAppendix ? "附录小节，共 " : "PDF目录小节，共 ") +
       activeLesson.tutorials.length + " 项");
-    activeLesson.tutorials.forEach(function (topic) {
+    /* 三级抽屉的 DOM id 由章序号与父节编号派生（1.5 → chapterSubs1-1-5） */
+    function subsIdOf(topic) {
+      return "chapterSubs" + (index + 1) + "-" + topic.number.replace(/\./g, "-");
+    }
+    /* 生成一个小节 chip；hasSubs 时附开合箭头，点击先开合三级抽屉再跳到父节正文 */
+    function makeChip(topic, hasSubs) {
       /* 正文小节的 id 由编号派生（1.5.1 → pdf-topic-1-5-1），点击时按 id 滚动 */
       var targetId = "pdf-topic-" + topic.number.replace(/\./g, "-");
-      var c = el("button", "chip", esc(topic.number + " " + topic.title));
+      var c = el("button", "chip",
+        '<span class="chip-label">' + esc(topic.number + " " + topic.title) + "</span>" +
+        (hasSubs ? '<span class="chip-caret" aria-hidden="true">⌄</span>' : ""));
       c.type = "button";
       c.setAttribute("data-outline-topic", topic.number);
       if (topic.practiceSectionId) {
@@ -682,11 +699,46 @@
       c.title = topic.page
         ? "PDF 第 " + topic.page + " 页"
         : (isAppendix ? "附录小节" : "");
+      if (hasSubs) {
+        c.classList.add("has-subs");
+        c.setAttribute("aria-expanded", "false");
+        c.setAttribute("aria-controls", subsIdOf(topic));
+        c.title = (c.title ? c.title + " · " : "") + "含三级小节，点击开合";
+      }
       c.addEventListener("click", function () {
+        /* 带子节的父 chip 是所在 .chip-group 的直接子元素：先开合，再照旧跳转 */
+        if (hasSubs) {
+          var group = c.parentNode;
+          setGroupOpen(group, !group.classList.contains("is-open"));
+        }
         var target = document.getElementById(targetId);
         if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
       });
-      nav.appendChild(c);
+      return c;
+    }
+    /* 父节编号 → 三级抽屉容器；三段编号的小节据此挂进父节的分组 */
+    var subsOf = {};
+    activeLesson.tutorials.forEach(function (topic) {
+      var segs = topic.number.split(".");
+      if (segs.length > 2) {
+        var parentGroup = subsOf[segs.slice(0, -1).join(".")];
+        /* 父节缺失（数据异常）时不丢条目：落回下面按二级 chip 渲染 */
+        if (parentGroup) { parentGroup.appendChild(makeChip(topic, false)); return; }
+      }
+      var hasChildren = activeLesson.tutorials.some(function (other) {
+        return other.number.indexOf(topic.number + ".") === 0;
+      });
+      if (!hasChildren) { nav.appendChild(makeChip(topic, false)); return; }
+      /* 带三级子节的二级小节：包一层 .chip-group（父 chip + 可开合的三级抽屉） */
+      var group = el("div", "chip-group");
+      var subs = el("div", "chip-subs");
+      subs.id = subsIdOf(topic);
+      var subsList = el("div", "chips");
+      subs.appendChild(subsList);
+      group.appendChild(makeChip(topic, true));
+      group.appendChild(subs);
+      nav.appendChild(group);
+      subsOf[topic.number] = subsList;
     });
     activeLesson.extraSections.forEach(function (section) {
       var targetId = "extra-sec-" + section.id.replace(/\./g, "-");
@@ -927,7 +979,8 @@
   }
 
   /*
-   * 渲染侧栏「章节」瀑布式目录：每章一个条目，内嵌该章的小节抽屉；
+   * 渲染侧栏「章节」瀑布式目录（章 → 小节 → 三级小节）：每章一个条目，内嵌该章的小节抽屉，
+   * 抽屉内的三级分组由 renderChips 填充；
    * 当前章节默认展开，其余折叠。点击当前章节就地开合，点击其他章节则切换。
    */
   function renderChapterNav() {
@@ -1019,12 +1072,23 @@
       map[c.getAttribute("data-outline-topic")] = c;
     });
     var obs = new IntersectionObserver(function (entries) {
+      var hit = null;
       entries.forEach(function (en) {
         if (!en.isIntersecting) return;
         var topic = en.target.getAttribute("data-outline-topic");
-        document.querySelectorAll(".chip").forEach(function (c) { c.classList.remove("current"); });
-        if (map[topic]) map[topic].classList.add("current");
+        var chip = map[topic];
+        if (!chip) return;
+        /* 同一批可能有多节同时落在判定带内（如父节与它的三级小节）：
+           保留文档顺序最靠前的一个，避免批内处理顺序不定导致高亮抖动 */
+        if (hit && (chip.compareDocumentPosition(hit) & Node.DOCUMENT_POSITION_PRECEDING)) return;
+        hit = chip;
       });
+      if (!hit) return;
+      document.querySelectorAll(".chip").forEach(function (c) { c.classList.remove("current"); });
+      hit.classList.add("current");
+      /* 当前项是三级小节时展开其父组，保证高亮条目在侧栏里可见 */
+      var group = hit.closest ? hit.closest(".chip-group") : null;
+      if (group) setGroupOpen(group, true);
     }, { rootMargin: "-15% 0px -70% 0px" });
     setupSpy.observer = obs;
     document.querySelectorAll("[data-outline-topic].outline-topic, [data-outline-topic].supplement-topic").forEach(function (topic) {
@@ -1064,12 +1128,13 @@
       apply(false); persist(false);
     });
 
-    // 窄屏下目录是浮层抽屉: 选中某个小节后自动收起 (点章节只展开其小节, 抽屉保持打开)
+    // 窄屏下目录是浮层抽屉: 选中叶级小节后自动收起;
+    // 点章条目只展开其小节、点带子节的父节只开合三级抽屉, 两者都保持抽屉打开
     var toc = $("toc");
     if (toc) toc.addEventListener("click", function (e) {
       if (!narrow.matches) return;
       var hit = e.target.closest ? e.target.closest(".chip") : null;
-      if (hit) { apply(true); persist(true); }
+      if (hit && !hit.classList.contains("has-subs")) { apply(true); persist(true); }
     });
   }
 
