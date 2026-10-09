@@ -794,9 +794,24 @@ a { color: var(--seal); text-decoration-thickness: 1px; text-underline-offset: 3
   overflow: hidden;
   box-shadow: var(--shadow-panel);
   color: var(--ink);
+  transform-origin: bottom right; /* 开合缩放的锚点，与右下角重开按钮同侧 */
 }
 
 .workbench[hidden] { display: none; }
+
+/* 开合动画：打开时从小放大淡入，关闭时缩小淡出后由 app.js 置 hidden */
+.workbench.is-opening { animation: wb-open 0.24s ease-out both; }
+.workbench.is-closing { animation: wb-close 0.18s ease-in forwards; }
+
+@keyframes wb-open {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes wb-close {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.9); }
+}
 
 .wb-content {
   display: flex;

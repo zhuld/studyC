@@ -183,10 +183,8 @@
   function setCode(src, stdin, judgeCtx) {
     state.loadedCode = src;
     state.currentJudge = judgeCtx || null;
-    if ($("workbench").hidden) {
-      $("workbench").hidden = false;
-      $("workbenchLauncher").hidden = true;
-    }
+    /* 关闭动画中途载入代码时打断关闭、重新弹出（动画类由 showWorkbench 清理） */
+    if (workbench.hidden || workbench.classList.contains("is-closing")) showWorkbench();
     codeEl.value = src;
     stdinEl.value = stdin || "";
     renderEditor();
@@ -229,6 +227,27 @@
     workbench.style.bottom = "auto";
   }
 
+  /*
+   * 工作台开合动画。
+   * 打开：先取消隐藏，重启入场动画类（强制重排以保证重复触发）。
+   * 关闭：先播退场动画，真正 hidden 延后到 animationend（见 setupWorkbench），
+   *      同时把重开入口按钮露出来，让两段动画顺接。
+   */
+  function showWorkbench() {
+    $("workbenchLauncher").hidden = true;
+    workbench.hidden = false;
+    workbench.classList.remove("is-opening", "is-closing");
+    void workbench.offsetWidth; /* 强制重排，令动画类可被再次触发 */
+    workbench.classList.add("is-opening");
+  }
+
+  function hideWorkbench() {
+    workbench.classList.remove("is-opening");
+    void workbench.offsetWidth;
+    workbench.classList.add("is-closing");
+    $("workbenchLauncher").hidden = false;
+  }
+
   /* 工作台交互：关闭/重开、拖动标题栏、右下角缩放，均支持键盘操作 */
   function setupWorkbench() {
     workbench = $("workbench");
@@ -237,14 +256,23 @@
 
     /* 关闭后焦点移回「打开代码工作台」按钮，保持键盘可达 */
     $("workbenchClose").addEventListener("click", function () {
-      workbench.hidden = true;
-      $("workbenchLauncher").hidden = false;
+      hideWorkbench();
       $("workbenchLauncher").focus();
     });
     $("workbenchLauncher").addEventListener("click", function () {
-      workbench.hidden = false;
-      $("workbenchLauncher").hidden = true;
+      showWorkbench();
       workbenchDrag.focus();
+    });
+
+    /* 入场/退场动画结束后摘掉动画类，并把真正隐藏延后到退场播完 */
+    workbench.addEventListener("animationend", function (e) {
+      if (e.target !== workbench) return;
+      if (workbench.classList.contains("is-closing")) {
+        workbench.classList.remove("is-closing");
+        workbench.hidden = true;
+      } else {
+        workbench.classList.remove("is-opening");
+      }
     });
 
     /* 拖动标题栏：按下时先转成 left/top 定位，再用指针捕获跟踪 pointermove，
@@ -252,6 +280,7 @@
     workbenchDrag.addEventListener("pointerdown", function (e) {
       if (e.button !== 0 || e.target.closest(".wb-actions, button, select")) return;
       e.preventDefault();
+      workbench.classList.remove("is-opening"); /* 拖拽前结束入场缩放，避免读到动画中的尺寸 */
       var rect = workbench.getBoundingClientRect();
       var startX = e.clientX, startY = e.clientY;
       var left = rect.left, top = rect.top;
@@ -285,6 +314,7 @@
     workbenchResize.addEventListener("pointerdown", function (e) {
       if (e.button !== 0) return;
       e.preventDefault();
+      workbench.classList.remove("is-opening"); /* 同上：先结束入场缩放再测量尺寸 */
       var rect = workbench.getBoundingClientRect();
       var startX = e.clientX, startY = e.clientY;
       var startWidth = rect.width, startHeight = rect.height;
