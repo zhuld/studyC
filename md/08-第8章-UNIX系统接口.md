@@ -15,8 +15,9 @@ UNIX 操作系统通过一系列的系统调用提供服务，这些系统调用
 因为大多数的输入／输出是通过键盘和显示器来实现的，为了方便起见，UNIX 对此做了特别的安排。当命令解释程序（即“ shell”）运行一个程序的时候，它将打开 3个文件，对应的文件描述符分别为 0，1，2，依次表示标准输入，标准输出和标准错误。如果程序从文件 0中读，对 1和 2进行写，就可以进行输／输出而不必关心打开文件的问题。
 
 程序的使用者可通过<和>重定向程序的 I/O：
-
-`prog <` 输入文件名 > 输出文件名
+```bash
+    prog < 输入文件名 > 输出文件名
+```
 
 这种情况下，shell把文件描述符 0和 1的默认赋值改变为指定的文件。通常，文件描述符 2仍与显示器相关联，这样，出错信息会输出到显示器上。与管道相关的输入／输出也有类似的特性。在任何情况下，文件赋值的改变都不是由程序完成的，而是由 shell完成的。只要程序使用文件 0作为输入，文件 1和 2作为输出，它就不会知道程序的输入从哪里来，并输出到哪里去。
 
@@ -58,9 +59,6 @@ UNIX 操作系统通过一系列的系统调用提供服务，这些系统调用
    /* getchar:  unbuffered single character input */
    int getchar(void)
    {
-```
-
-```c
        char c;
        return (read(0, &c, 1) == 1) ? (unsigned char) c : EOF;
    }
@@ -105,11 +103,7 @@ UNIX 操作系统通过一系列的系统调用提供服务，这些系统调用
 
 `O_RDONLY` 以只读方式打开文件`O_WRONLY` 以只写方式打开文件`O_RDWR` 以读写方式打开文件
 
-在 System V UNIX系统中，这些常量在头文件`<fcntl.h>`中定义，而在 Berkeley（BSD ）
-
-```
-版本中则在<sys/file.h>中定义。
-```
+在 System V UNIX系统中，这些常量在头文件`<fcntl.h>`中定义，而在 Berkeley（BSD ）版本中则在<sys/file.h>中定义。
 
 可以使用下列语句打开一个文件以执行读操作：
 
@@ -159,13 +153,7 @@ UNIX 操作系统通过一系列的系统调用提供服务，这些系统调用
 
 该程序创建的输出文件具有固定的权限 0666。利用 8.6节中将要讨论的`stat`系统调用，可以获得一个已存在文件的模式，并将此模式赋值给它的副本。
 
-注意，函数`error`类似于函数`printf`，在调用时可带变长参数表。下面通过`error`函数的实现说明如何使用`printf`函数家族的另一个成员`vprintf`。标准库函数`vprintf`函数与 `printf`函数类似，所不同的是，它用一个参数取代了变长参数表，且此参数通过调用
-
-```
-va_start宏进行初始化。同样，vfprintf和vsprintf函数分别与fprintf和sprintf
-```
-
-函数类似。
+注意，函数`error`类似于函数`printf`，在调用时可带变长参数表。下面通过`error`函数的实现说明如何使用`printf`函数家族的另一个成员`vprintf`。标准库函数`vprintf`函数与 `printf`函数类似，所不同的是，它用一个参数取代了变长参数表，且此参数通过调用`va_start`宏进行初始化。同样，`vfprintf`和`vsprint`f函数分别与`fprintf`和`sprintf`函数类似。
 
 ```c
    #include <stdio.h>
@@ -185,11 +173,7 @@ va_start宏进行初始化。同样，vfprintf和vsprintf函数分别与fprintf�
 
 一个程序同时打开的文件数是有限制的（通常为 20）。相应地，如果一个程序需要同时处理许多文件，那么它必须重用文件描述符。函数`close`（`int fd`）用来断开文件描述符和已打开文件之间的连接，并释放此文件描述符，以供其它文件使用。`close` 函数与标准库中的`fclose`函数相对应，但它不需要清洗（`flush`）缓冲区。如果程序通过`exit`函数退出或从主程序中返回，所有打开的文件将被关闭。
 
-函数 `unlink(char *name)`将文件 `name` 从文件系统中删除，它对应于标准库函数
-
-```
-remove。
-```
+函数 `unlink(char *name)`将文件 `name` 从文件系统中删除，它对应于标准库函数`remove`
 
 练习 8-1 用`read`、`write`、`open`和`close`系统调用代替标准库中功能等价的函数，重写第 7章的`cat`程序，并通过实验比较两个版本的相对执行速度。
 
@@ -252,9 +236,6 @@ remove。
        int  fd;        /* file descriptor */
    } FILE;
    extern FILE _iob[OPEN_MAX];
-```
-
-```c
    #define stdin   (&_iob[0])
    #define stdout  (&_iob[1])
    #define stderr  (&_iob[2])
@@ -298,9 +279,6 @@ remove。
            if ((fp->flag & (_READ | _WRITE)) == 0)
                break;        /* found free slot */
        if (fp >= _iob + OPEN_MAX)   /* no free slots */
-```
-
-```c
            return NULL;
        if (*mode == 'w')
            fd = creat(name, PERMS);
@@ -352,10 +330,9 @@ remove。
    }
 ```
 
-最后一件事情便是如何执行这些函数。我们必须定义和初始化数组`_iob` 中的 `stdin`、
+最后一件事情便是如何执行这些函数。我们必须定义和初始化数组`_iob` 中的 `stdin`、`stdout`和`stderr`值：
 
-```
-stdout和stderr值：
+```c
    FILE _iob[OPEN_MAX] = {    /* stdin, stdout, stderr */
        { 0, (char *) 0, (char *) 0, _READ, 0 },
        { 0, (char *) 0, (char *) 0, _WRITE, 1 },
@@ -367,9 +344,7 @@ stdout和stderr值：
 
 练习 8-2 用字段代替显式的按位操作，重写 `fopen`和`_fillbuf`函数。比较相应代码的长度和执行速度。
 
-```
-   练习 8-3 设计并编写函数_flushbuf、fflush和fclose。
-```
+练习 8-3 设计并编写函数_flushbuf、fflush和fclose。
 
 练习 8-4 标准库函数
 
@@ -391,10 +366,9 @@ stdout和stderr值：
 
 遗憾的是，在不同版本的系统中，目录的格式和确切的内容是不一样的。因此，为了分离出不可移植的部分，我们把任务分成两部分。外层定义了一个称为 `Dirent`的结构和 3个函数`opendir`、`readdir`和`closedir`，它们提供与系统无关的对目录项中的名字和 i结点编号的访问。我们将利用此接口编写`fsize`程序，然后说明如何在与 Version 7和 System V UNIX 系统的目录结构相同的系统上实现这些函数。其它情况留作练习。
 
-结构`Dirent`包含 i结点编号和文件名。文件名的最大长度由`NAMZ_MAX`设定，`NAME_MAX`的值由系统决定。`opendir`返回一个指向称为`DIR`的结构的指针，该结构与结构`FILE`类似，
+结构`Dirent`包含 i结点编号和文件名。文件名的最大长度由`NAMZ_MAX`设定，`NAME_MAX`的值由系统决定。`opendir`返回一个指向称为`DIR`的结构的指针，该结构与结构`FILE`类似，它将被readdir和closedir使用。所有这些信息存放在头文件dirent.h中。
 
-```
-它将被readdir和closedir使用。所有这些信息存放在头文件dirent.h中。
+```c
    #define NAME_MAX   14  /* longest filename component; */
                                   /* system-dependent */
    typedef struct {       /* portable directory entry */
@@ -412,15 +386,14 @@ stdout和stderr值：
 
 系统调用`stat`以文件名作为参数，返回文件的 i结点中的所有信息；若出错，则返回-1。如下所示：
 
-```
+```c
    char *name;
    struct stat stbuf;
    int stat(char *, struct stat *);
    stat(name, &stbuf);
-它用文件 name的 i结点信息填充结构 stbuf。头文件<sys/stat.h>中包含了描述 stat
 ```
 
-的返回值的结构。该结构的一个典型形式如下所示：
+它用文件 `name`的 i结点信息填充结构 `stbuf`。头文件<sys/stat.h>中包含了描述 `stat`的返回值的结构。该结构的一个典型形式如下所示：
 
 ```c
    struct stat   /* inode information returned by stat */
@@ -447,9 +420,6 @@ stdout和stderr值：
    #define S_IFMT    0160000  /* type of file: */
    #define S_IFDIR   0040000  /* directory */
    #define S_IFCHR   0020000  /* character special */
-```
-
-```c
    #define S_IFBLK   0060000  /* block special */
    #define S_IFREG   0010000  /* regular */
    /* ... */
@@ -545,19 +515,12 @@ stdout和stderr值：
 
 某些版本的系统支持更长的文件名和更复杂的目录结构。
 
-类型`ino_t`是使用`typedef`定义的类型，它用于描述 i结点表的索引。在我们通常使用的系统中，此类型为`unsigned short`，但是这种信息不应在程序中使用。因为不同的系统中该类型可能不同，所以使用 `typedef`定义要好一些。所有的“ 系统” 类型可以在文件
-
-```
-<sys/types.h）中找到。
-```
+类型`ino_t`是使用`typedef`定义的类型，它用于描述 i结点表的索引。在我们通常使用的系统中，此类型为`unsigned short`，但是这种信息不应在程序中使用。因为不同的系统中该类型可能不同，所以使用 `typedef`定义要好一些。所有的“ 系统” 类型可以在文件<sys/types.h）中找到。
 
 `opendir`函数首先打开目录，验证此文件是一个目录（调用系统调用`fstat`，它与`stat`类似，但它以文件描述符作为参数），然后分配一个目录结构，并保存信息：
 
 ```c
    int fstat(int fd, struct stat *);
-```
-
-```c
    /* opendir:  open a directory for readdir calls */
    DIR *opendir(char *dirname)
    {
@@ -627,11 +590,7 @@ stdout和stderr值：
 
 释放过程也是首先搜索空闲块链表，以找到可以插入被释放块的合适位置。如果与被释放块相邻的任一边是一个空闲块，则将这两个块合成一个更大的块，这样存储空间不会有太多的碎片。因为空闲块链表是以地址的递增顺序链接在一起的，所以很容易判断相邻的块是否空闲。
 
-我们在第 5章中曾提出了这样的问题，即确保由 `malloc`函数返回的存储空间满足将要保存的对象的对齐要求。虽然机器类型各异，但是，每个特定的机器都有一个最受限的类型：如果最受限的类型可以存储在某个特定的地址中，则其它所有的类型也可以存放在此地址中。在某些机器中，最受限的类型是 `double`类型；而在另外一些机器中，最受限的类型是 `int`
-
-```
-或long类型。
-```
+我们在第 5章中曾提出了这样的问题，即确保由 `malloc`函数返回的存储空间满足将要保存的对象的对齐要求。虽然机器类型各异，但是，每个特定的机器都有一个最受限的类型：如果最受限的类型可以存储在某个特定的地址中，则其它所有的类型也可以存放在此地址中。在某些机器中，最受限的类型是 `double`类型；而在另外一些机器中，最受限的类型是 `int`或long类型。
 
 空闲块包含一个指向链表中下一个块的指针、一个块大小的记录和一个指向空闲空间本身的指针。位于块开始处的控制信息称为“ 头部“ 。为了简化块的对齐，所有块的大小都必须是头部大小的整数倍，且头部已正确地对齐。这是通过一个联合实现的，该联合包含所需的头部结构以及一个对齐要求最受限的类型的实例，在下面这段程序中，我们假定`long`类型为最受限的类型：
 
@@ -664,9 +623,6 @@ stdout和stderr值：
    static Header *freep = NULL;     /* start of free list */
    /* malloc:  general-purpose storage allocator */
    void *malloc(unsigned nbytes)
-```
-
-```c
    {
        Header *p, *prevp;
        Header *moreroce(unsigned);
@@ -712,9 +668,6 @@ UNIX 系统调用`sbrk(n)`返回一个指针，该指针指向`n`个字节的存
        if (cp == (char *) -1)   /* no space at all */
            return NULL;
        up = (Header *) cp;
-```
-
-```c
        up->s.size = nu;
        free((void *)(up+1));
        return freep;
