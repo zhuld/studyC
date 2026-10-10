@@ -720,7 +720,7 @@ def main() -> None:
     n_appx = sum(len(c["tutorials"]) for c in data[8:])
     print(f"[ OK ] 8 章 / {n_main} 主小节 + {n_sub} 三级小节 + "
           f"{len(data) - 8} 附录 / {n_appx} 附录小节 "
-          f"md⇔JSON 文本逐节一致, 图片一致")
+          f"md 与 JSON 文本逐节一致, 图片一致")
 
 
 if __name__ == "__main__":
