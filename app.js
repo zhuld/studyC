@@ -820,7 +820,7 @@
       /* 正文代码没有 stdin 数据，因此以「不判题」的方式载入 */
       var bar = el("div", "card-actions code-actions");
       var loadBtn = el("button", "btn", "载入编辑器");
-      var runBtn = el("button", "btn primary", "▶ 运行");
+      var runBtn = el("button", "btn primary", "▶ 运行示例");
       loadBtn.type = "button";
       runBtn.type = "button";
       loadBtn.title = "把这段教材代码放进工作台, 可在其中补齐上下文";
@@ -834,6 +834,75 @@
         bar.appendChild(el("span", "code-actions-note", "程序会读取 stdin, 请在工作台填写输入"));
       }
       pre.insertAdjacentElement("afterend", bar);
+    });
+  }
+
+  /* ============================== 代码块复制 ============================== */
+
+  /*
+   * 把文本写入剪贴板：优先 Clipboard API（要求安全上下文），
+   * 被拒绝或不可用（如 http 局域网访问）时回退到隐藏 textarea + execCommand。
+   * 完成后回调 done(ok)，按钮上的文字反馈由调用方负责。
+   */
+  function copyText(text, done) {
+    function fallback() {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      done(ok);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        navigator.clipboard.writeText(text).then(
+          function () { done(true); },
+          fallback
+        );
+      } catch (e) { fallback(); }
+    } else {
+      fallback();
+    }
+  }
+
+  /*
+   * 给代码块加右上角「复制」按钮：先把 pre 包进 .code-fig 容器作为定位上下文，
+   * 按钮因此不会随 pre 的横向滚动移动；复制内容取 pre.textContent，与「载入编辑器」一致。
+   * 正文、补充专题与示例卡的代码块统一在 renderSections 末尾调用一次，
+   * 故须晚于 decorateRunnableCode，以免改变其「载入 / 运行」动作条的插入位置；
+   * 已包裹的块直接跳过，避免重复加按钮。
+   */
+  function addCopyButtons(root) {
+    Array.prototype.forEach.call(root.querySelectorAll("pre.card-code"), function (pre) {
+      if (pre.parentNode && pre.parentNode.classList.contains("code-fig")) return;
+      var fig = el("div", "code-fig");
+      pre.parentNode.insertBefore(fig, pre);
+      fig.appendChild(pre);
+
+      var btn = el("button", "code-copy", "复制");
+      btn.type = "button";
+      btn.title = "复制代码";
+      btn.setAttribute("aria-label", "复制代码");
+      var timer = null;
+      btn.addEventListener("click", function () {
+        copyText(pre.textContent, function (ok) {
+          btn.textContent = ok ? "已复制" : "复制失败";
+          btn.classList.toggle("copied", ok);
+          btn.classList.toggle("copy-fail", !ok);
+          if (timer) clearTimeout(timer);
+          timer = setTimeout(function () {
+            btn.textContent = "复制";
+            btn.classList.remove("copied", "copy-fail");
+            timer = null;
+          }, 1600);
+        });
+      });
+      fig.appendChild(btn);
     });
   }
 
@@ -951,6 +1020,9 @@
         wrap.appendChild(article);
       });
     }
+
+    /* 所有正文与卡片渲染完后统一给代码块加右上角「复制」按钮 */
+    addCopyButtons(wrap);
   }
 
   /* 渲染章末习题区；本章没有习题时隐藏整块标题 */

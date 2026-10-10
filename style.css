@@ -632,6 +632,43 @@ a { color: var(--seal); text-decoration-thickness: 1px; text-underline-offset: 3
   tab-size: 4;
 }
 
+/* 代码块容器与右上角「复制」按钮 (app.js: addCopyButtons)：
+   .code-fig 作为绝对定位的上下文，按钮不会随 pre 横向滚动移动；
+   增加上内边距给按钮留出位置，保证长首行也不会被按钮遮住 */
+.code-fig { position: relative; }
+.code-fig > .card-code { padding-top: 16px; }
+
+.code-copy {
+  position: absolute;
+  top: 8px;
+  right: 6px;
+  padding: 3px 9px;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.2;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  background: var(--paper-card);
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.code-copy:hover {
+  color: var(--ink);
+  border-color: var(--ink-faint);
+  transform: translateY(-1px);
+}
+.code-copy.copied {
+  color: var(--status-ok);
+  border-color: var(--judge-pass-border);
+  background: var(--judge-pass-bg);
+}
+.code-copy.copy-fail {
+  color: var(--status-error);
+  border-color: var(--judge-fail-border);
+  background: var(--judge-fail-bg);
+}
+
 .ex-prompt { font-size: 14.4px !important; line-height: 1.85 !important; margin-bottom: 10px !important; }
 
 .card-actions { display: flex; gap: 8px; flex-wrap: wrap; }

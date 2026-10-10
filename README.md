@@ -39,6 +39,8 @@
 - **课程与代码分离**：切换章节不会覆盖工作台内容；从示例或练习载入代码时工作台自动展开。
 - **教材正文可直接运行**：正文里「带 `main` 的完整程序」（当前 38 处）在代码块下方自动获得
   「载入编辑器 / ▶ 运行」入口，判定规则见 [code-blocks.js](code-blocks.js)。
+- **代码块一键复制**：正文与示例卡的每个代码块右上角都有「复制」按钮，点击即复制整段代码
+  并短暂显示「已复制」（Clipboard API，非安全上下文回退 `execCommand`）。
 - **在线编译**：调用 [Wandbox](https://wandbox.org) 公开 API（CORS 开放，浏览器直连，无需后端）。
   编译器下拉框由 `list.json` 中 `language === "C"` 的条目填充；C 标准可选
   （c89 / c99 / c11 …，取决于编译器），默认 **C89**——教材描述的是 ANSI C。
@@ -127,6 +129,7 @@ python -m http.server 8080
 | `renderSections()` | 正文：按 PDF 顺序输出小节（`1.5` → `h2`、`1.5.1` → `h3`，附录的 `A.1` → `h2`、`A.2.1` → `h3` 同理），再输出补充专题；配套示例/练习卡片紧随其小节正文 |
 | `renderBookExercises()` | 章末习题卡片 |
 | `decorateRunnableCode()` | 给正文中命中判定的代码块追加「载入编辑器 / ▶ 运行」按钮 |
+| `addCopyButtons()` | 给 `#sections` 内全部 `pre.card-code` 包 `.code-fig` 容器并加右上角「复制」按钮（复制 `pre.textContent`，须在 `decorateRunnableCode` 之后执行） |
 | `setupSpy()` | 滚动高亮：`IntersectionObserver` 触发后按几何选出「顶边已越过视口 25% 横线的最后一个小节」高亮；当前项为三级小节时自动展开其父组 |
 | `selectChip()` | 点击 chip 时立即高亮并「锁定」（用户真实滚动 wheel/触摸/按键后才交还滚动侦测），避免平滑跳转途中高亮被上一长节抢占而错位 |
 
