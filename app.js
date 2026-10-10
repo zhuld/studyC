@@ -104,47 +104,22 @@
 
   /* ========================= 语法高亮（C） ========================= */
 
-  /* C 关键字；末尾另附几个常见的 C++ 词，使混入 class/new 等词的片段
-     也不会被误判成普通标识符 */
-  var KEYWORDS = ("auto break case char const continue default do double else enum extern " +
-    "float for goto if inline int long register restrict return short signed sizeof static " +
-    "struct switch typedef union unsigned void volatile while _Bool _Atomic _Thread_local " +
-    "asm constexpr class namespace new operator template this throw try catch using").split(/\s+/);
-  /* 常用标准库类型名（单独着色） */
-  var TYPES = ("int8_t int16_t int32_t int64_t uint8_t uint16_t uint32_t uint64_t size_t ssize_t " +
-    "ptrdiff_t FILE bool intptr_t uintptr_t").split(/\s+/);
-  /* 词表转哈希集合，便于逐词 O(1) 查询 */
-  var KW_SET = {}, TY_SET = {};
-  KEYWORDS.forEach(function (k) { KW_SET[k] = 1; });
-  TYPES.forEach(function (t) { TY_SET[t] = 1; });
+  /* 着色实现的唯一来源在 highlight.js（UMD：浏览器 window.KRC_HIGHLIGHT，
+     Node 下 tools/test_highlight.js require 同一份），这里只取引用；
+     脚本缺失时降级为纯转义文本，页面其余功能不受影响 */
+  var highlight = (window.KRC_HIGHLIGHT && window.KRC_HIGHLIGHT.highlight) ||
+    function (code) { return esc(code); };
 
   /*
-   * 把 C 源码转换为带 tok-* 类的高亮 HTML（每段先 esc 再包 span，避免二次解析）。
-   * 单趟正则按「注释 → 字符串/字符 → 预处理行 → 数字 → 标识符」的优先级交替匹配，
-   * 因此注释与字面量内部的词不会被后面的分组重复着色。
-   * 返回值末尾补一个换行，使高亮层行数与 textarea 一致，避免末行错位。
+   * 给容器内所有正文代码框（pre.card-code）着色：取 textContent（已还原 &lt; 等实体）
+   * 作源码，经 highlight() 生成 tok-* span 后回填。textContent 不受 span 影响，
+   * 因此「载入 / 运行 / 复制」等取 textContent 的逻辑不受干扰；重复执行结果相同（幂等）。
+   * 须在正文 innerHTML 注入之后调用，renderSections 在加复制按钮前统一跑一次。
    */
-  function highlight(code) {
-    var re = /(\/\*[\s\S]*?\*\/|\/\/[^\n]*)|("(?:\\.|[^"\\])*"?|'(?:\\.|[^'\\])*'?)|(#\s*\w+)|(\b\d+\.?\d*[uUlLfF]*\b)|([A-Za-z_]\w*)/g;
-    var out = "", last = 0, m;
-    while ((m = re.exec(code)) !== null) {
-      out += esc(code.slice(last, m.index));
-      if (m[1] != null)      out += '<span class="tok-cm">'  + esc(m[1]) + "</span>";
-      else if (m[2] != null) out += '<span class="tok-str">' + esc(m[2]) + "</span>";
-      else if (m[3] != null) out += '<span class="tok-pp">'  + esc(m[3]) + "</span>";
-      else if (m[4] != null) out += '<span class="tok-num">' + esc(m[4]) + "</span>";
-      else {
-        var w = m[5];
-        if (KW_SET[w])       out += '<span class="tok-kw">'  + esc(w) + "</span>";
-        else if (TY_SET[w])  out += '<span class="tok-ty">'  + esc(w) + "</span>";
-        /* 后跟左括号的标识符按函数名着色（纯启发式，无符号表） */
-        else if (code[re.lastIndex] === "(") out += '<span class="tok-fn">' + esc(w) + "</span>";
-        else out += esc(w);
-      }
-      last = re.lastIndex;
-    }
-    out += esc(code.slice(last));
-    return out + "\n";
+  function highlightCodeBlocks(root) {
+    Array.prototype.forEach.call(root.querySelectorAll("pre.card-code"), function (pre) {
+      pre.innerHTML = highlight(pre.textContent);
+    });
   }
 
   /* ============================== 编辑器 ============================== */
@@ -156,7 +131,8 @@
   /* 重绘高亮层与行号列；输入、Tab 缩进、载入代码后调用 */
   function renderEditor() {
     var code = codeEl.value;
-    hlEl.innerHTML = highlight(code);
+    /* 末尾补一个换行使高亮层行数与 textarea、行号列一致，避免末行错位 */
+    hlEl.innerHTML = highlight(code) + "\n";
     /* 行号列是纯文本（每行一个数字），与高亮层同样参与滚动同步 */
     var lines = code.split("\n").length;
     var g = "";
@@ -1021,7 +997,9 @@
       });
     }
 
-    /* 所有正文与卡片渲染完后统一给代码块加右上角「复制」按钮 */
+    /* 所有正文与卡片渲染完后统一给代码框着色（取 textContent，与「复制 / 载入编辑器」
+       读到的是同一份文本），再加右上角「复制」按钮 */
+    highlightCodeBlocks(wrap);
     addCopyButtons(wrap);
   }
 

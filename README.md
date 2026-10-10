@@ -41,6 +41,8 @@
   「载入编辑器 / ▶ 运行」入口，判定规则见 [code-blocks.js](code-blocks.js)。
 - **代码块一键复制**：正文与示例卡的每个代码块右上角都有「复制」按钮，点击即复制整段代码
   并短暂显示「已复制」（Clipboard API，非安全上下文回退 `execCommand`）。
+- **语法高亮**：编辑器高亮层与教材正文的每个代码框（含示例卡）共用同一套 C 着色规则——
+  注释、字符串、预处理指令、关键字、类型、数字与函数名分别着色（[highlight.js](highlight.js)）。
 - **在线编译**：调用 [Wandbox](https://wandbox.org) 公开 API（CORS 开放，浏览器直连，无需后端）。
   编译器下拉框由 `list.json` 中 `language === "C"` 的条目填充；C 标准可选
   （c89 / c99 / c11 …，取决于编译器），默认 **C89**——教材描述的是 ANSI C。
@@ -83,25 +85,27 @@ python -m http.server 8080
 | `lessons.js` | 课程数据加载器：`fetch` + 结构校验 + 派生配对，就绪后广播事件 |
 | `app.js` | 页面主逻辑：渲染、编辑器、在线编译、判题、进度与本地存储 |
 | `code-blocks.js` | 教材正文代码块的「可在线编译」判定（页面与测试共用同一份规则） |
+| `highlight.js` | C 源码语法高亮：编辑器高亮层与正文代码框共用，页面与测试共用同一份规则 |
 | `course-content.json` | 课程数据：8 章 + 3 个附录 / 188 小节 / 64 专题 / 7 道章末习题 |
 | `images/` | 教程插图（由管线从 `md/images/` 复制），页面直接引用 |
 | `md/` | 书稿：`md/README.md` 目录页 + 13 个章节文件 + `md/images/`，是课程数据的唯一来源 |
 | `tools/` | 开发辅助脚本：数据管线与回归测试，不参与页面部署 |
 | `c-programming-language-2nd-edition-simple-chinese.pdf` | 教材 PDF，管线的输入与人工核对依据（体积较大，不入版本控制） |
 
-页面侧的渲染与交互集中在 `app.js` 一个文件里（约 1 200 行）；`lessons.js` 与 `code-blocks.js` 各自
-只负责一件事（数据加载、代码块判定），都在 100 行以内。`tools/pdf_to_md.py` 是最大的一段工具代码，
+页面侧的渲染与交互集中在 `app.js` 一个文件里（约 1 200 行）；`lessons.js`、`code-blocks.js` 与
+`highlight.js` 各自只负责一件事（数据加载、代码块判定、语法高亮），都在 100 行以内。`tools/pdf_to_md.py` 是最大的一段工具代码，
 `style.css` 与 `app.js` 规模相当。
 
 ## 架构
 
 ### 模块与加载顺序
 
-页面按依赖顺序加载三个脚本，顺序不可调换：
+页面按依赖顺序加载四个脚本，顺序不可调换：
 
 ```html
 <script src="lessons.js"></script>     <!-- 课程数据 → window.CHAPTERS / window.CHAPTER1 -->
 <script src="code-blocks.js"></script> <!-- 判定规则 → window.KRC_CODE_BLOCKS -->
+<script src="highlight.js"></script>   <!-- C 语法高亮 → window.KRC_HIGHLIGHT -->
 <script src="app.js"></script>         <!-- 渲染与全部交互 -->
 ```
 
@@ -116,7 +120,9 @@ python -m http.server 8080
    归入 `chapter.extraSections`。最后设定 `window.CHAPTERS` / `window.CHAPTER1` 并广播
    `course-content-ready`；失败则设 `window.COURSE_CONTENT_ERROR` 并广播 `course-content-error`。
 3. `code-blocks.js` 以 UMD 包装导出 `isRunnableProgram(code)`（Node 下 `require` 可拿到同一份实现）。
-4. `app.js` 监听就绪事件后执行 `init()`：恢复主题 → 绑定工作台与编辑器 → 渲染第 1 章 → 拉取编译器列表。
+4. `highlight.js` 以 UMD 包装导出 `highlight(code)`：编辑器高亮层与正文代码框（`pre.card-code`）
+   共用这一份着色规则，`tools/test_highlight.js` 同样 `require` 它做回归。
+5. `app.js` 监听就绪事件后执行 `init()`：恢复主题 → 绑定工作台与编辑器 → 渲染第 1 章 → 拉取编译器列表。
 
 ### 渲染
 
@@ -129,6 +135,7 @@ python -m http.server 8080
 | `renderSections()` | 正文：按 PDF 顺序输出小节（`1.5` → `h2`、`1.5.1` → `h3`，附录的 `A.1` → `h2`、`A.2.1` → `h3` 同理），再输出补充专题；配套示例/练习卡片紧随其小节正文 |
 | `renderBookExercises()` | 章末习题卡片 |
 | `decorateRunnableCode()` | 给正文中命中判定的代码块追加「载入编辑器 / ▶ 运行」按钮 |
+| `highlightCodeBlocks()` | 给 `#sections` 内全部 `pre.card-code` 着色：取 `textContent` 回填 `innerHTML`（与「复制 / 载入编辑器」同源，幂等），须在 `addCopyButtons` 之前执行 |
 | `addCopyButtons()` | 给 `#sections` 内全部 `pre.card-code` 包 `.code-fig` 容器并加右上角「复制」按钮（复制 `pre.textContent`，须在 `decorateRunnableCode` 之后执行） |
 | `setupSpy()` | 滚动高亮：`IntersectionObserver` 触发后按几何选出「顶边已越过视口 25% 横线的最后一个小节」高亮；当前项为三级小节时自动展开其父组 |
 | `selectChip()` | 点击 chip 时立即高亮并「锁定」（用户真实滚动 wheel/触摸/按键后才交还滚动侦测），避免平滑跳转途中高亮被上一长节抢占而错位 |
@@ -150,8 +157,10 @@ DOM 元素之间靠 `data-*` 属性约定通信，新增元素时请沿用同一
 行号列 `#gutter` 与之同高；三者都绝对定位、自身不产生滚动条，因此 `syncScroll()` 必须把 `textarea`
 的滚动位置同步给高亮层与行号列，否则文字与光标会错位。
 
-`highlight()` 用单趟正则按「注释 → 字符串/字符 → 预处理行 → 数字 → 标识符」的优先级交替匹配，
-每段先转义再包 `span`，因此注释与字面量内部的词不会被后续分组重复着色。
+`highlight()`（实现在 [`highlight.js`](highlight.js)）用单趟正则按「注释 → 字符串/字符 → 预处理行 →
+数字 → 标识符」的优先级交替匹配，每段先转义再包 `span`，因此注释与字面量内部的词不会被后续分组重复着色。
+字面量一律不跨行：未闭合的 `"` 只染到行尾，字符字面量必须同行闭合（避免正文里的英文撇号被误染）。
+返回值不带尾换行——正文代码框回填后与原文行数一致；编辑器由 `renderEditor()` 补一个换行对齐行号列。
 
 工作台是 `position: fixed` 的浮层，拖动标题栏与右下角缩放手柄都使用 pointer capture，指针移出窗口也不会丢失拖动；
 尺寸与位置始终被夹在视口内（留 12px 边距）；无鼠标时可用方向键（Shift 加速）。
@@ -307,19 +316,21 @@ md 与 JSON 的小节编号集合必须完全一致。写盘后立即做
   改完直接刷新页面。
 - **注释与文案使用简体中文**，代码注释只写需要澄清的地方。
 - **数据与页面解耦**：增改教程内容只动 `course-content.json`（或 `md/` + 管线），不碰页面代码。
-- **单一事实来源**：正文代码块的可编译判定只在 [`code-blocks.js`](code-blocks.js) 里实现一次，
-  页面与 Node 测试共用；判题归一化规则只在 `app.js` 与 `tools/test_judge.js` 各有一份，改动必须同步。
+- **单一事实来源**：正文代码块的可编译判定只在 [`code-blocks.js`](code-blocks.js)、C 语法高亮只在
+  [`highlight.js`](highlight.js) 里实现一次，页面与 Node 测试共用；判题归一化规则只在 `app.js`
+  与 `tools/test_judge.js` 各有一份，改动必须同步。
 - **样式走变量**：颜色、圆角、字体一律经 CSS 变量；半透明色用 `color-mix` 从主题色派生，
   新增一种颜色通常只需在 `style.css` 的 `:root` 块加一行。
 - **可访问性**：工作台的拖动/缩放/关闭都有键盘替代操作，动态区域带 `aria-*` 标注。
 
 ## 测试
 
-`tools/` 下有 3 个测试脚本，前两个不联网：
+`tools/` 下有 4 个测试脚本，前三个不联网：
 
 ```powershell
 node tools/test_course_data.js    # 课程数据回归（离线）
 node tools/test_code_blocks.js    # 正文代码块判定回归（离线）
+node tools/test_highlight.js      # 语法高亮回归（离线）
 node tools/test_judge.js          # 端到端判题验证（需联网，会调用 Wandbox）
 ```
 
@@ -327,9 +338,10 @@ node tools/test_judge.js          # 端到端判题验证（需联网，会调�
 | --- | --- |
 | `test_course_data.js` | 章数（8 章 + 3 附录）、附录标记与位置、编号唯一性、每章专题数下限、`theory` 篇幅（≥300 字）、示例/练习字段齐备、正文章教程页码合法与专题对应关系、附录小节不得带页码/专题、每章正文总篇幅（正文 ≥10 000 字、附录 ≥1 000 字）、全课程固定总量（64 个专题 / 188 个教程），并拒绝连续问号等编码损坏 |
 | `test_code_blocks.js` | 用同一份判定规则扫描 740+ 个正文代码块，核对「可编译完整程序」的命中分布（38 块，逐小节计数）与被排除分布（跨块片段、书中省略写法、代码+中文旁注排版块），并独立复核花括号配平与非 ASCII 残留 |
+| `test_highlight.js` | 用同一份 `highlight()` 对全部正文代码框与示例/练习源码做往返比对（去 span、还原实体后与源码逐字相等）、标签白名单、字面量不跨行（英文撇号不误染）、token 分类抽查与编辑器行数对齐 |
 | `test_judge.js` | 拿每道题的参考解法真跑 Wandbox，与 `expected` 归一化比对；带退避重试与请求间隔（人工验证工具） |
 
-提交前请至少跑通前两个；改动题目或正文代码块时再跑第三个。
+提交前请至少跑通前三个；改动题目或正文代码块时再跑第四个。
 
 ## 贡献指南
 
