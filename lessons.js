@@ -77,16 +77,16 @@
             return;
           }
 
-          /* 正文章：段落数下限按是否含子小节区分（父节可只剩导语），
-             theory 是配套课程讲解，父节可以为空、叶子小节必须有 */
+          /* 正文章：段落数下限按是否含子小节区分（父节可只剩导语）；
+             theory 是书稿第 3 块起的延伸正文，原书短小节（如 7.8.1 只有
+             引言与函数表）可以为空，篇幅靠测试的字数断言把关 */
           if (!Number.isInteger(tutorial.page) || tutorial.page < 1 ||
               !practiceSections[tutorial.sectionId]) {
             bad("页码或配套专题缺失");
           }
           if (tutorial.paragraphs.length < (hasChildren ? 1 : 2) ||
-              !Array.isArray(tutorial.theory) ||
-              (!tutorial.theory.length && !hasChildren)) {
-            bad("正文或讲解篇幅不足");
+              !Array.isArray(tutorial.theory)) {
+            bad("正文篇幅不足");
           }
         });
 

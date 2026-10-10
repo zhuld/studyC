@@ -104,9 +104,11 @@ chapters.forEach((chapter, chapterIndex) => {
       tutorial.paragraphs.length >= (isAppendix || childTutorials.length ? 1 : 2),
       `${tutorial.number} should contain original tutorial text`
     );
+    /* theory 是书稿第 3 块起的延伸正文; 原书短小节(如 7.8.1 只有引言+函数表)
+       可以为空, 正文完整性由下方的全节字数与按章字数断言把关 */
     assert.ok(
-      tutorial.theory.length > 0 || childTutorials.length > 0 || isAppendix,
-      `${tutorial.number} should contain extended lesson content`
+      Array.isArray(tutorial.theory),
+      `${tutorial.number} theory should be an array`
     );
     const fullText = plainText(tutorial) + childTutorials.map(plainText).join("");
     assert.ok(
