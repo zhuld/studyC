@@ -2358,7 +2358,7 @@
         "sectionId": "7.8",
         "paragraphs": [
           "<p>前面已经提到过字符串函数 <code>strlen</code>、<code>strcpy</code>、<code>strcat</code> 和 <code>strcmp</code>，它们都在头文件<code>&lt;string.h&gt;</code>中定义。在下面的各个函数中，<code>s</code>与<code>t</code>为<code>char *</code>类型，<code>c</code>与<code>n</code>为<code>int</code>类型。</p>",
-          "<pre class=\"card-code\">strcat(s, t)       将t指向的字符串连接到s指向的字符串的末尾\nstrncat(s, t, n)   将`t`指向的字符串中前`n`个字符连接到`s`指向的字符串的末尾\nstrcmp(s, t)       根据 s指向的字符串小于（s&lt;t）、等于（s==t）或大于（s&gt;t）t 指向的字符串的不同情况，分别返回负整数、0或正整数\nstrncmp(s, t, n)   同strcmp相同，但只在前n个字符中比较\nstrcpy(s, t)       将t指向的字符串复制到s指向的位置\nstrncpy(s, t, n)   将`t`指向的字符串中前`n`个字符复制到`s`指向的位置\nstrlen(s)          返回s指向的字符串的长度\nstrchr(s, c)       在s指向的字符串中查找c，若找到，则返回指向它第一次出现的位置的指针，否则返回`NULL``strrchr(s, c)` 在`s`指向的字符串中查找`c`，若找到，则返回指向它最后一次出现的位置的指针，否则返回`NULL`</pre>"
+          "<pre class=\"card-code\">strcat(s, t)       将t指向的字符串连接到s指向的字符串的末尾\nstrncat(s, t, n)   将`t`指向的字符串中前`n`个字符连接到`s`指向的字符串的末尾\nstrcmp(s, t)       根据 s指向的字符串小于（s&lt;t）、等于（s==t）或大于（s&gt;t）t 指向的字符串的不同情况，分别返回负整数、0或正整数\nstrncmp(s, t, n)   同strcmp相同，但只在前n个字符中比较\nstrcpy(s, t)       将t指向的字符串复制到s指向的位置\nstrncpy(s, t, n)   将`t`指向的字符串中前`n`个字符复制到`s`指向的位置\nstrlen(s)          返回s指向的字符串的长度\nstrchr(s, c)       在s指向的字符串中查找c，若找到，则返回指向它第一次出现的位置的指针，否则返回NULL strrchr(s, c) 在s指向的字符串中查找c，若找到，则返回指向它最后一次出现的位置的指针，否则返回NULL</pre>"
         ],
         "theory": []
       },
