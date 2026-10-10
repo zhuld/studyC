@@ -88,6 +88,8 @@ body {
 
 a { color: var(--seal); text-decoration-thickness: 1px; text-underline-offset: 3px; }
 
+code { font-family: var(--mono); color: var(--seal-deep);  padding: 1px 4px; white-space: nowrap; }
+
 .sr-only {
   position: absolute; width: 1px; height: 1px;
   clip: rect(0 0 0 0); overflow: hidden; white-space: nowrap;
