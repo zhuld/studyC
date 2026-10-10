@@ -1210,28 +1210,9 @@
 
   /* ============================ 初始化 ============================ */
 
-  /* 初始化：主题、目录、工作台、章节数据渲染，最后拉起编译器列表 */
+  /* 初始化：目录、工作台、章节数据渲染，最后拉起编译器列表 */
   function init() {
     var L = window.CHAPTER1;
-
-    /* 主题以 <head> 内联脚本写入的 data-theme 为准（避免首屏跳变） */
-    var theme = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
-    var themeButton = $("themeToggle");
-    var themeLabel = $("themeLabel");
-    function updateThemeButton() {
-      var isDark = theme === "dark";
-      themeButton.setAttribute("aria-pressed", isDark ? "true" : "false");
-      themeButton.setAttribute("aria-label", "切换到" + (isDark ? "亮色" : "暗色") + "主题");
-      themeButton.querySelector(".theme-toggle-icon").textContent = isDark ? "☼" : "☾";
-      themeLabel.textContent = isDark ? "亮色" : "暗色";
-    }
-    updateThemeButton();
-    themeButton.addEventListener("click", function () {
-      theme = theme === "dark" ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", theme);
-      updateThemeButton();
-      try { localStorage.setItem("krc-ch1-theme-v1", theme); } catch (e) {}
-    });
 
     setupTocToggle();
 

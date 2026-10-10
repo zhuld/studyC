@@ -50,7 +50,6 @@
 - **独立代码工作台**：可拖动、缩放、关闭；关闭后可从页面右下角重新打开，拖动与缩放均可用键盘操作；开合时带缩放动画（尊重 `prefers-reduced-motion`）。
 - **三级瀑布式目录**：章 → 小节 → 三级小节逐级就地下拉，当前章默认展开，点带子节的父节开合其三级抽屉；
   窄屏下目录为浮层抽屉，选中叶级小节后自动收起。
-- **明暗主题**：右上角切换，选择保存在浏览器本地，首屏绘制前恢复以避免闪烁。
 
 ## 快速开始
 
@@ -78,7 +77,7 @@ python -m http.server 8080
 | 路径 | 说明 |
 | --- | --- |
 | `index.html` | 页面骨架：报头、左栏目录、右栏教程、浮动工作台；内容容器初始为空，由脚本填充 |
-| `style.css` | 样式表；颜色一律走 CSS 变量，明暗主题只覆盖变量 |
+| `style.css` | 样式表；颜色一律走 CSS 变量 |
 | `lessons.js` | 课程数据加载器：`fetch` + 结构校验 + 派生配对，就绪后广播事件 |
 | `app.js` | 页面主逻辑：渲染、编辑器、在线编译、判题、进度与本地存储 |
 | `code-blocks.js` | 教材正文代码块的「可在线编译」判定（页面与测试共用同一份规则） |
@@ -106,7 +105,7 @@ python -m http.server 8080
 
 初始化链路：
 
-1. `<head>` 内的内联脚本在首屏绘制前读取 `localStorage`，写入 `data-theme` 与 `toc-collapsed` 类，避免样式跳变。
+1. `<head>` 内的内联脚本在首屏绘制前读取 `localStorage`，写入 `toc-collapsed` 类，避免样式跳变。
 2. `lessons.js` 拉取 `course-content.json`，**快速失败**式校验：章数必须为 11（8 章 + 3 个附录），每章需有
    `meta`/`sections`/`tutorials`/`bookExercises`，专题编号必须唯一，教程字段与段落数下限必须满足；
    附录（`meta.kind === "appendix"`）另走一支：`sections` 必须为空、小节不得带页码与 `sectionId`、
@@ -170,8 +169,7 @@ DOM 元素之间靠 `data-*` 属性约定通信，新增元素时请沿用同一
 
 | 键 | 用途 | 写入方 |
 | --- | --- | --- |
-| `krc-ch1-theme-v1` | 明暗主题；在首屏绘制前恢复 | `index.html` 内联脚本（读）、`app.js`（写） |
-| `krc-course-toc-collapsed-v1` | 目录是否收缩（窄屏默认收缩） | 同上 |
+| `krc-course-toc-collapsed-v1` | 目录是否收缩（窄屏默认收缩） | `index.html` 内联脚本（读）、`app.js`（写） |
 | `krc-course-chapter-v1` | 上次阅读的章节 | `app.js` `selectChapter()` |
 | `krc-ch1-progress-v1` | 已通过的专题与习题（编号 → 时间戳） | `app.js` `saveProgress()` |
 
@@ -308,8 +306,8 @@ md 与 JSON 的小节编号集合必须完全一致。写盘后立即做
 - **数据与页面解耦**：增改教程内容只动 `course-content.json`（或 `md/` + 管线），不碰页面代码。
 - **单一事实来源**：正文代码块的可编译判定只在 [`code-blocks.js`](code-blocks.js) 里实现一次，
   页面与 Node 测试共用；判题归一化规则只在 `app.js` 与 `tools/test_judge.js` 各有一份，改动必须同步。
-- **样式走变量**：颜色、圆角、字体一律经 CSS 变量；暗色主题只覆盖变量，半透明色用 `color-mix` 从主题色派生，
-  新增一种颜色通常只需在 `style.css` 的两个 `:root` 块各加一行。
+- **样式走变量**：颜色、圆角、字体一律经 CSS 变量；半透明色用 `color-mix` 从主题色派生，
+  新增一种颜色通常只需在 `style.css` 的 `:root` 块加一行。
 - **可访问性**：工作台的拖动/缩放/关闭都有键盘替代操作，动态区域带 `aria-*` 标注。
 
 ## 测试

@@ -4,16 +4,16 @@
    美学方向：活页讲义/铅印教科书（暖纸 + 朱红印章） × 深色终端工作台
 
    组织顺序：
-     1. 主题变量： :root（明色）与 :root[data-theme="dark"]（暗色覆盖）
+     1. 主题变量： :root（明色）
      2. 基础元素与工具类
      3. 报头 → 布局 → 左栏目录 → 正文教程 → 浮动工作台
      4. 响应式：窄屏目录抽屉、窄屏布局、矮屏、减少动效偏好
 
-   约定：颜色一律走变量，暗色主题只覆盖变量；半透明色用 color-mix 从主题色派生，
-        因此新增一种颜色通常只需在两个 :root 块各加一行。
+   约定：颜色一律走变量；半透明色用 color-mix 从主题色派生，
+        因此新增一种颜色通常只需在 :root 块各加一行。
    ========================================================================== */
 
-/* 明色主题（默认）：颜色、字体、圆角的唯一来源 */
+/* 主题变量（默认）：颜色、字体、圆角的唯一来源 */
 :root {
   color-scheme: light;
 
@@ -52,7 +52,7 @@
   --tok-keyword: #b83a45;
   --tok-type: #286c9a;
 
-  /* ---------- 半透明衍生色（引用上方主题色，只定义一次，明暗主题共用） ---------- */
+  /* ---------- 半透明衍生色（引用上方主题色，只定义一次） ---------- */
   --paper-rule: color-mix(in srgb, var(--ink) 4%, transparent);
   --seal-wash: color-mix(in srgb, var(--seal) 10%, transparent);
   --seal-line: color-mix(in srgb, var(--seal) 20%, transparent);
@@ -67,45 +67,6 @@
   --mono: "Cascadia Mono", "JetBrains Mono", Consolas, "Courier New",
           "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", "Source Han Sans SC", monospace;
   --radius: 4px;
-}
-
-/* 暗色主题：只覆盖颜色变量（纸面、墨色、印章、状态、编辑器、语法高亮） */
-:root[data-theme="dark"] {
-  color-scheme: dark;
-
-  /* ---------- 纸面 ---------- */
-  --paper: #191a1b;
-  --paper-2: #222324;
-  --paper-line: #393938;
-  --paper-surface: #202122;
-  --paper-card: #242525;
-  --paper-glow: rgba(255, 240, 210, 0.035);
-  --paper-shadow: rgba(0, 0, 0, 0.2);
-
-  /* ---------- 墨色 ---------- */
-  --ink: #e9e1d1;
-  --ink-soft: #c1b8a8;
-  --ink-faint: #958d7f;
-
-  /* ---------- 朱红印章 ---------- */
-  --seal: #d46950;
-  --seal-deep: #aa4937;
-  --amber: #e0a458;
-
-  /* ---------- 状态 ---------- */
-  --status-ok: #7fd8a4;
-  --status-error: #ef9ba2;
-
-  /* ---------- 编辑器 ---------- */
-  --editor-input: rgba(0, 0, 0, 0.25);
-  --editor-selection: rgba(224, 164, 88, 0.28);
-
-  /* ---------- 语法高亮 ---------- */
-  --tok-comment: #818995;
-  --tok-string: #9ecb7a;
-  --tok-pp: #d08ee0;
-  --tok-keyword: #e06c75;
-  --tok-type: #61afef;
 }
 
 * { box-sizing: border-box; }
@@ -145,7 +106,7 @@ a { color: var(--seal); text-decoration-thickness: 1px; text-underline-offset: 3
   background: linear-gradient(180deg, var(--paper-glow), transparent);
 }
 
-.masthead, .sec, .card, .ex, .book-card, .theme-toggle {
+.masthead, .sec, .card, .ex, .book-card {
   transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -191,33 +152,6 @@ a { color: var(--seal); text-decoration-thickness: 1px; text-underline-offset: 3
   color: var(--ink-soft);
   vertical-align: middle;
 }
-
-.mast-right { text-align: right; }
-
-.theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin-bottom: 15px;
-  padding: 7px 11px;
-  border: 1px solid var(--paper-line);
-  border-radius: 999px;
-  background: var(--paper-surface);
-  color: var(--ink-soft);
-  font: 11px var(--mono);
-  cursor: pointer;
-  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
-}
-.theme-toggle:hover {
-  color: var(--seal);
-  border-color: var(--seal);
-  transform: translateY(-1px);
-}
-.theme-toggle:focus-visible {
-  outline: 2px solid var(--seal);
-  outline-offset: 3px;
-}
-.theme-toggle-icon { color: var(--seal); font-size: 15px; line-height: 1; }
 
 /* ============================ 布局 ============================ */
 
@@ -1171,11 +1105,10 @@ a { color: var(--seal); text-decoration-thickness: 1px; text-underline-offset: 3
 
 /* ============================ 响应式 ============================ */
 
-/* 平板宽度：布局改为单列（目录浮起），报头改左对齐，小节列表吸顶位置下调 */
+/* 平板宽度：布局改为单列（目录浮起），报头靠上对齐，小节列表吸顶位置下调 */
 @media (max-width: 1080px) {
   .layout { grid-template-columns: 1fr; }
   .masthead { align-items: flex-start; }
-  .mast-right { text-align: left; }
 }
 
 /* 手机宽度：压缩报头与工作台控件，工作台铺满视口 */

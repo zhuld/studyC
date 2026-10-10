@@ -6,7 +6,7 @@
         → 浮动代码工作台 → 盖章浮层 → 底部脚本
   数据：lessons.js 加载 course-content.json，app.js 渲染并驱动全部交互；
         因此本文件中的 #sections、#chapterNav、#exercises 等初始为空。
-  主题：<head> 内的内联脚本在首屏绘制前恢复本地偏好，避免样式跳变。
+  本地偏好：<head> 内的内联脚本在首屏绘制前恢复目录收缩状态，避免样式跳变。
 -->
 <html lang="zh-CN">
 <head>
@@ -15,12 +15,8 @@
 <title>C程序设计语言 · 交互读本</title>
 <meta name="description" content="C 语言第 1–8 章与附录 A–C 交互课程：逐节学习、阅读教材原文、运行代码示例与练习判题。">
 <script>
-  // 首屏绘制前恢复本地偏好（主题、目录收缩状态），避免先渲染默认样式再跳变
+  // 首屏绘制前恢复本地偏好（目录收缩状态），避免先渲染默认样式再跳变
   try {
-    var savedTheme = localStorage.getItem("krc-ch1-theme-v1");
-    if (savedTheme === "dark" || savedTheme === "light") {
-      document.documentElement.setAttribute("data-theme", savedTheme);
-    }
     // 无本地记录时跟随视口宽度：窄屏默认收缩目录
     var savedToc = localStorage.getItem("krc-course-toc-collapsed-v1");
     var tocCollapsed = savedToc === null
@@ -42,13 +38,6 @@
       <!-- #chapterName 为占位内容，切换章节时由 app.js 覆写 -->
       <h1>C程序设计语言<span class="chapter" id="chapterName">第 1 章　导言</span></h1>
     </div>
-  </div>
-  <div class="mast-right">
-    <button class="theme-toggle" id="themeToggle" type="button"
-            aria-label="切换到暗色主题" aria-pressed="false">
-      <span class="theme-toggle-icon" aria-hidden="true">☾</span>
-      <span id="themeLabel">暗色</span>
-    </button>
   </div>
 </header>
 
