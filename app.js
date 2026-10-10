@@ -736,11 +736,13 @@
         c.title = (c.title ? c.title + " · " : "") + "含三级小节，点击开合";
       }
       c.addEventListener("click", function () {
-        /* 带子节的父 chip 是所在 .chip-group 的直接子元素：先开合，再照旧跳转 */
+        /* 带子节的父 chip 是所在 .chip-group 的直接子元素：先切换开合 */
         if (hasSubs) {
           var group = c.parentNode;
           setGroupOpen(group, !group.classList.contains("is-open"));
         }
+        /* 点击即选中：立即高亮并锁定，避免平滑滚动途中被侦测竞态改到上一节 */
+        selectChip(c, topic.number);
         var target = document.getElementById(targetId);
         if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
       });
@@ -779,6 +781,7 @@
       c.setAttribute("data-practice-sec", section.id);
       c.title = "课程补充专题（不在 PDF 目录中）";
       c.addEventListener("click", function () {
+        selectChip(c, topicId);
         var target = document.getElementById(targetId);
         if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
       });
@@ -788,6 +791,7 @@
       var c2 = el("button", "chip", "章末习题");
       c2.type = "button";
       c2.addEventListener("click", function () {
+        selectChip(c2, "book-exercises");
         var t = $("exercisesHead");
         if (t) t.scrollIntoView({ behavior: "smooth", block: "start" });
       });
@@ -1090,40 +1094,76 @@
   /* ============================ 滚动高亮 ============================ */
 
   /*
-   * 用 IntersectionObserver 把正文小节的可见性映射到侧栏 chip 的 current 类。
-   * rootMargin 把判定区域收缩成页面顶部的一条横带（上方 15%、下方 70% 不参与），
-   * 于是「刚滚到顶部」的小节才会高亮；切换章节时先断开上一批观察。
+   * 用 IntersectionObserver 感知正文小节进出视口，回调里按几何选出「当前小节」，
+   * 把它的侧栏 chip 标记为 current。判定规则取「顶边已越过视口 25% 横线的最后一个小节」
+   * （文档顺序递增，遍历时后者覆盖前者）：既符合「正在阅读哪一节」的直觉，
+   * 也能正确处理父节与其三级小节、以及上一长节尾巴仍留在视口的情形，避免高亮错位。
+   * 点击 chip 跳转属于明确的用户意图：selectChip 会立即置 current 并锁定高亮，
+   * 在用户真实滚动（wheel/触摸/按键）前忽略本回调，防止平滑滚动途中被竞态覆盖。
    */
   function setupSpy() {
     if (!("IntersectionObserver" in window)) return;
     if (setupSpy.observer) setupSpy.observer.disconnect();
+    setupSpy.pinned = null;
     var map = {};
     document.querySelectorAll(".chip[data-outline-topic]").forEach(function (c) {
       map[c.getAttribute("data-outline-topic")] = c;
     });
-    var obs = new IntersectionObserver(function (entries) {
-      var hit = null;
-      entries.forEach(function (en) {
-        if (!en.isIntersecting) return;
-        var topic = en.target.getAttribute("data-outline-topic");
-        var chip = map[topic];
-        if (!chip) return;
-        /* 同一批可能有多节同时落在判定带内（如父节与它的三级小节）：
-           保留文档顺序最靠前的一个，避免批内处理顺序不定导致高亮抖动 */
-        if (hit && (chip.compareDocumentPosition(hit) & Node.DOCUMENT_POSITION_PRECEDING)) return;
-        hit = chip;
-      });
-      if (!hit) return;
+    var topics = Array.prototype.slice.call(
+      document.querySelectorAll("[data-outline-topic].outline-topic, [data-outline-topic].supplement-topic"));
+
+    /* 把指定小节置为 current，并展开其所属三级抽屉（保证高亮条目在侧栏可见） */
+    function highlight(topic) {
+      var chip = map[topic];
+      if (!chip || chip.classList.contains("current")) return;
       document.querySelectorAll(".chip").forEach(function (c) { c.classList.remove("current"); });
-      hit.classList.add("current");
-      /* 当前项是三级小节时展开其父组，保证高亮条目在侧栏里可见 */
-      var group = hit.closest ? hit.closest(".chip-group") : null;
+      chip.classList.add("current");
+      var group = chip.closest ? chip.closest(".chip-group") : null;
       if (group) setGroupOpen(group, true);
-    }, { rootMargin: "-15% 0px -70% 0px" });
+    }
+
+    /* 选出「顶边已越过 25% 横线的最后一个小节」并高亮 */
+    function pickCurrent() {
+      if (setupSpy.pinned) return;               /* 点击跳转锁定期间不被动改高亮 */
+      var line = window.innerHeight * 0.25;
+      var winner = null;
+      for (var i = 0; i < topics.length; i++) {
+        if (topics[i].getBoundingClientRect().top <= line) winner = topics[i];
+      }
+      if (winner) highlight(winner.getAttribute("data-outline-topic"));
+    }
+
+    /* 用 rAF 合并同一帧内的多次观察回调，避免高频重算 */
+    var scheduled = false;
+    function schedule() {
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(function () { scheduled = false; pickCurrent(); });
+    }
+    var obs = new IntersectionObserver(schedule, { rootMargin: "-15% 0px -70% 0px" });
+    topics.forEach(function (t) { obs.observe(t); });
     setupSpy.observer = obs;
-    document.querySelectorAll("[data-outline-topic].outline-topic, [data-outline-topic].supplement-topic").forEach(function (topic) {
-      obs.observe(topic);
-    });
+
+    /* 用户真实滚动输入时解除点击锁定，把高亮交还滚动侦测；
+       程序化平滑滚动不触发这些事件，故锁定在跳转全程保持，避免闪烁/错位。 */
+    if (!setupSpy._unpinArmed) {
+      setupSpy._unpinArmed = true;
+      ["wheel", "touchmove", "keydown"].forEach(function (ev) {
+        window.addEventListener(ev, function () { setupSpy.pinned = null; }, { passive: true });
+      });
+    }
+  }
+
+  /*
+   * 点击 chip：立即把它设为 current（用户意图优先于滚动高亮），并锁定高亮；
+   * 锁定直至用户真实滚动，规避平滑滚动途中被滚动侦测的竞态覆盖而错位。
+   * 父组的开合由各点击处理器按「切换」语义自行处理，这里不强制展开，
+   * 以免父 chip 想收起时又被强行展开。三级抽屉的被动展开见 highlight()。
+   */
+  function selectChip(chip, topic) {
+    document.querySelectorAll(".chip").forEach(function (c) { c.classList.remove("current"); });
+    chip.classList.add("current");
+    setupSpy.pinned = topic || true;
   }
 
   /* ============================ 目录收缩 ============================ */

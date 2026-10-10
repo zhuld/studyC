@@ -128,7 +128,8 @@ python -m http.server 8080
 | `renderSections()` | 正文：按 PDF 顺序输出小节（`1.5` → `h2`、`1.5.1` → `h3`，附录的 `A.1` → `h2`、`A.2.1` → `h3` 同理），再输出补充专题；配套示例/练习卡片紧随其小节正文 |
 | `renderBookExercises()` | 章末习题卡片 |
 | `decorateRunnableCode()` | 给正文中命中判定的代码块追加「载入编辑器 / ▶ 运行」按钮 |
-| `setupSpy()` | 滚动高亮：用 `IntersectionObserver` 同步目录高亮 |
+| `setupSpy()` | 滚动高亮：`IntersectionObserver` 触发后按几何选出「顶边已越过视口 25% 横线的最后一个小节」高亮；当前项为三级小节时自动展开其父组 |
+| `selectChip()` | 点击 chip 时立即高亮并「锁定」（用户真实滚动 wheel/触摸/按键后才交还滚动侦测），避免平滑跳转途中高亮被上一长节抢占而错位 |
 
 DOM 元素之间靠 `data-*` 属性约定通信，新增元素时请沿用同一命名：
 
