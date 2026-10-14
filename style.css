@@ -275,7 +275,6 @@ code { font-family: var(--mono); color: var(--seal-deep);  padding: 1px 4px; whi
   flex: 0 0 auto;
   font: 10px/1 var(--mono);
   padding: 2px;
-  opacity: 0.7;
 }
 
 /* 小节抽屉：0fr → 1fr 过渡，展开时把小节列表自上下落（瀑布） */
@@ -323,7 +322,6 @@ code { font-family: var(--mono); color: var(--seal-deep);  padding: 1px 4px; whi
   flex: 0 0 auto;
   font: 10px/1 var(--mono);
   padding: 2px;
-  opacity: 0.7;
 }
 
 /* 三级抽屉：与章抽屉同款 0fr → 1fr 过渡；内层裁剪溢出，左竖线示意隶属关系 */
