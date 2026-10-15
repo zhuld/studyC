@@ -15,8 +15,21 @@
 <title>C程序设计语言 · 交互读本</title>
 <meta name="description" content="C 语言前言与序、第 1–8 章与附录 A–C 交互课程：逐节学习、阅读教材原文、在线编译运行代码。">
 <script>
-  // 首屏绘制前恢复本地偏好（目录收缩状态），避免先渲染默认样式再跳变
+  // 首屏绘制前恢复阅读主题与系统偏好，避免主题闪烁。
+  var root = document.documentElement;
+  var systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  root.setAttribute("data-theme", systemTheme);
   try {
+    var savedTheme = localStorage.getItem("krc-course-theme-v1");
+    if (savedTheme === "light" || savedTheme === "dark") {
+      root.setAttribute("data-theme", savedTheme);
+    }
+
+    var savedFontSize = parseInt(localStorage.getItem("krc-course-font-size-v1"), 10);
+    if (savedFontSize >= 15 && savedFontSize <= 21) {
+      root.style.setProperty("--reading-font-size", savedFontSize + "px");
+    }
+
     // 无本地记录时跟随视口宽度：窄屏默认收缩目录
     var savedToc = localStorage.getItem("krc-course-toc-collapsed-v1");
     var tocCollapsed = savedToc === null
@@ -40,6 +53,36 @@
     </div>
   </div>
 </header>
+
+<div class="reading-dock" role="region" aria-label="阅读工具">
+  <div class="reading-progress">
+    <span class="reading-progress-label">本章进度</span>
+    <div class="progress-track" id="readingProgress"
+         role="progressbar" aria-label="当前章节阅读进度"
+         aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <span class="progress-fill" id="readingProgressFill"></span>
+    </div>
+    <span class="progress-value" id="readingProgressValue">0%</span>
+  </div>
+  <div class="reading-controls" role="group" aria-label="阅读偏好">
+    <div class="font-controls" role="group" aria-label="正文大小">
+      <span class="control-caption">字号</span>
+      <button class="reading-control" id="fontDecrease" type="button"
+              aria-label="缩小正文字号" title="缩小正文字号">A−</button>
+      <output class="font-size-value" id="fontSizeValue" aria-label="当前正文字号">16px</output>
+      <button class="reading-control" id="fontIncrease" type="button"
+              aria-label="放大正文字号" title="放大正文字号">A+</button>
+    </div>
+    <button class="theme-toggle" id="themeToggle" type="button"
+            aria-label="切换到深色主题">
+      <span class="theme-icon" id="themeIcon" aria-hidden="true">☾</span>
+      <span id="themeLabel">深色</span>
+    </button>
+    <button class="workbench-launcher" id="workbenchLauncher" type="button">
+      <span aria-hidden="true">›_</span> 打开代码工作台
+    </button>
+  </div>
+</div>
 
 <main class="layout">
 
@@ -122,11 +165,6 @@
   </aside>
 
 </main>
-
-<!-- 打开代码工作台的入口：工作台默认隐藏，本按钮静态声明为可见；打开/关闭由 app.js 切换显隐 -->
-<button class="workbench-launcher" id="workbenchLauncher" type="button">
-  <span aria-hidden="true">›_</span> 打开代码工作台
-</button>
 
 <!-- 加载顺序即依赖顺序：课程数据 → 正文代码块标注 → 语法高亮 → 渲染与交互 -->
 <script src="lessons.js"></script>

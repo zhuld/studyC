@@ -9,7 +9,7 @@
  *      经右下角「打开代码工作台」按钮或正文代码块的「载入 / 运行」打开
  *   4. 在线编译：调用 Wandbox 的 list.json（编译器列表）与 compile.json（编译并执行），
  *      默认以 C89（ANSI C，即教材描述的标准）提交
- *   5. 本地存档：目录收缩状态与当前章节写入 localStorage
+ *   5. 本地存档：目录、当前章节与阅读偏好写入 localStorage
  *
  * 依赖：必须晚于 lessons.js 与 code-blocks.js 加载（见 index.html 的脚本顺序）。
  *      课程数据就绪后由 window 事件 "course-content-ready" 触发初始化，
@@ -47,6 +47,11 @@
   /* document.getElementById 的简写 */
   var $ = function (id) { return document.getElementById(id); };
 
+  function scrollBehavior() {
+    return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? "auto" : "smooth";
+  }
+
   /* 创建元素：cls 为类名（可省略），html 为 innerHTML 片段 */
   function el(tag, cls, html) {
     var n = document.createElement(tag);
@@ -74,6 +79,11 @@
     loadedCode: "",         // 最近一次「载入」的原始代码，供「重置」还原
     running: false          // 编译进行中标记，避免重复提交请求
   };
+
+  var READING_FONT_MIN = 15;
+  var READING_FONT_MAX = 21;
+  var READING_FONT_STEP = 1;
+  var readingProgressFrame = 0;
 
   window.__krc = state; // 暴露给控制台便于调试
 
@@ -564,7 +574,7 @@
         /* 点击即选中：立即高亮并锁定，避免平滑滚动途中被侦测竞态改到上一节 */
         selectChip(c, topic.number);
         var target = document.getElementById(targetId);
-        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (target) target.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
       });
       return c;
     }
@@ -726,6 +736,91 @@
     addCopyButtons(wrap);
   }
 
+  function updateReadingProgress() {
+    var sections = $("sections");
+    var track = $("readingProgress");
+    if (!sections || !track) return;
+
+    var rect = sections.getBoundingClientRect();
+    var height = rect.height;
+    var value = 0;
+    if (height > 0) {
+      var maxScroll = height - (window.innerHeight || document.documentElement.clientHeight);
+      if (maxScroll <= 0) {
+        value = rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) ? 100 : 0;
+      } else {
+        var start = rect.top + window.pageYOffset;
+        value = Math.round(((window.pageYOffset - start) / maxScroll) * 100);
+      }
+    }
+    value = Math.max(0, Math.min(100, value));
+    track.setAttribute("aria-valuenow", String(value));
+    track.setAttribute("aria-valuetext", value + "%");
+    $("readingProgressFill").style.width = value + "%";
+    $("readingProgressValue").textContent = value + "%";
+  }
+
+  function scheduleReadingProgress() {
+    if (readingProgressFrame) return;
+    readingProgressFrame = window.requestAnimationFrame(function () {
+      readingProgressFrame = 0;
+      updateReadingProgress();
+    });
+  }
+
+  function applyReadingFontSize(size, persist) {
+    var value = Math.max(READING_FONT_MIN, Math.min(READING_FONT_MAX, size));
+    document.documentElement.style.setProperty("--reading-font-size", value + "px");
+    $("fontSizeValue").textContent = value + "px";
+    $("fontDecrease").disabled = value <= READING_FONT_MIN;
+    $("fontIncrease").disabled = value >= READING_FONT_MAX;
+    if (persist) {
+      try { localStorage.setItem("krc-course-font-size-v1", String(value)); } catch (e) {}
+    }
+  }
+
+  function applyReadingTheme(theme, persist) {
+    var isDark = theme === "dark";
+    document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+    $("themeToggle").setAttribute("aria-label",
+      isDark ? "切换到浅色主题" : "切换到深色主题");
+    $("themeIcon").textContent = isDark ? "☀" : "☾";
+    $("themeLabel").textContent = isDark ? "浅色" : "深色";
+    if (persist) {
+      try { localStorage.setItem("krc-course-theme-v1", isDark ? "dark" : "light"); } catch (e) {}
+    }
+  }
+
+  function setupReadingControls() {
+    var currentSize = parseInt(
+      window.getComputedStyle(document.documentElement)
+        .getPropertyValue("--reading-font-size"), 10);
+    if (isNaN(currentSize) || currentSize < READING_FONT_MIN || currentSize > READING_FONT_MAX) {
+      currentSize = 16;
+    }
+    applyReadingFontSize(currentSize, false);
+    applyReadingTheme(
+      document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light",
+      false
+    );
+
+    $("fontDecrease").addEventListener("click", function () {
+      applyReadingFontSize(currentSize = currentSize - READING_FONT_STEP, true);
+    });
+    $("fontIncrease").addEventListener("click", function () {
+      applyReadingFontSize(currentSize = currentSize + READING_FONT_STEP, true);
+    });
+    $("themeToggle").addEventListener("click", function () {
+      var nextTheme = document.documentElement.getAttribute("data-theme") === "dark"
+        ? "light" : "dark";
+      applyReadingTheme(nextTheme, true);
+    });
+
+    window.addEventListener("scroll", scheduleReadingProgress, { passive: true });
+    window.addEventListener("resize", scheduleReadingProgress);
+    updateReadingProgress();
+  }
+
   /* 开合某一章的小节抽屉，并同步章节按钮的 aria-expanded */
   function setChapterOpen(item, open) {
     item.classList.toggle("is-open", open);
@@ -817,8 +912,11 @@
     renderChips();
     renderSections();
     setupSpy();
+    updateReadingProgress();
     try { localStorage.setItem("krc-course-chapter-v2", String(number)); } catch (e) {}
-    if (scrollToTop) $("sections").scrollIntoView({ behavior: "smooth", block: "start" });
+    if (scrollToTop) {
+      $("sections").scrollIntoView({ behavior: scrollBehavior(), block: "start" });
+    }
   }
 
   /* ============================ 滚动高亮 ============================ */
@@ -972,6 +1070,7 @@
       L = window.CHAPTERS[savedChapter - 1];
     }
     selectChapter(L, false);
+    setupReadingControls();
 
     // 编辑器事件
     codeEl.addEventListener("input", renderEditor);
@@ -1031,4 +1130,3 @@
   }
 
 })();
-
