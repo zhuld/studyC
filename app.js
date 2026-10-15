@@ -6,10 +6,11 @@
  *      与教材小节正文
  *   2. 教材正文代码块：借 code-blocks.js 的判定规则，给可编译的完整程序加「载入 / 运行」入口
  *   3. 代码工作台：默认隐藏的可拖动、缩放、关闭浮层编辑器（行号 + C 语法高亮 + Tab 缩进），
- *      经右下角「打开代码工作台」按钮或正文代码块的「载入 / 运行」打开
+ *      经工具条「打开代码工作台」按钮或正文代码块的「载入 / 运行」打开
  *   4. 在线编译：调用 Wandbox 的 list.json（编译器列表）与 compile.json（编译并执行），
  *      默认以 C89（ANSI C，即教材描述的标准）提交
- *   5. 本地存档：目录、当前章节与阅读偏好写入 localStorage
+ *   5. 阅读辅助：工具条显示当前章节进度，提供字号调整、明暗主题与全屏切换
+ *   6. 本地存档：目录、当前章节、字号与主题选择写入 localStorage
  *
  * 依赖：必须晚于 lessons.js 与 code-blocks.js 加载（见 index.html 的脚本顺序）。
  *      课程数据就绪后由 window 事件 "course-content-ready" 触发初始化，
@@ -821,6 +822,48 @@
     updateReadingProgress();
   }
 
+  /* ============================ 全屏 ============================ */
+
+  /*
+   * 全屏阅读：整页（documentElement）进入全屏，目录与工具条保持可用；
+   * 浏览器前缀差异较大（Safari 走 webkit*），因此访问前先探测，缺失即隐藏按钮。
+   * 全屏状态可能由 Esc 或浏览器手势改变，故统一以 fullscreenchange 事件回写按钮外观。
+   */
+  function fullscreenElement() {
+    return document.fullscreenElement || document.webkitFullscreenElement || null;
+  }
+
+  function setupFullscreenToggle() {
+    var btn = $("fullscreenToggle");
+    var root = document.documentElement;
+    var request = root.requestFullscreen || root.webkitRequestFullscreen;
+    var exit = document.exitFullscreen || document.webkitExitFullscreen;
+    /* 移动端浏览器常不开放非视频元素的全屏，此时不显示该按钮 */
+    if (!btn || !request || !exit) {
+      if (btn) btn.hidden = true;
+      return;
+    }
+
+    function sync() {
+      var active = !!fullscreenElement();
+      btn.setAttribute("aria-pressed", active ? "true" : "false");
+      btn.setAttribute("aria-label", active ? "退出全屏" : "进入全屏");
+      $("fullscreenIcon").textContent = active ? "⤡" : "⤢";
+      $("fullscreenLabel").textContent = active ? "退出" : "全屏";
+    }
+
+    btn.addEventListener("click", function () {
+      /* 浏览器可能拒绝请求（如非用户手势触发），失败时静默保持原状态 */
+      var action = fullscreenElement() ? exit.call(document) : request.call(root);
+      if (action && typeof action.catch === "function") action.catch(function () {});
+    });
+
+    ["fullscreenchange", "webkitfullscreenchange"].forEach(function (ev) {
+      document.addEventListener(ev, sync);
+    });
+    sync();
+  }
+
   /* 开合某一章的小节抽屉，并同步章节按钮的 aria-expanded */
   function setChapterOpen(item, open) {
     item.classList.toggle("is-open", open);
@@ -1071,6 +1114,7 @@
     }
     selectChapter(L, false);
     setupReadingControls();
+    setupFullscreenToggle();
 
     // 编辑器事件
     codeEl.addEventListener("input", renderEditor);
