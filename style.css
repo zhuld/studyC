@@ -284,7 +284,7 @@ code { font-family: var(--mono); color: var(--seal-deep);  padding: 1px 4px; whi
 .layout {
   display: grid;
   grid-template-columns: minmax(205px, 248px) minmax(0, 1fr);
-  gap: clamp(24px, 3.5vw, 54px);
+  gap: clamp(12px, 2.5vw, 24px);
   padding: 30px clamp(18px, 4vw, 56px) 72px;
   align-items: start;
 }
@@ -298,9 +298,9 @@ code { font-family: var(--mono); color: var(--seal-deep);  padding: 1px 4px; whi
   width: auto;
   max-height: calc(100vh - 94px);
   overflow-y: auto;
-  padding: 8px 16px 16px 0;
-  border-right: 1px solid var(--paper-line);
+  padding: 8px 8px 16px 0;
   scrollbar-width: thin;
+  scrollbar-gutter: stable;
   scrollbar-color: var(--paper-line) transparent;
 }
 
@@ -1024,13 +1024,15 @@ sup, sub { line-height: 0; }   /* 行内上下标（md 的 ^x^ / ~x~ 经管线�
     bottom: 0;
     width: min(302px, 86vw);
     max-height: none;
+    /* 必须覆盖基础规则的 align-self: start：固定定位下它会让抽屉按内容撑高（高过视口，且因不溢出而永不出现
+       滚动条），恢复默认值后由 top/bottom 把抽屉夹到视口高度，内容超出即由基础规则的 overflow-y: auto 出滚动条 */
+    align-self: stretch;
     z-index: 45;
     margin: 0;
     padding: 18px 18px 24px;
     background: var(--paper);
     border-right: 1px solid var(--paper-line);
     box-shadow: var(--shadow-pop);
-    overflow-y: auto;
   }
 
   /* 浮层抽屉会盖住工具条最左的开合按钮，故抽屉内显示收起按钮 */
