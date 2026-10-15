@@ -120,7 +120,6 @@ body {
   color: var(--ink);
   background:
     radial-gradient(1200px 500px at 85% -10%, var(--seal-wash), transparent 60%),
-    repeating-linear-gradient(0deg, transparent 0 31px, var(--paper-rule) 31px 32px),
     var(--paper);
   min-height: 100vh;
 }
@@ -535,7 +534,6 @@ code { font-family: var(--mono); color: var(--seal-deep);  padding: 1px 4px; whi
 }
 
 .outline-topic p {
-  max-width: 76ch;
   margin: 0 0 16px;
   color: var(--ink);
   font-size: var(--reading-font-size);
