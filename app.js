@@ -786,7 +786,7 @@
     $("themeToggle").setAttribute("aria-label",
       isDark ? "切换到浅色主题" : "切换到深色主题");
     $("themeIcon").textContent = isDark ? "☀" : "☾";
-    $("themeLabel").textContent = isDark ? "浅色" : "深色";
+    // $("themeLabel").textContent = isDark ? "浅色" : "深色";
     if (persist) {
       try { localStorage.setItem("krc-course-theme-v1", isDark ? "dark" : "light"); } catch (e) {}
     }
@@ -849,7 +849,7 @@
       btn.setAttribute("aria-pressed", active ? "true" : "false");
       btn.setAttribute("aria-label", active ? "退出全屏" : "进入全屏");
       $("fullscreenIcon").textContent = active ? "⤡" : "⤢";
-      $("fullscreenLabel").textContent = active ? "退出" : "全屏";
+      // $("fullscreenLabel").textContent = active ? "退出" : "全屏";
     }
 
     btn.addEventListener("click", function () {

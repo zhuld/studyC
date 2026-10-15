@@ -219,7 +219,6 @@ code { font-family: var(--mono); color: var(--seal-deep);  padding: 1px 4px; whi
   min-width: 140px;
 }
 
-.reading-progress-label,
 .progress-value,
 .font-size-value {
   font-family: var(--mono);
