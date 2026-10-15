@@ -630,6 +630,35 @@ def strip_scripts_outside_code(text: str) -> str:
     return "".join(out)
 
 
+def strip_bold_outside_code(text: str) -> str:
+    """只在 code 片段之外按转换规则去掉成对粗体分隔符 **。
+
+    与 strip_scripts_outside_code 同一思路: 转换后 JSON 侧的 <strong> 标签
+    会被 norm_json 剥掉只剩内容, md 侧须同步去掉成对 ** 才能逐字对齐;
+    code 片段内不做转换, 其中的 ** (如 `void **p`) 两侧都原样保留。
+
+    与转换端共用 INLINE_BOLD_RE, 因此「内容不含 *」等限制完全一致;
+    行内粗体 (**说明**：…) 与整块题注 (**图 5-1**) 一并处理。
+
+    Args:
+        text: 段落或单元格原文。
+
+    Returns:
+        处理后的文本。
+
+    Side effects:
+        无。
+    """
+    out: list[str] = []
+    pos = 0
+    for m in INLINE_CODE_RE.finditer(text):
+        out.append(INLINE_BOLD_RE.sub(r"\1", text[pos:m.start()]))
+        out.append(m.group(0))
+        pos = m.end()
+    out.append(INLINE_BOLD_RE.sub(r"\1", text[pos:]))
+    return "".join(out)
+
+
 # ---------- 写入 JSON ----------
 
 def apply_content(data: list, parsed: list) -> None:
@@ -806,10 +835,10 @@ def block_md_text(b: "Block") -> str:
         b: 待转换的 Block。
 
     Returns:
-        img 块返回 ""; p 块去掉整块包裹的 ** 与其中的反引号、
-        并按转换规则去掉上下标分隔符; table 块按「行 × 列」顺序拼接
-        各单元格(不含分隔行与 `|`), 单元格内同样去上下标分隔符、
-        反引号与成对 **, 拼接不加空白——与 JSON 侧去标签后
+        img 块返回 ""; p 块去掉成对 ** (行内粗体与整块题注, code 内的 **
+        保留) 与其中的反引号、并按转换规则去掉上下标分隔符; table 块按
+        「行 × 列」顺序拼接各单元格(不含分隔行与 `|`), 单元格内同样去
+        上下标分隔符、反引号与成对 **, 拼接不加空白——与 JSON 侧去标签后
         <th>/<td> 直接相邻的行为一致; code 块原样返回正文。
     """
     if b.kind == "img":
@@ -819,15 +848,14 @@ def block_md_text(b: "Block") -> str:
         for row in b.rows:
             for cell in row:
                 c = strip_scripts_outside_code(cell)
-                c = re.sub(r"\*\*([^*]+)\*\*", r"\1", c)
+                c = strip_bold_outside_code(c)
                 cells.append(c.replace("`", ""))
         return "".join(cells)
     t = b.text
     if b.kind == "p":
-        st = t.strip()
-        # 整块粗体多为题注, 去掉外层 ** 才能与 JSON 去标签文本对齐
-        if st.startswith("**") and st.endswith("**") and len(st) >= 4:
-            t = st[2:-2]
+        # 行内粗体(**说明**：…)与整块题注(**图 5-1**)一并去掉成对 **,
+        # 才能与 JSON 去标签文本对齐; code 片段内的 ** 原样保留
+        t = strip_bold_outside_code(t)
         t = strip_scripts_outside_code(t)
         t = t.replace("`", "")
     return t
