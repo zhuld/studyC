@@ -340,7 +340,7 @@ code { font-family: var(--mono); color: var(--seal-deep);  padding: 1px 4px; whi
   position: fixed;
   left: 0;
   top: 96px;
-  z-index: 20;
+  z-index: 35;
   padding: 9px 7px;
   border: 1px solid var(--paper-line);
   border-left: none;
