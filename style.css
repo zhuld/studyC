@@ -221,7 +221,6 @@ code { font-family: var(--mono); color: var(--seal-deep);  padding: 1px 4px; whi
 
 .reading-progress-label,
 .progress-value,
-.control-caption,
 .font-size-value {
   font-family: var(--mono);
   font-size: 11px;
@@ -257,7 +256,6 @@ code { font-family: var(--mono); color: var(--seal-deep);  padding: 1px 4px; whi
 
 .reading-controls { flex: 0 0 auto; }
 .font-controls { padding-right: 12px; border-right: 1px solid var(--paper-line); }
-.control-caption { margin-right: 2px; }
 
 .reading-control,
 .dock-toggle {
@@ -322,7 +320,9 @@ code { font-family: var(--mono); color: var(--seal-deep);  padding: 1px 4px; whi
   letter-spacing: 0.14em;
 }
 
-.toc-collapse {
+/* 抽屉内的收起按钮：仅窄屏（目录为浮层抽屉、会盖住工具条）时显示 */
+.toc-close {
+  display: none;
   border: 1px solid var(--paper-line);
   border-radius: var(--radius);
   background: var(--paper-surface);
@@ -332,34 +332,12 @@ code { font-family: var(--mono); color: var(--seal-deep);  padding: 1px 4px; whi
   padding: 4px 8px;
   cursor: pointer;
 }
-.toc-collapse:hover { color: var(--seal); border-color: var(--seal); }
-.toc-collapse:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
-
-.toc-expand {
-  display: none;
-  position: fixed;
-  left: 0;
-  top: 96px;
-  z-index: 35;
-  padding: 9px 7px;
-  border: 1px solid var(--paper-line);
-  border-left: none;
-  border-radius: 0 var(--radius) var(--radius) 0;
-  background: var(--paper-surface);
-  color: var(--ink-soft);
-  font: 12px var(--serif);
-  letter-spacing: 0.08em;
-  cursor: pointer;
-  box-shadow: 2px 2px 8px var(--paper-shadow);
-}
-.toc-expand:hover { color: var(--seal); border-color: var(--seal); }
-.toc-expand:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
+.toc-close:hover { color: var(--seal); border-color: var(--seal); }
+.toc-close:focus-visible { outline: 2px solid var(--seal); outline-offset: 2px; }
 
 .toc-collapsed .toc { display: none; }
-.toc-collapsed .toc-expand { display: block; }
 .toc-collapsed .layout {
   grid-template-columns: minmax(0, 1fr);
-  padding-left: clamp(54px, 6vw, 76px);   /* 为展开按钮留出左缘轨道 */
 }
 
 /* ============================ 左：教程 ============================ */
@@ -959,21 +937,6 @@ sup, sub { line-height: 0; }   /* 行内上下标（md 的 ^x^ / ~x~ 经管线�
 }
 .wb-resize:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
 
-.workbench-launcher {
-  position: static;
-  z-index: auto;
-  padding: 6px 10px;
-  border: 1px solid var(--seal);
-  border-radius: 5px;
-  background: var(--paper-surface);
-  color: var(--ink);
-  box-shadow: none;
-  font: 12px var(--mono);
-  cursor: pointer;
-}
-.workbench-launcher[hidden] { display: none; }
-.workbench-launcher span { margin-right: 6px; color: var(--amber); }
-.workbench-launcher:hover { background: var(--paper-2); border-color: var(--seal-deep); }
 .out-placeholder { color: var(--ink-faint); font-style: italic; }
 .out-sec { display: block; margin-top: 8px; }
 .out-sec-label {
@@ -998,19 +961,23 @@ sup, sub { line-height: 0; }   /* 行内上下标（md 的 ^x^ / ~x~ 经管线�
 
 /* 手机宽度：压缩报头与工作台控件，工作台铺满视口 */
 @media (max-width: 560px) {
+  /* 允许换行：目录开关与进度条同行，偏好控件另起整行 */
   .reading-dock {
-    align-items: stretch;
-    flex-direction: column;
-    gap: 8px;
+    flex-wrap: wrap;
+    gap: 8px 10px;
     padding: 9px 14px 10px;
   }
   .reading-progress { gap: 9px; }
-  .reading-controls { justify-content: space-between; flex-wrap: wrap; row-gap: 7px; }
+  .reading-controls {
+    flex: 1 1 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    row-gap: 7px;
+  }
   .font-controls { padding-right: 10px; }
   .reading-control,
   .dock-toggle { min-height: 32px; }
   .layout { padding: 16px 14px 48px; }
-  .toc-collapsed .layout { padding-left: 50px; }
   .seal { width: 48px; height: 48px; font-size: 27px; }
   .mast-left { gap: 12px; }
   .masthead { padding: 20px 14px 15px; }
@@ -1066,4 +1033,7 @@ sup, sub { line-height: 0; }   /* 行内上下标（md 的 ^x^ / ~x~ 经管线�
     box-shadow: var(--shadow-pop);
     overflow-y: auto;
   }
+
+  /* 浮层抽屉会盖住工具条最左的开合按钮，故抽屉内显示收起按钮 */
+  .toc-close { display: block; }
 }

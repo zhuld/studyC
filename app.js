@@ -1052,6 +1052,7 @@
   /*
    * 目录收缩：状态写在 <html> 的 toc-collapsed 类上（CSS 负责布局），
    * 并同步到 localStorage 供下次首屏直接恢复。
+   * 开合入口是工具条最左的 #tocToggle（常驻，窄屏下抽屉盖住工具条时另有抽屉内的 #tocClose）；
    * 窄屏下目录是浮层抽屉，点选小节后自动收起。
    */
   function setupTocToggle() {
@@ -1059,25 +1060,33 @@
 
     function apply(collapsed) {
       document.documentElement.classList.toggle("toc-collapsed", collapsed);
-      var btn = $("tocCollapse");
-      if (btn) btn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+      var btn = $("tocToggle");
+      if (!btn) return;
+      /* 单个按钮兼顾开合，故文案与图标随状态改成下一步动作 */
+      btn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+      btn.setAttribute("aria-label", collapsed ? "展开目录" : "收起目录");
+      btn.setAttribute("title", collapsed ? "展开目录" : "收起目录");
+      $("tocToggleIcon").textContent = collapsed ? "»" : "«";
     }
 
     function persist(collapsed) {
       try { localStorage.setItem("krc-course-toc-collapsed-v1", collapsed ? "1" : "0"); } catch (e) {}
     }
 
+    function setCollapsed(collapsed) {
+      apply(collapsed);
+      persist(collapsed);
+    }
+
     // 与 <head> 内联脚本写入的初始状态对齐 (仅同步 aria, 不落盘)
     apply(document.documentElement.classList.contains("toc-collapsed"));
 
-    var collapseBtn = $("tocCollapse");
-    var expandBtn = $("tocExpand");
-    if (collapseBtn) collapseBtn.addEventListener("click", function () {
-      apply(true); persist(true);
+    var toggleBtn = $("tocToggle");
+    if (toggleBtn) toggleBtn.addEventListener("click", function () {
+      setCollapsed(!document.documentElement.classList.contains("toc-collapsed"));
     });
-    if (expandBtn) expandBtn.addEventListener("click", function () {
-      apply(false); persist(false);
-    });
+    var closeBtn = $("tocClose");
+    if (closeBtn) closeBtn.addEventListener("click", function () { setCollapsed(true); });
 
     // 窄屏下目录是浮层抽屉: 选中叶级小节后自动收起;
     // 点章条目只展开其小节、点带子节的父节只开合三级抽屉, 两者都保持抽屉打开
@@ -1085,7 +1094,7 @@
     if (toc) toc.addEventListener("click", function (e) {
       if (!narrow.matches) return;
       var hit = e.target.closest ? e.target.closest(".chip") : null;
-      if (hit && !hit.classList.contains("has-subs")) { apply(true); persist(true); }
+      if (hit && !hit.classList.contains("has-subs")) setCollapsed(true);
     });
   }
 

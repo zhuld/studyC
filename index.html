@@ -2,8 +2,8 @@
 <!--
   index.html — 页面骨架（所有容器在此声明，内容由脚本填充）
 
-  结构：报头 → 左栏目录（三级瀑布式：章条目内嵌小节，带子节的小节再内嵌三级小节）→ 右栏教程（正文）
-        → 浮动代码工作台 → 底部脚本
+  结构：报头 → 阅读工具条（最左为目录开关，其后为章节进度与阅读偏好）→ 左栏目录（三级瀑布式：
+        章条目内嵌小节，带子节的小节再内嵌三级小节）→ 右栏教程（正文）→ 浮动代码工作台 → 底部脚本
   数据：lessons.js 加载 course-content.json，app.js 渲染并驱动全部交互；
         因此本文件中的 #sections、#chapterNav 等初始为空。
   本地偏好：<head> 内的内联脚本在首屏绘制前恢复目录收缩状态，避免样式跳变。
@@ -55,6 +55,12 @@
 </header>
 
 <div class="reading-dock" role="region" aria-label="阅读工具">
+  <!-- 目录开合：常驻入口，位于工具条最左；窄屏下目录为浮层抽屉时也用它开合 -->
+  <button class="dock-toggle" id="tocToggle" type="button"
+          aria-label="收起目录" aria-expanded="true" aria-controls="toc"
+          title="收起目录">
+    <span class="dock-icon" id="tocToggleIcon" aria-hidden="true">«</span>
+  </button>
   <div class="reading-progress">
     <span class="reading-progress-label">本章进度</span>
     <div class="progress-track" id="readingProgress"
@@ -66,7 +72,6 @@
   </div>
   <div class="reading-controls" role="group" aria-label="阅读偏好">
     <div class="font-controls" role="group" aria-label="正文大小">
-      <span class="control-caption">字号</span>
       <button class="reading-control" id="fontDecrease" type="button"
               aria-label="缩小正文字号" title="缩小正文字号">A−</button>
       <output class="font-size-value" id="fontSizeValue" aria-label="当前正文字号">16px</output>
@@ -83,8 +88,8 @@
       <span class="dock-icon" id="fullscreenIcon" aria-hidden="true">⤢</span>
       <span id="fullscreenLabel">全屏</span>
     </button>
-    <button class="workbench-launcher" id="workbenchLauncher" type="button">
-      <span aria-hidden="true">›_</span> 打开代码工作台
+    <button class="dock-toggle" id="workbenchLauncher" type="button">
+      <span aria-hidden="true">›_</span>
     </button>
   </div>
 </div>
@@ -95,14 +100,13 @@
   <aside class="toc" id="toc" aria-label="章节目录">
     <div class="toc-head">
       <span class="toc-title">目录</span>
-      <button class="toc-collapse" id="tocCollapse" type="button"
-              title="收缩隐藏目录" aria-label="收缩隐藏目录" aria-expanded="true">«</button>
+      <!-- 窄屏下目录是覆盖工具条的浮层抽屉，故抽屉内保留一个收起按钮（仅 ≤1080px 显示，见 style.css） -->
+      <button class="toc-close" id="tocClose" type="button"
+              title="收起目录" aria-label="收起目录">«</button>
     </div>
     <!-- 三级瀑布式目录：每章一个 .chapter-item（章节按钮 + 可开合的小节抽屉；带子节的小节再内嵌三级抽屉），由 app.js 渲染 -->
     <nav class="chapter-nav" id="chapterNav" aria-label="课程章节"></nav>
   </aside>
-  <button class="toc-expand" id="tocExpand" type="button"
-          title="展开目录" aria-label="展开目录">目录 »</button>
 
   <!-- ======================= 右：教程（章节内容，由 app.js 渲染） ======================= -->
   <section class="lesson" id="lessonCol">
