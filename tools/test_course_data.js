@@ -84,10 +84,10 @@ chapters.forEach((chapter, chapterIndex) => {
 });
 /* 固定总量：课程契约的一部分，修订课程数据时需同步调整 */
 assert.strictEqual(
-  tutorialIds.size, 187,
-  "course should retain 6 preface sections, all 91 main topics plus 90 appendix sections"
+  tutorialIds.size, 188,
+  "course should retain 6 preface sections, all 91 main topics plus 91 appendix sections"
 );
 console.log(
   `[ OK ] ${chapters.length} chapters, ${tutorialCount} tutorials ` +
-  `(6 preface, ${tutorialCount - 96} in appendices)`
+  `(6 preface, ${tutorialCount - 97} in appendices)`
 );

@@ -1,45 +1,41 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""md_to_course.py —— 流水线第 2 阶段: 分章 Markdown → course-content.json。
+"""md_to_course.py —— 流水线第 2 阶段: 书稿 Markdown → course-content.json。
 
-读取 pdf_to_md.py 生成的前言、八章书稿与三个附录, 把每节正文解析成块级
-HTML 后写回课程数据 course-content.json, 并同步图片。本脚本只更新课程
-内容数据, 不改动页面(HTML/CSS/JS)。
+读取 md/ 下的全部书稿 (`*.md`), 把每节正文解析成块级 HTML 后重新生成
+课程数据 course-content.json, 并同步图片。本脚本只更新课程内容数据,
+不改动页面(HTML/CSS/JS)。
 
 输入:
-    md/00-前言与序.md     前言书稿 (`## ` 为各篇序言标题, 见 PREFACE_FILE)
-    md/NN-第N章-*.md     八章书稿 (见下方 CHAPTER_FILES)
-    md/NN-附录X-*.md     附录书稿 (见下方 APPENDIX_FILES)
-    md/images/*          书稿引用的图片
-    course-content.json  既有课程数据 (八章的章节/小节编号作为写入骨架)
+    md/*.md             全部书稿; 按文件名排序即章节顺序, 不区分前言、
+                        正文与附录 (每次运行都从头重新生成)
+    md/images/*         书稿引用的图片
 输出:
-    course-content.json  章节顺序为「前言 → 八章 → 三个附录」共 12 章;
-                         前言与附录由书稿全量生成, 八章的 paragraphs
-                         被 md 正文覆盖
-    images/*             从 md/images/ 复制来的图片 (程序根目录)
+    course-content.json 由 md 全量重建的章节列表 (覆盖写入)
+    images/*            从 md/images/ 复制来的图片 (程序根目录)
 
 命令行用法(在仓库根目录执行):
-    python tools/md_to_course.py            # 写入 JSON 并复制图片, 随后自校验
-    python tools/md_to_course.py --verify   # 只做 md ⇔ JSON 一致性校验, 不写文件
+    python tools/md_to_course.py            # 重新生成 JSON 并复制图片, 随后自校验
+    python tools/md_to_course.py --verify   # 只做 md ⇔ 既有 JSON 一致性校验, 不写文件
 
-写入规则:
-    - md 中 `## x.y` 是教材主小节, `### x.y.z` 是第三级小节; 二者与 JSON 里
-      91 个 tutorials 的编号一一对应 (77 主小节 + 14 三级小节)
+统一的 md 格式 (所有书稿一视同仁):
+    - `# 章标题` 是 h1, 取作 meta.chapter; 开头没有 h1 时回退用文件名
+    - `## x.y 标题` 是二级小节, `### x.y.z 标题` 是三级小节; 编号也可带
+      附录字母前缀 (`A.1` / `A.2.1`)
+    - `## 标题` / `### 标题` 是无编号小节, 编号按本章编号前缀顺序合成:
+      前言书稿的各篇序言 `## ` 标题因此得到 0.1, 0.2, …
+    - 章编号前缀的推导顺序: 首个带编号小节的前缀 → h1「附录X」的字母 →
+      文件名开头的数字 (`00-前言与序.md` → `0`)
+    - 整篇没有任何 `##` 标题时 (如附录 C), 章首导言合成为 `<前缀>.1` 一小节
+    - meta.kind 由小节编号前缀决定: 字母前缀 → "appendix"、`0.` 前缀 →
+      "preface"、其余正文章不带 kind (与 app.js / Node 测试的约定一致)
+    - 每节的 paragraphs = 该节标题下的全部块; 首节的块并上章首导言,
+      因此导言随之进入首节; 三级小节只取自身标题下的正文
     - 行内标记: 除 `code`、**粗体** 外, 段落还支持行内上标 ^x^ 与下标 ~x~,
       分别转成 <sup>x</sup> / <sub>x</sub> (如 10^38^ → 10<sup>38</sup>,
       H~2~O → H<sub>2</sub>O); 分隔符之间的内容须是至多 12 个不含空白的
       字母/数字/运算符字符且至少含一个字母或数字, code 片段内不转换,
       因此按位取反 ~077、异或 x ^ y、字符 '~' 等写法不受影响
-    - 每节的 paragraphs 只取「该节标题之下的正文」: 三级小节
-      (subsection) 显示 `### x.y.z` 的内容, 其原有内容被 md 正文覆盖清除;
-      父节不再吞并三级正文
-    - 小节编号与标题等手工字段保持不变
-    - 前言书稿的 `## ` 标题是各篇序言的标题 (出版者的话 / 中文版序 / …),
-      无编号, 按出现顺序合成 0.1, 0.2, …; 章标题取自文件名「前言与序」;
-      整章由书稿生成: meta.kind = "preface"、置于章节列表最前
-    - 附录的编号带字母前缀 (`## A.1` / `### A.2.1`), 且 JSON 里没有对应骨架,
-      整章由书稿生成: meta.kind = "appendix"、全部块进 paragraphs
-    - 附录 C 的书稿只有 h1 没有任何 `##` 标题, 整篇合成为一个小节
     - 表格: 连续行若由「表头行 + 分隔行 + 数据行」构成(每行都含 `|`, 分隔行
       单元格形如 `---`/`:---:`/`---:`), 整块转成 <div class="table-scroll">
       包裹的 <table>: 表头 <th>、数据 <td>, 对齐标记写成 text-align 内联样式;
@@ -50,7 +46,11 @@ HTML 后写回课程数据 course-content.json, 并同步图片。本脚本只�
 
 关键设计约束:
     - 只搬运已经过版面重建的文字, 不转录原著正文, 以规避版权风险。
-    - 输出确定: 章节顺序与块顺序严格保持 md 中的出现顺序, 不排序、不去重。
+    - md/ 是唯一事实来源: 每次运行都从 md 全量重新生成 course-content.json,
+      既有 JSON 既不读取也不保留其中的人工字段 (编号、标题、章节顺序一并
+      由 md 重新推导)。
+    - 输出确定: 章节顺序(文件名排序)与块顺序严格保持 md 中的出现顺序,
+      不排序、不去重。
     - 自校验: 写完立即做「md ⇔ JSON」逐节文本比对, 不一致即退出码 1。
       (完整回归另需 node 跑 tools/test_*.js)
 """
@@ -71,27 +71,8 @@ MD_DIR = BASE / "md"
 JSON_PATH = BASE / "course-content.json"
 IMG_DST = BASE / "images"
 
-# 前言书稿: h1 是各篇序言的标题, 没有编号; 整章由书稿生成后置于最前
-PREFACE_FILE = "00-前言与序.md"
-
-# 顺序必须与 JSON 中的 8 章一致; 缺文件会直接抛错, 避免写错章节
-CHAPTER_FILES = [
-    "01-第1章-导言.md",
-    "02-第2章-类型、运算符与表达式.md",
-    "03-第3章-控制流.md",
-    "04-第4章-函数与程序结构.md",
-    "05-第5章-指针与数组.md",
-    "06-第6章-结构.md",
-    "07-第7章-输入与输出.md",
-    "08-第8章-UNIX系统接口.md",
-]
-
-# 附录书稿: 没有 JSON 写入骨架, 整章由书稿生成后追加在第 8 章之后
-APPENDIX_FILES = [
-    "09-附录A-参考手册.md",
-    "10-附录B-标准库.md",
-    "11-附录C-变更小结.md",
-]
+# 章节清单: 不维护任何书稿名单, 也不读取既有 course-content.json 作骨架;
+# md/ 下的 *.md 按文件名排序即章节顺序, 每次运行都全量重新生成 JSON
 
 # 整块图片: 一行或多行成块后就是 ![](images/...), 用 $ 锚定到块尾
 IMAGE_BLOCK_RE = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)\s*$")
@@ -105,12 +86,12 @@ INLINE_BOLD_RE = re.compile(r"\*\*([^*]+)\*\*")
 SCRIPT_BODY = r"[A-Za-z0-9+\-*/().,%×=]{1,12}"
 SUP_MARK_RE = re.compile(r"\^(%s)\^" % SCRIPT_BODY)
 SUB_MARK_RE = re.compile(r"~(%s)~" % SCRIPT_BODY)
-# 主小节编号 x.y 与三级小节编号 x.y.z
-SECTION_NUM_RE = re.compile(r"^\d+\.\d+$")
-SUB_NUM_RE = re.compile(r"^\d+\.\d+\.\d+$")
-# 附录小节编号 A.1 与三级编号 A.2.1 (字母前缀是附录与正文章的唯一差别)
-APPX_SECTION_NUM_RE = re.compile(r"^[A-Z]\.\d+$")
-APPX_SUB_NUM_RE = re.compile(r"^[A-Z]\.\d+\.\d+$")
+# 统一的小节编号词: 可带字母前缀 (附录 A.2、前言合成号 0.1 也算),
+# 两段 `x.y` 是二级小节、三段 `x.y.z` 是三级小节, 词尾允许一个句点
+# (`### 1.5.1. 文件复制`); 不匹配该词形的标题即视为无编号小节
+NUM_TOKEN_RE = re.compile(r"^(?:[A-Za-z]|\d+)(?:\.\d+)+\.?$")
+# 无编号小节章的兜底前缀: 「00-前言与序.md」开头的数字 → "0"
+FILE_PREFIX_RE = re.compile(r"^(\d+)")
 # 表格分隔行的单个单元格: `---` / `:---` / `---:` / `:---:` (至少一个 `-`)
 TABLE_SEP_CELL_RE = re.compile(r"^:?-+:?$")
 # 表格行的单元格分隔符: 未转义的 `|` (`\|` 是单元格内的字面竖线, 不切)
@@ -266,55 +247,34 @@ def md_inline_to_html(text: str) -> str:
     return s
 
 
-def split_heading(rest: str) -> tuple[str, str]:
-    """把标题行去掉 `#` 后的剩余文字拆成编号与标题。
+def split_heading(rest: str) -> tuple[str | None, str]:
+    """把标题行拆成 (编号, 标题); 首词不是编号时编号为 None (无编号小节)。
 
     `A.2.5 常量` → ("A.2.5", "常量"); `1.5.1. 文件复制` 去掉尾点后得
-    ("1.5.1", "文件复制"); 只有编号没有标题时标题为空串。
+    ("1.5.1", "文件复制"); `出版者的话` → (None, "出版者的话")——整行都是
+    标题, 编号由 assign_numbers 按本章编号前缀合成。
 
     Args:
         rest: 去掉 `#` 前缀与首尾空白后的标题行。
 
     Returns:
-        (编号, 标题) 二元组。
+        (编号, 标题) 二元组; 首词不是编号时编号为 None。
 
     Raises:
-        ValueError: 标题行里没有编号。
+        ValueError: 标题行为空。
 
     Side effects:
         无。
     """
+    rest = rest.strip()
+    if not rest:
+        raise ValueError("空标题行")
     parts = rest.split(None, 1)
-    if not parts:
-        raise ValueError(f"空标题行: {rest!r}")
-    num = parts[0].rstrip(".")
-    title = parts[1].strip() if len(parts) > 1 else ""
-    return num, title
-
-
-def read_h1(path: Path) -> str:
-    """读取书稿的 h1 章标题 (如「附录A 参考手册」)。
-
-    Args:
-        path: 书稿 md 文件路径。
-
-    Returns:
-        h1 标题文字; 文件开头没有 h1 时返回空串。
-
-    Raises:
-        FileNotFoundError: 文件不存在。
-
-    Side effects:
-        无(只读取 md 文件)。
-    """
-    if not path.exists():
-        raise FileNotFoundError(path)
-    for line in path.read_text(encoding="utf-8").split("\n"):
-        if line.startswith("# "):
-            return line[2:].strip()
-        if line.strip():
-            break
-    return ""
+    if NUM_TOKEN_RE.match(parts[0]):
+        num = parts[0].rstrip(".")
+        title = parts[1].strip() if len(parts) > 1 else ""
+        return num, title
+    return None, rest
 
 
 def split_appendix_h1(h1: str) -> tuple[str, str]:
@@ -445,51 +405,49 @@ def try_parse_table(cur: list[str], path: Path, line_no: int):
     return Block("table", "\n".join(cur), rows=rows, aligns=aligns)
 
 
-def parse_chapter(path: Path, appendix: bool = False, preface: bool = False):
-    """解析章节 md, 按其自带的标题切分为小节块。
+def parse_chapter(path: Path):
+    """解析书稿 md, 按自带标题切分为带编号的小节块 (所有书稿同一套规则)。
 
-    每个 `## x.y` / `### x.y.z` 标题开一节, 正文归该节所有; 返回顺序与 md
-    中一致(不排序、不去重)。章标题 `# ` 行只记入 h1, 标题之前的正文作为章首
-    导言。块以空行分隔; 相邻非空行先累积, 遇空行/新标题/围栏开关时整体 flush。
+    每个 `## ` / `### ` 标题开一节, 正文归该节所有; 返回顺序与 md 中一致
+    (不排序、不去重)。`# ` 行只记入 h1, 标题之前的正文作为章首导言。
+    块以空行分隔; 相邻非空行先累积, 遇空行/新标题/围栏开关时整体 flush。
+    标题首词是编号 (`1.5` / `1.5.1` / `A.2` …) 时直接采用, 否则视为无编号
+    小节, 由 assign_numbers 按本章编号前缀合成编号 (前言书稿的 `## ` 各篇
+    序言标题因此得到 0.1, 0.2, …)。
 
     Args:
-        path: 章 md 文件路径。
-        appendix: 附录书稿传 True: 小节编号允许字母前缀 (`A.1` / `A.2.1`);
-            整篇没有任何 `##` 标题时(如附录 C)把导言合成为一个小节。
-        preface: 前言书稿传 True: `## ` 行不再是编号小节, 而是各篇序言的
-            标题, 编号按出现顺序合成 "0.1", "0.2", …。
+        path: 书稿 md 文件路径。
 
     Returns:
-        (intro_blocks, sections) 二元组:
+        (h1, intro_blocks, sections):
+            h1: 章标题, 文件开头没有 `# ` 时为空串;
             intro_blocks: 章首导言 Block 列表;
-            sections: [(编号, 标题, [Block, ...]), ...], 编号为 "x.y"、
-                "x.y.z"、附录的 "A.1"/"A.2.1" 或前言的 "0.1"。
+            sections: [(编号, 标题, [Block, ...]), ...], 编号均已就位。
 
     Raises:
         FileNotFoundError: 文件不存在。
-        ValueError: 行内标题编号异常、三级小节未紧跟父节、围栏未闭合、
-            图片块混入多行或图片路径异常、正文没有小节标题。
+        ValueError: 二级/三级标题的编号层级异常、三级小节未紧跟父节、
+            小节编号重复、推导不出编号前缀、围栏未闭合、图片块混入多行、
+            图片路径异常, 或正文既没有小节标题也没有 h1。
 
     Side effects:
         无(只读取 md 文件)。
     """
     if not path.exists():
         raise FileNotFoundError(path)
-    sec_re = APPX_SECTION_NUM_RE if appendix else SECTION_NUM_RE
-    sub_re = APPX_SUB_NUM_RE if appendix else SUB_NUM_RE
     lines = path.read_text(encoding="utf-8").split("\n")
+    h1 = ""
     intro: list[Block] = []
-    sections: list[tuple[str, str, list[Block]]] = []
     target: list[Block] = intro
-    cur_main: str | None = None   # 当前所属主小节编号 (三级小节的父节)
+    # raw: [(编号|None, 层级 2|3, 标题, [Block, ...]), ...], 编号可能缺省
+    raw: list = []
     cur: list[str] = []
     cur_first = 0                 # cur 首行的行号(1 起), 供表格报错定位
     in_fence = False
     fence_line = -1
-    h1 = ""
 
     def flush():
-        nonlocal cur, cur_first, in_fence, fence_line
+        nonlocal cur, cur_first
         if not cur:
             return
         body = "\n".join(cur)
@@ -539,30 +497,19 @@ def parse_chapter(path: Path, appendix: bool = False, preface: bool = False):
             # 第三级小节标题 (如 `### 1.5.1. 文件复制`): 正文归该小节所有
             # 必须先于 `## ` 判断, 否则 "###" 会被 "## " 之类规则误吞
             flush()
-            num, title = split_heading(line[3:].strip())
-            if not sub_re.match(num):
+            num, title = split_heading(line[3:])
+            if num is not None and num.count(".") != 2:
                 raise ValueError(f"{path.name}: 三级小节编号异常: {line!r}")
-            if num.rsplit(".", 1)[0] != cur_main:
-                raise ValueError(
-                    f"{path.name}: 三级小节 {num} 未紧跟其父节 {cur_main}: {line!r}")
             target = []
-            sections.append((num, title, target))
+            raw.append((num, 3, title, target))
             continue
         if line.startswith("## "):
             flush()
-            if preface:
-                # 前言书稿的二级标题是各篇序言的标题, 无编号,
-                # 按出现顺序合成 0.1, 0.2, …
-                target = []
-                sections.append(("0.%d" % (len(sections) + 1),
-                                  line[3:].strip(), target))
-                continue
-            num, title = split_heading(line[3:].strip())
-            if not sec_re.match(num):
+            num, title = split_heading(line[3:])
+            if num is not None and num.count(".") != 1:
                 raise ValueError(f"{path.name}: 节编号异常: {line!r}")
-            cur_main = num
             target = []
-            sections.append((num, title, target))
+            raw.append((num, 2, title, target))
             continue
         if line.startswith("# "):
             flush()          # 章标题行, 记下 h1 后不再参与正文
@@ -573,16 +520,108 @@ def parse_chapter(path: Path, appendix: bool = False, preface: bool = False):
             continue
         cur.append(line)
     flush()
+
+    prefix = chapter_prefix(path, h1, raw)
+    sections = assign_numbers(path, raw, prefix)
     if not sections:
-        if not appendix:
-            raise ValueError(f"{path.name}: 未找到任何 ## 节")
-        # 附录 C 之类的书稿只有 h1: 整篇导言合成为一个小节 (编号 C.1)
-        letter, title = split_appendix_h1(h1)
-        if not letter or not intro:
-            raise ValueError(f"{path.name}: 缺「附录X」标题或正文, 无法合成小节")
-        sections.append((f"{letter}.1", title, intro))
+        # 整篇没有任何 ## 标题 (如附录 C): 章首导言合成为一个小节
+        if not intro:
+            raise ValueError(f"{path.name}: 缺小节标题与正文")
+        _letter, title = split_appendix_h1(h1)
+        if not title:
+            raise ValueError(f"{path.name}: 没有 ## 小节也没有 h1, 无法合成小节")
+        sections = [(f"{prefix}.1", title, intro)]
         intro = []      # 正文已归入该小节, 导言本身不再重复参与比对
-    return intro, sections
+    return h1, intro, sections
+
+
+def chapter_prefix(path: Path, h1: str, raw: list) -> str:
+    """推导本章小节编号的前缀 (数字章号或附录字母)。
+
+    顺序: ① 首个带编号小节的首段 (`1.5` → `1`, `A.2` → `A`);
+    ② h1 里「附录X」的字母; ③ 文件名开头的数字去前导零
+    (`00-前言与序.md` → `0`)。
+
+    Args:
+        path: 书稿 md 文件路径。
+        h1: 章标题。
+        raw: parse_chapter 收集的原始小节列表 (编号可能缺省)。
+
+    Returns:
+        编号前缀字符串。
+
+    Raises:
+        ValueError: 三步都推不出前缀 (无带编号小节、h1 不是「附录X …」、
+            文件名开头没有数字)。
+
+    Side effects:
+        无。
+    """
+    for num, _level, _title, _blocks in raw:
+        if num:
+            return num.split(".")[0]
+    letter, _ = split_appendix_h1(h1)
+    if letter:
+        return letter
+    m = FILE_PREFIX_RE.match(path.name)
+    if m:
+        return str(int(m.group(1)))    # "00" → "0"
+    raise ValueError(
+        f"{path.name}: 无法推导章编号前缀 "
+        "(无带编号小节, h1 不是「附录X …」, 文件名开头也没有数字)")
+
+
+def assign_numbers(path: Path, raw: list, prefix: str) -> list:
+    """给无编号小节合成编号, 并校验编号层级、父节与章内唯一性。
+
+    无编号的二级小节依次得到 `<前缀>.1`、`<前缀>.2`、… (已占用的编号自动
+    跳过); 无编号的三级小节得到 `<父节编号>.<n>`, 父节即其上一个二级小节。
+
+    Args:
+        path: 书稿 md 文件路径 (仅用于报错信息)。
+        raw: parse_chapter 收集的 (编号|None, 层级, 标题, 块) 列表, 保持 md 顺序。
+        prefix: 本章编号前缀 (由 chapter_prefix 推导)。
+
+    Returns:
+        [(编号, 标题, 块), ...], 编号均已就位且章内唯一。
+
+    Raises:
+        ValueError: 三级小节出现在任何二级小节之前、三级小节未紧跟父节,
+            或小节编号重复。
+
+    Side effects:
+        无。
+    """
+    sections: list = []
+    used: set[str] = set()
+    child_n: dict[str, int] = {}
+    prev_main = ""            # 上一个二级小节编号, 即三级小节的父节
+    for num, level, title, blocks in raw:
+        if level == 2:
+            if num is None:
+                k = 1
+                while f"{prefix}.{k}" in used:
+                    k += 1
+                num = f"{prefix}.{k}"
+            prev_main = num
+        else:
+            if not prev_main:
+                raise ValueError(
+                    f"{path.name}: 三级小节「{title}」出现在任何二级小节之前")
+            if num is None:
+                k = child_n.get(prev_main, 0) + 1
+                while f"{prev_main}.{k}" in used:
+                    k += 1
+                num = f"{prev_main}.{k}"
+            elif num.rsplit(".", 1)[0] != prev_main:
+                raise ValueError(
+                    f"{path.name}: 三级小节 {num} 未紧跟其父节 {prev_main}")
+            child_n[prev_main] = int(num.rsplit(".", 1)[1])
+        if num in used:
+            raise ValueError(f"{path.name}: 小节编号重复: {num}")
+        used.add(num)
+        sections.append((num, title, blocks))
+    return sections
 
 
 def _strip_scripts(s: str) -> str:
@@ -661,117 +700,40 @@ def strip_bold_outside_code(text: str) -> str:
 
 # ---------- 写入 JSON ----------
 
-def apply_content(data: list, parsed: list) -> None:
-    """把八章书稿写入 JSON: 各节 paragraphs。
+def build_chapter(filename: str, h1: str, intro: list, sections: list) -> dict:
+    """由书稿生成完整章节对象 (每次运行全量重建, 不读既有 JSON 骨架)。
 
     Args:
-        data: course-content.json 反序列化后的八个正文章节(就地修改)。
-        parsed: 八章的 parse_chapter 结果, 顺序与 data 对应。
-
-    Returns:
-        None。
-
-    Side effects:
-        就地覆盖 data 中每节的 paragraphs;
-        向 stdout 打印每章同步统计。
-
-    Raises:
-        AssertionError: 章节数不为 8、编号重复, 或 md 与 JSON 的小节集合
-            不一致时立即失败, 避免写坏数据。
-    """
-    assert len(data) == 8 == len(parsed), "章节数必须为 8"
-    for ci, (intro, sections) in enumerate(parsed):
-        chap = data[ci]
-        sec_map = {num: blocks for num, _title, blocks in sections}
-        assert len(sec_map) == len(sections), f"第{ci+1}章节编号重复"
-        tuts = {t["number"]: t for t in chap["tutorials"]}
-        assert len(tuts) == len(chap["tutorials"]), f"第{ci+1}章 tutorial 编号重复"
-        md_nums = {num for num, _title, _blocks in sections}
-        assert md_nums == set(tuts), (
-            f"第{ci+1}章 md 与 JSON 小节不一致: "
-            f"仅md={sorted(md_nums - set(tuts))} 仅json={sorted(set(tuts) - md_nums)}")
-        # 正文: paragraphs = 全部块(块级 HTML, 严格保序)
-        # 三级小节 (### x.y.z) 只取本小节标题下的正文, 覆盖清除其原有内容;
-        # 父节不再包含三级小节的正文 (正文交由对应 subsection 显示)
-        n_sub = 0
-        for idx, (num, _title, sec_blocks) in enumerate(sections):
-            # 首节的块 = 章首导言 + 该节正文, 使导言随之进入 1.1 的 paragraphs
-            blocks = (intro + sec_blocks) if idx == 0 else sec_blocks
-            assert blocks, f"{num}: 标题下没有正文块"
-            if num.count(".") > 1:
-                n_sub += 1
-            t = tuts[num]
-            t["paragraphs"] = [b.full for b in blocks]
-        print(f"  第{ci+1}章: {len(sections) - n_sub} 主小节 + {n_sub} 三级小节已同步")
-
-
-def build_appendix(filename: str, h1: str, intro: list, sections: list) -> dict:
-    """由附录书稿生成完整章节对象 (附录在 JSON 里没有写入骨架)。
-
-    Args:
-        filename: md/ 下的附录文件名 (仅用于报错信息)。
-        h1: 书稿的 h1 标题 (如「附录A 参考手册」)。
+        filename: md/ 下的书稿文件名 (仅用于报错信息)。
+        h1: 书稿的 h1 章标题; 为空时回退用文件名
+            (「00-前言与序.md」→「前言与序」)。
         intro: 章首导言 Block 列表, 会并入首节正文。
-        sections: parse_chapter(appendix=True) 得到的 (编号, 标题, 块) 列表。
+        sections: parse_chapter 得到的 (编号, 标题, 块) 列表。
 
     Returns:
-        可直接放进 course-content.json 的章节对象:
-        meta.kind = "appendix"、tutorials 的
-        paragraphs 收全部块(原书正文)。
+        可直接放进 course-content.json 的章节对象: meta.chapter = 章标题;
+        meta.kind 由小节编号前缀决定——字母前缀 (`A.1`) → "appendix"、
+        `0.` 前缀 → "preface"、其余正文章不带 kind;
+        tutorials 的 paragraphs 收全部块(块级 HTML, 严格保序)。
 
     Raises:
-        ValueError: h1 不是「附录X …」或某节没有正文块。
+        ValueError: 没有任何小节, 或某节没有正文块。
 
     Side effects:
         无(只构造对象, 不修改传入的 intro/sections)。
     """
-    letter, _ = split_appendix_h1(h1)
-    if not letter:
-        raise ValueError(f"{filename}: h1 不是「附录X …」: {h1!r}")
-
-    tutorials = []
-    for idx, (num, title, sec_blocks) in enumerate(sections):
-        # 首节的块 = 章首导言 + 该节正文 (与正文章同一规则)
-        blocks = (intro + sec_blocks) if idx == 0 else sec_blocks
-        if not blocks:
-            raise ValueError(f"{filename}: {num} 标题下没有正文块")
-        tutorials.append({
-            "number": num,
-            "title": title,
-            "paragraphs": [b.full for b in blocks],
-        })
-    return {
-        "meta": {
-            "chapter": h1,
-            "kind": "appendix",
-        },
-        "tutorials": tutorials,
-    }
-
-
-def build_preface(filename: str, intro: list, sections: list) -> dict:
-    """由前言书稿生成完整章节对象 (前言在 JSON 里没有写入骨架)。
-
-    Args:
-        filename: md/ 下的前言文件名 (用于派生章标题与报错信息)。
-        intro: 章首导言 Block 列表, 会并入首节正文。
-        sections: parse_chapter(preface=True) 得到的 (编号, 标题, 块) 列表。
-
-    Returns:
-        可直接放进 course-content.json 的章节对象:
-        meta.kind = "preface"、章标题取自文件名
-        (「00-前言与序.md」→「前言与序」)、tutorials 的 paragraphs 收全部块。
-
-    Raises:
-        ValueError: 某节没有正文块。
-
-    Side effects:
-        无(只构造对象, 不修改传入的 intro/sections)。
-    """
-    title = PREFACE_TITLE_RE.sub("", filename).removesuffix(".md")
+    if not sections:
+        raise ValueError(f"{filename}: 没有任何小节")
+    title = h1 or PREFACE_TITLE_RE.sub("", filename).removesuffix(".md")
+    prefix = sections[0][0].split(".")[0]
+    meta = {"chapter": title}
+    if prefix.isalpha():
+        meta["kind"] = "appendix"
+    elif prefix == "0":
+        meta["kind"] = "preface"
     tutorials = []
     for idx, (num, sec_title, sec_blocks) in enumerate(sections):
-        # 首节的块 = 章首导言 + 该节正文 (与正文章同一规则)
+        # 首节的块 = 章首导言 + 该节正文 (导言随之进入首节, 各章同一规则)
         blocks = (intro + sec_blocks) if idx == 0 else sec_blocks
         if not blocks:
             raise ValueError(f"{filename}: {num} {sec_title} 标题下没有正文块")
@@ -780,20 +742,14 @@ def build_preface(filename: str, intro: list, sections: list) -> dict:
             "title": sec_title,
             "paragraphs": [b.full for b in blocks],
         })
-    return {
-        "meta": {
-            "chapter": title,
-            "kind": "preface",
-        },
-        "tutorials": tutorials,
-    }
+    return {"meta": meta, "tutorials": tutorials}
 
 
 def sync_images(parsed: list) -> int:
     """把章节引用的图片从 md/images/ 复制到程序根目录 images/。
 
     Args:
-        parsed: 前言、八章与三个附录的 parse_chapter 结果 (附录不含图片)。
+        parsed: 各章 parse_chapter 结果 (h1, 导言, 小节) 的列表。
 
     Returns:
         实际复制的图片张数(内容已一致而跳过的计入 0)。
@@ -808,7 +764,7 @@ def sync_images(parsed: list) -> int:
     IMG_DST.mkdir(exist_ok=True)
     copied = 0
     seen = set()
-    for intro, sections in parsed:
+    for _h1, intro, sections in parsed:
         blocks = list(intro) + [b for _n, _t, bs in sections for b in bs]
         for b in blocks:
             if b.kind != "img" or b.src in seen:
@@ -897,12 +853,13 @@ def first_diff(a: str, b: str) -> str:
 def verify(data: list, parsed: list) -> list[str]:
     """双向完整性校验: 每节 md 文本 ⇔ JSON 去标签文本逐节相等, 图片数一致。
 
-    前言、八章与附录走同一套比对: 首节的 md 块都先并上章首导言, 再与该节
+    所有书稿走同一套比对: 首节的 md 块都先并上章首导言, 再与该节
     paragraphs 的去标签文本比对。
 
     Args:
-        data: 待校验的 JSON 章节列表(apply_content 之后或磁盘既有数据)。
-        parsed: 前言、八章与三个附录的 parse_chapter 结果, 顺序与 data 对应。
+        data: 待校验的 JSON 章节列表(重新生成的对象或磁盘既有数据)。
+        parsed: 各章 parse_chapter 结果 (h1, 导言, 小节) 列表, 顺序与
+            data 对应。
 
     Returns:
         错误描述列表; 全部通过时为空列表。
@@ -911,8 +868,10 @@ def verify(data: list, parsed: list) -> list[str]:
         无(只比较, 不修改传入数据)。
     """
     errors: list[str] = []
+    if len(data) != len(parsed):
+        return [f"章节数不一致: JSON={len(data)} 章, md={len(parsed)} 章"]
     total_imgs = 0
-    for ci, (intro, sections) in enumerate(parsed):
+    for ci, (_h1, intro, sections) in enumerate(parsed):
         chap = data[ci]
         if not sections:
             errors.append(f"第{ci+1}章无小节")
@@ -946,19 +905,43 @@ def verify(data: list, parsed: list) -> list[str]:
     dump = json.dumps(data, ensure_ascii=False)
     if re.search(r"\?{3,}", dump):
         errors.append("输出含 ??? 占位符")
-    if total_imgs != 21:
-        errors.append(f"图片引用总数应为 21 (含前言扉页 1 张), 实际 {total_imgs}")
+    if total_imgs != dump.count("<img "):
+        errors.append(f"图片引用总数不一致: md={total_imgs} json={dump.count('<img ')}")
     return errors
 
 
 # ---------- 入口 ----------
 
-def main() -> None:
-    """程序入口: 解析书稿, 写入 JSON 并自校验(或仅校验)。
+def list_md_files() -> list[Path]:
+    """按文件名升序列出 md/ 下的全部书稿 (即章节顺序)。
 
-    默认流程: 读入 course-content.json → 解析前言、八章与三个附录的 md →
-    apply_content 写八章正文 → 由书稿重建前言与三个附录章节 → sync_images
-    复制图片 → 写回 JSON → verify 校验。带 --verify 时只校验磁盘上的既有
+    不维护任何书稿名单: 新增、删除或重命名 md/*.md 都会直接反映到输出。
+
+    Returns:
+        书稿路径列表。
+
+    Raises:
+        FileNotFoundError: md/ 目录不存在。
+        ValueError: md/ 下没有任何 *.md 书稿。
+
+    Side effects:
+        无(只列目录)。
+    """
+    if not MD_DIR.is_dir():
+        raise FileNotFoundError(MD_DIR)
+    files = sorted(MD_DIR.glob("*.md"))
+    if not files:
+        raise ValueError(f"{MD_DIR}: 没有任何 *.md 书稿")
+    return files
+
+
+def main() -> None:
+    """程序入口: 解析 md/ 下的全部书稿, 全量重新生成 JSON 并自校验。
+
+    默认流程: list_md_files 列出 md/*.md → 逐章 parse_chapter →
+    build_chapter 重建章节对象 → sync_images 复制图片 → 覆盖写回
+    course-content.json → verify 校验。既有的 course-content.json 不参与
+    生成, 每次运行都是从 md 重新生成。带 --verify 时只校验磁盘上的既有
     JSON, 不写 JSON、不复制图片。
 
     Returns:
@@ -969,59 +952,39 @@ def main() -> None:
         打印进度与统计; 校验失败时以退出码 1 结束进程。
     """
     verify_only = "--verify" in sys.argv
-    data = json.loads(JSON_PATH.read_text(encoding="utf-8"))
-    # 8 个正文章是人工维护的写入骨架; 前言(第 1 章)与第 10 章起的附录
-    # 没有骨架, 一律由本脚本从书稿重建
-    main_chapters = [c for c in data
-                     if c.get("meta", {}).get("kind") not in ("preface", "appendix")]
-    assert len(main_chapters) == 8, \
-        "course-content.json 应含 8 个人工维护的正文章"
-    assert all(c.get("meta", {}).get("kind") in (None, "preface", "appendix")
-               for c in data), \
-        "course-content.json 只允许 kind ∈ {缺省, preface, appendix} 的章节"
-
-    parsed_preface = parse_chapter(MD_DIR / PREFACE_FILE, preface=True)
-    preface_chapter = build_preface(PREFACE_FILE, *parsed_preface)
-    parsed_chapters = [parse_chapter(MD_DIR / f) for f in CHAPTER_FILES]
-    parsed_appendix = []
-    appendix_chapters = []
-    for f in APPENDIX_FILES:
-        path = MD_DIR / f
-        intro, secs = parse_chapter(path, appendix=True)
-        parsed_appendix.append((intro, secs))
-        appendix_chapters.append(build_appendix(f, read_h1(path), intro, secs))
-    parsed = [parsed_preface] + parsed_chapters + parsed_appendix
+    files = list_md_files()
+    parsed = [parse_chapter(p) for p in files]   # [(h1, intro, sections)]
+    data = [build_chapter(p.name, h1, intro, sections)
+            for p, (h1, intro, sections) in zip(files, parsed)]
+    for p, (_h1, _intro, sections) in zip(files, parsed):
+        n_sub = sum(1 for num, _t, _b in sections if num.count(".") > 1)
+        print(f"  {p.name}: {len(sections) - n_sub} 二级小节 + {n_sub} 三级小节")
 
     if verify_only:
-        assert len(data) == 12 and \
-            data[0].get("meta", {}).get("kind") == "preface", (
-            "course-content.json 还没有前言章节, "
-            "请先运行 python tools/md_to_course.py")
+        if not JSON_PATH.exists():
+            raise FileNotFoundError(
+                f"{JSON_PATH} 不存在, 请先运行 python tools/md_to_course.py")
+        data = json.loads(JSON_PATH.read_text(encoding="utf-8"))
         errors = verify(data, parsed)
     else:
-        apply_content(main_chapters, parsed_chapters)
-        # 前言与附录一律由书稿重建; 正文章原位保留(只覆盖 paragraphs)
-        data = [preface_chapter] + main_chapters + appendix_chapters
         copied = sync_images(parsed)
         JSON_PATH.write_text(
             json.dumps(data, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8")
-        print(f"已写入 {JSON_PATH.name} (复制图片 {copied} 张)")
+        print(f"已写入 {JSON_PATH.name} ({len(data)} 章, 复制图片 {copied} 张)")
         errors = verify(data, parsed)
     if errors:
         print(f"[FAIL] {len(errors)} 项:")
         for e in errors[:30]:
             print("  -", e)
         sys.exit(1)
-    n_preface = len(data[0]["tutorials"])
-    n_main = sum(1 for c in data[1:9] for t in c["tutorials"]
-                 if t["number"].count(".") == 1)
-    n_sub = sum(1 for c in data[1:9] for t in c["tutorials"]
-                if t["number"].count(".") > 1)
-    n_appx = sum(len(c["tutorials"]) for c in data[9:])
-    print(f"[ OK ] 1 前言/{n_preface} 小节 + 8 章 / {n_main} 主小节 + "
-          f"{n_sub} 三级小节 + {len(data) - 9} 附录 / {n_appx} 附录小节 "
-          f"md 与 JSON 文本逐节一致, 图片一致")
+    n_tut = sum(len(c["tutorials"]) for c in data)
+    n_preface = sum(len(c["tutorials"]) for c in data
+                    if c["meta"].get("kind") == "preface")
+    appx = [c for c in data if c["meta"].get("kind") == "appendix"]
+    n_appx = sum(len(c["tutorials"]) for c in appx)
+    print(f"[ OK ] {len(data)} 章 / {n_tut} 小节 (前言 {n_preface} 节, "
+          f"附录 {len(appx)} 章 / {n_appx} 节) md 与 JSON 文本逐节一致, 图片一致")
 
 
 if __name__ == "__main__":

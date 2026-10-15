@@ -144,7 +144,7 @@
   },
   {
     "meta": {
-      "chapter": "第 1 章　导言"
+      "chapter": "第1章 导言"
     },
     "tutorials": [
       {
@@ -277,7 +277,7 @@
       },
       {
         "number": "1.5",
-        "title": "字符输入／输出",
+        "title": "字符输入/输出",
         "paragraphs": [
           "<p>接下来我们看一组与字符型数据处理有关的程序。读者将会发现，许多程序只不过是这里所讨论的程序原型的扩充版本而已。</p>",
           "<p>标准库提供的输入／输出模型非常简单。无论文本从何处输入，输出到何处，其输入／输出都是按照字符流的方式处理。文本流是由多行字符构成的字符序列，而每行字符则由 0个或多个字符组成，行末是一个换行符。标准库负责使每个输入／输出流都能够遵守这一模型。使用标准库的 C语言程序员不必关心在程序之外这些行是如何表示的。</p>",
@@ -509,7 +509,7 @@
   },
   {
     "meta": {
-      "chapter": "第 2 章　类型、运算符与表达式"
+      "chapter": "第2章 类型、运算符与表达式"
     },
     "tutorials": [
       {
@@ -829,7 +829,7 @@
   },
   {
     "meta": {
-      "chapter": "第 3 章　控制流"
+      "chapter": "第3章 控制流"
     },
     "tutorials": [
       {
@@ -901,7 +901,7 @@
       },
       {
         "number": "3.5",
-        "title": "while循环与 for循环",
+        "title": "while循环与for循环",
         "paragraphs": [
           "<p>我们在前面已经使用过<code>while</code>与<code>for</code>循环语句。在<code>while</code>循环语句</p>",
           "<pre class=\"card-code\">   while (表达式)\n    语句</pre>",
@@ -954,7 +954,7 @@
       },
       {
         "number": "3.7",
-        "title": "break语句与 continue语句",
+        "title": "break语句与continue语句",
         "paragraphs": [
           "<p>不通过循环头部或尾部的条件测试而跳出循环，有时是很方便的。<code>break</code> 语句可用于从<code>for</code>、<code>while</code>与<code>do-while</code>等循环中提前退出，就如同从<code>switch</code>语句中提前退出一样。<code>break</code>语句能使程序从<code>switch</code>语句或最内层循环中立即跳出。</p>",
           "<p>下面的函数<code>trim</code>用于删除字符串尾部的空格符、制表符与换行符。当发现最右边的字符为非空格符、非制表符、非换行符时，就使用<code>break</code>语句从循环中退出。</p>",
@@ -985,7 +985,7 @@
   },
   {
     "meta": {
-      "chapter": "第 4 章　函数与程序结构"
+      "chapter": "第4章 函数与程序结构"
     },
     "tutorials": [
       {
@@ -1306,7 +1306,7 @@
   },
   {
     "meta": {
-      "chapter": "第 5 章　指针与数组"
+      "chapter": "第5章 指针与数组"
     },
     "tutorials": [
       {
@@ -1722,7 +1722,7 @@
   },
   {
     "meta": {
-      "chapter": "第 6 章　结构"
+      "chapter": "第6章 结构"
     },
     "tutorials": [
       {
@@ -1948,7 +1948,7 @@
       },
       {
         "number": "6.7",
-        "title": "类型定义（typedef）",
+        "title": "类型定义",
         "paragraphs": [
           "<p>C 语言提供了一个称为<code>typedef</code>的功能，它用来建立新的数据类型名，例如，声明</p>",
           "<pre class=\"card-code\">   typedef int Length;</pre>",
@@ -2032,12 +2032,12 @@
   },
   {
     "meta": {
-      "chapter": "第 7 章　输入与输出"
+      "chapter": "第7章 输入与输出"
     },
     "tutorials": [
       {
         "number": "7.1",
-        "title": "标准输入／输出",
+        "title": "标准输入/输出",
         "paragraphs": [
           "<p>输入／输出功能并不是 C语言本身的组成部分，所以到目前为止，我们并没有过多地强调它们。但是，程序与环境之间的交互比我们在前面部分中描述的情况要复杂很多，本章将讲述标准库，介绍一些输入／输出函数、字符串处理函数、存储管理函数与数学函数，以及其它一些 C语言程序的功能。本章讨论的重点将放在输入／输出上。</p>",
           "<p>ANSI 标准精确地定义了这些库函数，所以，在任何可以使用 C语言的系统中都有这些函数的兼容形式。如果程序的系统交互部分仅仅使用了标准库提供的功能，则可以不经修改地从一个系统移植到另一个系统中。</p>",
@@ -2099,7 +2099,7 @@
       },
       {
         "number": "7.3",
-        "title": "变长参数表",
+        "title": "变长参数",
         "paragraphs": [
           "<p>本节以实现函数 <code>printf</code>的一个最简单版本为例，介绍如何以可移植的方式编写可处理变长参数表的函数。因为我们的重点在于参数的处理，所以，函数<code>minprintf</code>只处理格式字符串和参数，格式转换则通过调用函数<code>printf</code>实现。</p>",
           "<p>函数<code>printf</code>的正确声明形式为：</p>",
@@ -2193,7 +2193,7 @@
       },
       {
         "number": "7.6",
-        "title": "错误处理-stderr和 exit",
+        "title": "错误处理-stderr和exit",
         "paragraphs": [
           "<p><code>cat</code> 程序的错误处理功能并不完善。问题在于，如果因为某种原因而造成其中的一个文件无法访问，相应的诊断信息要在该连接的输出的末尾才能打印出来。当输出到屏幕时，这种处理方法尚可以接受，但如果输出到一个文件或通过管道输出到另一个程序时，就无法接受了。</p>",
           "<p>为了更好地处理这种情况，另一个输出流以与<code>stdin</code>和<code>stdout</code>相同的方式分派给程序，即<code>stderr</code>。即使对标准输出进行了重定向，写到<code>stderr</code>中的输出通常也会显示在屏幕上。</p>",
@@ -2313,7 +2313,7 @@
   },
   {
     "meta": {
-      "chapter": "第 8 章　UNIX 系统接口"
+      "chapter": "第8章 UNIX系统接口"
     },
     "tutorials": [
       {
@@ -2333,7 +2333,7 @@
       },
       {
         "number": "8.2",
-        "title": "低级 I/O-read和 write",
+        "title": "低级I/O-read和write",
         "paragraphs": [
           "<p>输入与输出是通过<code>read</code>和<code>write</code>系统调用实现的。在 C语言程序中，可以通过函数<code>read</code>和<code>write</code>访问这两个系统调用。这两个函数中，第一个参数是文件描述符，第二个参数是程序中存放读或写的数据的字符数组，第三个参数是要传输的字节数。</p>",
           "<pre class=\"card-code\">   int n_read = read(int fd, char *buf, int n);\n   int n_written = write(int fd, char *buf, int n);</pre>",
@@ -2353,7 +2353,7 @@
       },
       {
         "number": "8.3",
-        "title": "open、creat、close和 unlink",
+        "title": "open、creat、close和unlink",
         "paragraphs": [
           "<p>除了默认的标准输入、标准输出和标准错误文件外，其它文件都必须在读或写之前显式地打开。系统调用<code>open</code>和<code>creat</code>用于实现该功能。</p>",
           "<p><code>open</code>与第 7章讨论的 <code>fopen</code>相似，不同的是，前者返回一个文件描述符，它仅仅只是一个<code>int</code>类型的数值。而后者返回一个文件指针。如果发生错误，<code>open</code>将返回-1。</p>",
@@ -2396,7 +2396,7 @@
       },
       {
         "number": "8.5",
-        "title": "实例-fopen和 getc函数的实现",
+        "title": "实例-fopen和getc函数的实现",
         "paragraphs": [
           "<p>下面以标准库函数<code>fopen</code>和<code>getc</code>的一种实现方法为例来说明如何将这些系统调用结合起来使用。</p>",
           "<p>我们回忆一下，标准库中的文件不是通过文件描述符描述的，而是使用文件指针描述的。文件指针是一个指向包含文件各种信息的结构的指针，该结构包含下列内容：一个指向缓冲区的指针，通过它可以一次读入文件的一大块内容；一个记录缓冲区中剩余的字符数的计数器；一个指向缓冲区中下一个字符的指针；文件描述符；描述读／写模式的标志；描述错误状态的标志等。</p>",
