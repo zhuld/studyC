@@ -122,6 +122,7 @@ body {
     radial-gradient(1200px 500px at 85% -10%, var(--seal-wash), transparent 60%),
     var(--paper);
   min-height: 100vh;
+  min-width: 600px;
 }
 
 ::selection { background: var(--editor-selection); }
