@@ -33,6 +33,8 @@ function collectCodeBlocks() {
     });
   };
   chapters.forEach((chapter) => {
+    /* 章首导言独立成块，其代码块同样会渲染进页面，一并纳入判定 */
+    scan(chapter.meta.chapter, "intro", chapter.intro);
     chapter.tutorials.forEach((tutorial) => {
       scan(tutorial.number, "tutorial", tutorial.paragraphs);
     });

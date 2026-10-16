@@ -152,11 +152,12 @@ function checkChips(chapters, note) {
     const item = queryAll(root, '.chapter-item[data-chapter="' + (i + 1) + '"]')[0];
     assert.ok(item, note + "：找不到第 " + (i + 1) + " 章的抽屉");
     const nav = query(item, ".chips");
-    const kind = chapter.meta.kind;
+    /* 前言/教材/附录标签与页面同规则：按首节编号前缀（0. → 前言、字母 → 附录） */
+    const prefix = chapter.tutorials.length ? chapter.tutorials[0].number.split(".")[0] : "";
+    const kindLabel = prefix === "0" ? "前言" : /^[A-Za-z]$/.test(prefix) ? "附录" : "教材";
     assert.strictEqual(
       nav.getAttribute("aria-label"),
-      (kind === "appendix" ? "附录" : kind === "preface" ? "前言" : "教材") +
-        "小节，共 " + chapter.tutorials.length + " 项",
+      kindLabel + "小节，共 " + chapter.tutorials.length + " 项",
       note + "：" + chapter.meta.chapter + " 的目录 aria-label 不符"
     );
 
@@ -221,7 +222,7 @@ const synthetic = [
     { number: "2.1", title: "甲", paragraphs: [] },
     { number: "2.2", title: "乙", paragraphs: [] }
   ] },
-  { meta: { chapter: "附录A 参考手册", kind: "appendix" }, tutorials: [
+  { meta: { chapter: "附录A 参考手册" }, tutorials: [
     { number: "A.1", title: "甲", paragraphs: [] },
     { number: "A.2", title: "乙", paragraphs: [] },
     { number: "A.2.1", title: "记号", paragraphs: [] },
@@ -229,7 +230,7 @@ const synthetic = [
     { number: "A.2.3", title: "字", paragraphs: [] },
     { number: "A.3", title: "丙", paragraphs: [] }
   ] },
-  { meta: { chapter: "前言与序", kind: "preface" }, tutorials: [
+  { meta: { chapter: "前言与序" }, tutorials: [
     { number: "0.1", title: "出版者的话", paragraphs: [] }
   ] }
 ];

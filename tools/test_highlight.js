@@ -37,6 +37,8 @@ function collectSources() {
     while ((m = re.exec(text)) !== null) out.push({ label, code: decodeEntities(m[1]) });
   };
   chapters.forEach((chapter) => {
+    /* 章首导言独立成块，页面同样对其 pre 着色，一并纳入往返校验 */
+    chapter.intro.forEach((p, i) => scanHtml(`${chapter.meta.chapter}/intro[${i}]`, p));
     chapter.tutorials.forEach((tutorial) => {
       tutorial.paragraphs.forEach((p, i) => scanHtml(`${tutorial.number}/paragraphs[${i}]`, p));
     });

@@ -35,14 +35,24 @@
           throw new Error("课程内容格式错误：第 " + (chapterIndex + 1) + " 章结构不完整");
         }
 
-        /* 前言 (kind = "preface") 与附录 (kind = "appendix") 是只读书稿正文，
-           只需有内容即可；正文章的段落数下限按是否含子小节区分 */
-        var kind = chapter.meta.kind;
-        if (kind && kind !== "preface" && kind !== "appendix") {
+        /* 前言（首节编号 0.x）与附录（A.x–C.x）是只读书稿正文，只需有内容即可；
+           正文章的段落数下限按是否含子小节区分——章节身份按首节编号前缀判定 */
+        var prefix = chapter.tutorials.length
+          ? chapter.tutorials[0].number.split(".")[0] : "";
+        var isReadonly = prefix === "0" || /^[A-Za-z]$/.test(prefix);
+
+        /* 章首导言独立成块渲染：intro 必为块级 HTML 数组，
+           没有导言的章节（如附录 A）为空数组 */
+        if (!Array.isArray(chapter.intro)) {
           throw new Error("课程内容格式错误：第 " + (chapterIndex + 1) +
-            " 章 meta.kind 取值非法：" + kind);
+            " 章缺 intro 字段");
         }
-        var isReadonly = kind === "preface" || kind === "appendix";
+        chapter.intro.forEach(function (paragraph, i) {
+          if (typeof paragraph !== "string" || !paragraph.trim()) {
+            throw new Error("课程内容格式错误：第 " + (chapterIndex + 1) +
+              " 章 intro[" + i + "] 缺正文");
+          }
+        });
 
         chapter.tutorials.forEach(function (tutorial) {
           // 含三级小节 (如 1.5.1) 的父节可能只保留导语, 正文由子小节承载

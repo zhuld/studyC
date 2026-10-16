@@ -532,9 +532,11 @@
     var nav = item ? item.querySelector(".chips") : null;
     if (!nav) return;
     nav.innerHTML = "";
-    /* 无障碍与提示文案按「前言 / 正文章 / 附录」区分 */
-    var kind = activeLesson.meta.kind;
-    var kindLabel = kind === "appendix" ? "附录" : kind === "preface" ? "前言" : "教材";
+    /* 无障碍与提示文案按「前言 / 正文章 / 附录」区分：按首节编号前缀判定
+       （`0.` → 前言、字母 → 附录），与管线推导编号的规则同源 */
+    var prefix = activeLesson.tutorials.length
+      ? activeLesson.tutorials[0].number.split(".")[0] : "";
+    var kindLabel = prefix === "0" ? "前言" : /^[A-Za-z]$/.test(prefix) ? "附录" : "教材";
     nav.setAttribute("aria-label",
       kindLabel + "小节，共 " + activeLesson.tutorials.length + " 项");
     /* 三级抽屉的 DOM id 由章序号与父节编号派生（1.5 → chapterSubs1-1-5） */
@@ -706,12 +708,25 @@
   }
 
   /*
-   * 渲染正文区：按教材目录顺序输出各小节。
+   * 渲染正文区：先输出章首导言（以章节名称为标题独立成块），再按教材目录顺序输出各小节。
    * 小节标题的层级由编号段数决定（1.5 → h2，1.5.1 → h3）。
    */
   function renderSections() {
     var wrap = $("sections");
     wrap.innerHTML = "";
+
+    /* 章首导言：标题即章节名；不带 data-outline-topic——目录里没有它的 chip，
+       滚动高亮的取样选择器 [data-outline-topic].outline-topic 会自动跳过它 */
+    if (activeLesson.intro && activeLesson.intro.length) {
+      var introArticle = el("article", "outline-topic topic-intro");
+      var introContent = "<h2>" + esc(activeLesson.meta.chapter) + "</h2>";
+      activeLesson.intro.forEach(function (paragraph) {
+        introContent += paragraph + "\n";
+      });
+      introArticle.innerHTML = introContent;
+      decorateRunnableCode(introArticle);
+      wrap.appendChild(introArticle);
+    }
 
     activeLesson.tutorials.forEach(function (topic) {
       /* 编号有三段（如 1.5.1）的是子小节，改用 h3 并施加缩进样式 */
@@ -882,7 +897,6 @@
     var activeItem = null;
     window.CHAPTERS.forEach(function (chapter, index) {
       var isActive = chapter === activeLesson;
-      var kind = chapter.meta.kind;
       var item = el("div", "chapter-item");
       item.setAttribute("data-chapter", String(index + 1));
       /* 编号已由 chapter-tab-no 单独显示：正文章去掉「第 N 章」前缀，
@@ -890,17 +904,12 @@
       var tabTitle = chapter.meta.chapter
         .replace(/^第\s*\d+\s*章\s*/, "")
         .replace(/^附录\s*[A-Z]\s*/, "");
-      /* 编号栏：前言 0、正文章 1…8（取自「第 N 章」标题）、附录用 A/B/C（不补零） */
-      var tabNo;
-      if (kind === "appendix") {
-        tabNo = ((chapter.meta.chapter.match(/^附录\s*([A-Z])/) || [])[1] || "");
-      } else if (kind === "preface") {
-        tabNo = "0";
-      } else {
-        var m = chapter.meta.chapter.match(/^第\s*(\d+)\s*章/);
-        tabNo = m ? String(parseInt(m[1], 10))
-                  : String(index);
-      }
+      /* 编号栏：前言 0、正文章 1…8（取自「第 N 章」标题）、附录用 A/B/C（不补零）；
+         章节身份直接由标题判定——「附录X」→ 附录、「第 N 章」→ 正文章，其余即前言章 */
+      var appxNo = (chapter.meta.chapter.match(/^附录\s*([A-Z])/) || [])[1];
+      var mainNo = chapter.meta.chapter.match(/^第\s*(\d+)\s*章/);
+      var tabNo = appxNo || (mainNo ? String(parseInt(mainNo[1], 10))
+                                    : String(index));
       var subCount = chapter.tutorials.filter(function (t) {
         return t.number.split(".").length === 2;
       }).length;

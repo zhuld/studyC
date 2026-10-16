@@ -27,10 +27,9 @@
     - 章编号前缀的推导顺序: 首个带编号小节的前缀 → h1「附录X」的字母 →
       文件名开头的数字 (`00-前言与序.md` → `0`)
     - 整篇没有任何 `##` 标题时 (如附录 C), 章首导言合成为 `<前缀>.1` 一小节
-    - meta.kind 由小节编号前缀决定: 字母前缀 → "appendix"、`0.` 前缀 →
-      "preface"、其余正文章不带 kind (与 app.js / Node 测试的约定一致)
-    - 每节的 paragraphs = 该节标题下的全部块; 首节的块并上章首导言,
-      因此导言随之进入首节; 三级小节只取自身标题下的正文
+    - 每节的 paragraphs = 该节标题下的全部块; 章首导言不并入首节,
+      单独写进章节对象的 intro 字段 (页面以章节名称为标题在正文区
+      独立成块, 目录不为它设条目); 三级小节只取自身标题下的正文
     - 行内标记: 除 `code`、**粗体** 外, 段落还支持行内上标 ^x^ 与下标 ~x~,
       分别转成 <sup>x</sup> / <sub>x</sub> (如 10^38^ → 10<sup>38</sup>,
       H~2~O → H<sub>2</sub>O); 分隔符之间的内容须是至多 12 个不含空白的
@@ -707,14 +706,14 @@ def build_chapter(filename: str, h1: str, intro: list, sections: list) -> dict:
         filename: md/ 下的书稿文件名 (仅用于报错信息)。
         h1: 书稿的 h1 章标题; 为空时回退用文件名
             (「00-前言与序.md」→「前言与序」)。
-        intro: 章首导言 Block 列表, 会并入首节正文。
+        intro: 章首导言 Block 列表, 写入章节对象的 intro 字段,
+            不并入任何小节; 无导言时为空列表。
         sections: parse_chapter 得到的 (编号, 标题, 块) 列表。
 
     Returns:
         可直接放进 course-content.json 的章节对象: meta.chapter = 章标题;
-        meta.kind 由小节编号前缀决定——字母前缀 (`A.1`) → "appendix"、
-        `0.` 前缀 → "preface"、其余正文章不带 kind;
-        tutorials 的 paragraphs 收全部块(块级 HTML, 严格保序)。
+        intro 收章首导言块(块级 HTML, 无导言时为空数组);
+        tutorials 的 paragraphs 收该节全部块(块级 HTML, 严格保序)。
 
     Raises:
         ValueError: 没有任何小节, 或某节没有正文块。
@@ -725,24 +724,19 @@ def build_chapter(filename: str, h1: str, intro: list, sections: list) -> dict:
     if not sections:
         raise ValueError(f"{filename}: 没有任何小节")
     title = h1 or PREFACE_TITLE_RE.sub("", filename).removesuffix(".md")
-    prefix = sections[0][0].split(".")[0]
     meta = {"chapter": title}
-    if prefix.isalpha():
-        meta["kind"] = "appendix"
-    elif prefix == "0":
-        meta["kind"] = "preface"
     tutorials = []
-    for idx, (num, sec_title, sec_blocks) in enumerate(sections):
-        # 首节的块 = 章首导言 + 该节正文 (导言随之进入首节, 各章同一规则)
-        blocks = (intro + sec_blocks) if idx == 0 else sec_blocks
-        if not blocks:
+    for num, sec_title, sec_blocks in sections:
+        # 章首导言不并入任何小节, 单独落在 intro 字段, 由页面独立成块
+        if not sec_blocks:
             raise ValueError(f"{filename}: {num} {sec_title} 标题下没有正文块")
         tutorials.append({
             "number": num,
             "title": sec_title,
-            "paragraphs": [b.full for b in blocks],
+            "paragraphs": [b.full for b in sec_blocks],
         })
-    return {"meta": meta, "tutorials": tutorials}
+    return {"meta": meta, "intro": [b.full for b in intro],
+            "tutorials": tutorials}
 
 
 def sync_images(parsed: list) -> int:
@@ -853,8 +847,8 @@ def first_diff(a: str, b: str) -> str:
 def verify(data: list, parsed: list) -> list[str]:
     """双向完整性校验: 每节 md 文本 ⇔ JSON 去标签文本逐节相等, 图片数一致。
 
-    所有书稿走同一套比对: 首节的 md 块都先并上章首导言, 再与该节
-    paragraphs 的去标签文本比对。
+    所有书稿走同一套比对: 章首导言的 md 块与章节 intro 字段比对,
+    各小节的 md 块与其 paragraphs 的去标签文本逐节比对。
 
     Args:
         data: 待校验的 JSON 章节列表(重新生成的对象或磁盘既有数据)。
@@ -876,14 +870,25 @@ def verify(data: list, parsed: list) -> list[str]:
         if not sections:
             errors.append(f"第{ci+1}章无小节")
             continue
+        # 章首导言单独与 intro 字段比对 (无导言时两侧皆空)
+        intro_html = " ".join(chap.get("intro", []))
+        a = re.sub(r"\s+", " ",
+                   " ".join(block_md_text(x) for x in intro)).strip()
+        b = norm_json(intro_html)
+        if a != b:
+            errors.append(f"第{ci+1}章导言 文本不一致: {first_diff(a, b)}")
+        na = sum(1 for x in intro if x.kind == "img")
+        nb = intro_html.count("<img ")
+        total_imgs += na
+        if na != nb:
+            errors.append(f"第{ci+1}章导言 图片数不一致: md={na} json={nb}")
         tuts = {t["number"]: t for t in chap["tutorials"]}
-        first_num = sections[0][0]
         for num, _title, sec_blocks in sections:
             t = tuts.get(num)
             if t is None:
                 errors.append(f"第{ci+1}章 {num}: md 有而 JSON 无")
                 continue
-            blocks = (intro + sec_blocks) if num == first_num else sec_blocks
+            blocks = sec_blocks
             # 两侧都做空白折叠: md 保留原书换行, JSON 侧 HTML 无换行信息
             a = re.sub(r"\s+", " ",
                        " ".join(block_md_text(x) for x in blocks)).strip()
@@ -978,10 +983,21 @@ def main() -> None:
         for e in errors[:30]:
             print("  -", e)
         sys.exit(1)
+    def prefix_of(chap: dict) -> str:
+        """取章身份前缀: 首节编号的第一段 (前言 "0"、附录为字母、正文为数字)。
+
+        Args:
+            chap: 章节对象。
+
+        Returns:
+            编号前缀; 没有小节时为空串。
+        """
+        return (chap["tutorials"][0]["number"].split(".")[0]
+                if chap["tutorials"] else "")
+
     n_tut = sum(len(c["tutorials"]) for c in data)
-    n_preface = sum(len(c["tutorials"]) for c in data
-                    if c["meta"].get("kind") == "preface")
-    appx = [c for c in data if c["meta"].get("kind") == "appendix"]
+    n_preface = sum(len(c["tutorials"]) for c in data if prefix_of(c) == "0")
+    appx = [c for c in data if prefix_of(c).isalpha()]
     n_appx = sum(len(c["tutorials"]) for c in appx)
     print(f"[ OK ] {len(data)} 章 / {n_tut} 小节 (前言 {n_preface} 节, "
           f"附录 {len(appx)} 章 / {n_appx} 节) md 与 JSON 文本逐节一致, 图片一致")

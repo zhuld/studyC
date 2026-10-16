@@ -2,11 +2,10 @@
  * test_course_data.js — 课程数据回归测试（纯本地，不访问网络）
  * 运行：node tools/test_course_data.js   （在仓库根目录执行）
  *
- * 校验 course-content.json 的结构完整性：章节数量、编号唯一性、
- * 每个小节正文是否齐备，以及正文篇幅下限（防止批量丢失内容）。
+ * 校验 course-content.json 的结构完整性：章节数量、章首导言 intro、
+ * 编号唯一性、每个小节正文是否齐备，以及正文篇幅下限（防止批量丢失内容）。
  *
- * 课程 = 1 个前言章节（meta.kind = "preface"）+ 8 个正文章 +
- * 3 个附录（meta.kind = "appendix"）。
+ * 课程 = 1 个前言章节（首节编号 0.x）+ 8 个正文章 + 3 个附录（首节 A.x–C.x）。
  * 前言与附录是只读的原书正文，因此下面的篇幅断言分两支。
  */
 "use strict";
@@ -29,10 +28,11 @@ assert.ok(
 const tutorialIds = new Set();
 let tutorialCount = 0;
 chapters.forEach((chapter, chapterIndex) => {
-  /* 章节次序固定：前言是第 1 章、附录是最后三章、正文章一律不带 kind 标记 */
-  const kind = chapter.meta.kind;
-  const isPreface = kind === "preface";
-  const isAppendix = kind === "appendix";
+  /* 章节身份按首节编号前缀判定（0. → 前言、字母 → 附录），并与固定次序交叉校验：
+     前言是第 1 章、附录是最后三章 */
+  const prefix = chapter.tutorials.length ? chapter.tutorials[0].number.split(".")[0] : "";
+  const isPreface = prefix === "0";
+  const isAppendix = /^[A-Za-z]$/.test(prefix);
   const isReadonly = isPreface || isAppendix;
   assert.strictEqual(
     isPreface,
@@ -45,6 +45,12 @@ chapters.forEach((chapter, chapterIndex) => {
     `chapter ${chapterIndex + 1} appendix flag should match its position`
   );
   assert.ok(chapter.meta.chapter, `chapter ${chapterIndex + 1} should have a title`);
+  /* 章首导言独立成块：intro 是块级 HTML 数组，不并入首节；无导言时为空数组 */
+  assert.ok(Array.isArray(chapter.intro), `chapter ${chapterIndex + 1} should expose an intro array`);
+  chapter.intro.forEach((paragraph) => {
+    assert.ok(typeof paragraph === "string" && paragraph.trim(),
+      `chapter ${chapterIndex + 1} intro should have readable text`);
+  });
   assert.ok(chapter.tutorials.length > 0, `chapter ${chapterIndex + 1} should have ordered tutorials`);
 
   const tutorialNumbers = new Set();
@@ -76,7 +82,7 @@ chapters.forEach((chapter, chapterIndex) => {
   });
   // 正文取自教材 md, 单节篇幅随原书小节长短而定 (如 7.8.3 原文仅数行),
   // 因此按章整体把关, 防止大批正文缺失; 附录 C 通篇只有一节, 门槛相应降低
-  const chapterText = chapter.tutorials.map(plainText).join("");
+  const chapterText = chapter.intro.join("") + chapter.tutorials.map(plainText).join("");
   assert.ok(
     chapterText.length >= (isReadonly ? 1000 : 10000),
     `chapter ${chapterIndex + 1} should keep the whole chapter text`
