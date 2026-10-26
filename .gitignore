@@ -5,6 +5,7 @@ __pycache__/
 *.py[cod]
 
 tools/
+tools1/
 
 # Node dependencies
 node_modules/
