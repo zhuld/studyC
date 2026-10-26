@@ -1,6 +1,6 @@
 # 《C程序设计语言》交互读本
 
-《The C Programming Language》第 2 版（中文简体译本）的交互式阅读实现：**前言与序 + 8 章 + 3 个附录，共 188 个小节**。
+《The C Programming Language》第 2 版（中文简体译本）的交互式阅读实现：**前言与序 + 8 章 + 3 个附录，共 190 个小节**。
 
 逐节阅读教材原文，看到可运行的程序即可一键送进代码工作台，在线编译运行。纯静态页面，无构建步骤、无第三方运行时依赖。
 
@@ -20,7 +20,7 @@ python -m http.server 8080
 
 ## 部署
 
-推送到 GitHub 仓库后在 Settings → Pages 选择 `main` 分支根目录即可。部署需要根目录下的 `index.html`、`style.css`、`*.js`、`course-content.json` 与 `images/`。
+推送到 GitHub 仓库后在 Settings → Pages 选择 `main` 分支根目录即可。部署需要根目录下的 `index.html`、`style.css`、`*.js` 与 `md/`；网页会直接读取 Markdown 书稿及其中的 `md/images/` 插图。
 
 ---
 
@@ -54,7 +54,7 @@ python -m http.server 8080
 
 ## 给开发者
 
-目录结构、模块职责、数据管线与回归测试见 [开发文档](docs/开发文档.md)。
+目录结构、模块职责、Markdown 加载与回归测试见 [开发文档](docs/开发文档.md)。
 
 ---
 

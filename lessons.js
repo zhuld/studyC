@@ -1,7 +1,7 @@
 /*
  * lessons.js — 课程数据加载器
  *
- * 读取同目录下的 course-content.json，完成结构与完整性校验后，
+ * 读取 md/ 下的章节 Markdown 并解析，完成结构与完整性校验后，
  * 通过 window.CHAPTERS / window.CHAPTER1 交给 app.js，
  * 并用 window 事件通知就绪（course-content-ready / course-content-error）。
  *
@@ -11,19 +11,23 @@
 (function () {
   "use strict";
 
-  /* 以本脚本自身的 URL 为基准解析数据路径，使页面可部署在任意子目录 */
+  /* 文件名即课程顺序；浏览器无法列出目录，清单由解析器统一维护 */
+  var chapterFiles = window.MarkdownCourse.chapterFiles;
+  /* 以本脚本自身的 URL 为基准解析书稿路径，使页面可部署在任意子目录 */
   var baseUrl = new URL(".", document.currentScript.src);
-  /* 拉取并解析 JSON；HTTP 层错误转成带文件名的可读异常 */
-  function loadJson(fileName) {
-    return fetch(new URL(fileName, baseUrl)).then(function (response) {
+  function loadMarkdown(fileName) {
+    var path = "md/" + fileName;
+    return fetch(new URL(path, baseUrl)).then(function (response) {
       if (!response.ok) {
-        throw new Error(fileName + " 加载失败：HTTP " + response.status);
+        throw new Error(path + " 加载失败：HTTP " + response.status);
       }
-      return response.json();
+      return response.text().then(function (markdown) {
+        return window.MarkdownCourse.parse(fileName, markdown);
+      });
     });
   }
 
-  loadJson("course-content.json")
+  Promise.all(chapterFiles.map(loadMarkdown))
     .then(function (chapters) {
       /* 课程固定为 1 前言 + 8 章 + 3 个附录, 数量不符说明拿到的不是本课程的数据文件 */
       if (!Array.isArray(chapters) || chapters.length !== 12) {

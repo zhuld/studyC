@@ -4,8 +4,8 @@
 
 本脚本用 pypdf 读取原书 PDF 的文字坐标与字体信息, 先重建页面的视觉行,
 再依据 PDF 内嵌书签(outline)把全书切成「前言与序 / 各章 / 附录 / 索引」
-等输出单元, 逐单元渲染为 Markdown 正文与独立图片文件。其产物供下一阶段
-md_to_course.py 解析并写入 course-content.json。
+等输出单元, 逐单元渲染为 Markdown 正文与独立图片文件。网页运行时直接读取
+这些 Markdown 由网页运行时直接读取。
 
 输入:
     c-programming-language-2nd-edition-simple-chinese.pdf
@@ -26,7 +26,7 @@ md_to_course.py 解析并写入 course-content.json。
       结果; 图片去重与命名基于内容 SHA-1, 不依赖时间戳或随机数。
     - 仅依赖 pypdf; 字体信息缺失时自动退化为基于坐标的版面启发式。
     - 每次运行会删除 md/images/ 中本次未再生成的旧图片(见 main)。
-    - 覆盖保护: md/ 是人工整理过的书稿, 也是 course-content.json 的来源,
+    - 覆盖保护: md/ 是人工整理过的书稿, 也是网页运行时直接读取的来源,
       重新生成会整体覆盖, 因此默认拒绝写入, 需显式加 --force(见 main)。
 """
 from __future__ import annotations
@@ -929,7 +929,7 @@ def write_readme(units: list) -> None:
         "",
         "> 由 `pdf_to_md.py` 从 `c-programming-language-2nd-edition-simple-chinese.pdf` "
         "自动转换生成 (基于 pypdf 的文字坐标与字体信息重建标题、段落、代码块与插图)。"
-        "原书内置「目录」页未转换, 以本目录替代; 插图位于 `images/` 目录。",
+        "原书内置「目录」页未转换, 以本目录替代; 插图位于 `md/images/` 目录。",
         "",
         "## 目录",
         "",
@@ -948,7 +948,7 @@ def guard_overwrite(force: bool) -> None:
     """覆盖保护: 已有书稿时拒绝重新生成, 除非显式要求。
 
     md/ 由人工整理过(句读、题注、三级小节标题、图片命名都与脚本原始输出不同),
-    且是 course-content.json 的唯一来源, 一旦被重新生成就会整体覆盖。
+    且是网页运行时直接读取的书稿, 一旦被重新生成就会整体覆盖。
 
     Args:
         force: 是否为本次运行显式传入了 --force。
@@ -1016,7 +1016,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
-
 

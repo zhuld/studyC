@@ -247,8 +247,8 @@ assert.strictEqual(badgeOf(syntheticTabs[2], "chapter-tab-count"), 3,
 assert.strictEqual(badgeOf(syntheticTabs[3], "chapter-tab-count"), 1,
   "前言的一级徽标应为其小节数");
 
-/* ===== 2. 真实课程数据：12 章 187 节，数字与抽屉挂载逐章核对 ===== */
-const chapters = require("../course-content.json");
+/* ===== 2. 真实课程数据：直接解析 md/ 书稿，逐章核对数字与抽屉挂载 ===== */
+const chapters = require("../load-markdown-course")();
 checkChapters(chapters, "课程数据");
 checkChips(chapters, "课程数据");
 

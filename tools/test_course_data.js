@@ -2,7 +2,7 @@
  * test_course_data.js — 课程数据回归测试（纯本地，不访问网络）
  * 运行：node tools/test_course_data.js   （在仓库根目录执行）
  *
- * 校验 course-content.json 的结构完整性：章节数量、章首导言 intro、
+ * 校验浏览器端 Markdown 解析结果的结构完整性：章节数量、章首导言 intro、
  * 编号唯一性、每个小节正文是否齐备，以及正文篇幅下限（防止批量丢失内容）。
  *
  * 课程 = 1 个前言章节（首节编号 0.x）+ 8 个正文章 + 3 个附录（首节 A.x–C.x）。
@@ -11,9 +11,21 @@
 "use strict";
 
 const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
 
-/* 本脚本在 tools/ 下，课程数据位于上一级仓库根目录 */
-const chapters = require("../course-content.json");
+/* 与页面共用 Markdown 解析器构造真实课程章节 */
+const chapters = require("../load-markdown-course")();
+
+function validateImages(html, label) {
+  const imagePaths = Array.from(html.matchAll(/<img src="([^"]+)"/g), (match) => match[1]);
+  imagePaths.forEach((imagePath) => {
+    assert.ok(imagePath.startsWith("md/images/"),
+      `${label} images should load from md/images/`);
+    assert.ok(fs.existsSync(path.join(__dirname, "..", imagePath)),
+      `${imagePath} should exist`);
+  });
+}
 assert.strictEqual(
   chapters.length, 12,
   "course should contain preface, chapters 1–8 plus appendices A–C"
@@ -51,6 +63,8 @@ chapters.forEach((chapter, chapterIndex) => {
     assert.ok(typeof paragraph === "string" && paragraph.trim(),
       `chapter ${chapterIndex + 1} intro should have readable text`);
   });
+  chapter.intro.forEach((paragraph) =>
+    validateImages(paragraph, `chapter ${chapterIndex + 1} intro`));
   assert.ok(chapter.tutorials.length > 0, `chapter ${chapterIndex + 1} should have ordered tutorials`);
 
   const tutorialNumbers = new Set();
@@ -75,6 +89,7 @@ chapters.forEach((chapter, chapterIndex) => {
     );
     tutorial.paragraphs.forEach((paragraph) => {
       assert.ok(typeof paragraph === "string" && paragraph.trim(), `${tutorial.number} should have readable text`);
+      validateImages(paragraph, tutorial.number);
     });
     tutorialNumbers.add(tutorial.number);
     tutorialIds.add(tutorial.number);
@@ -90,8 +105,8 @@ chapters.forEach((chapter, chapterIndex) => {
 });
 /* 固定总量：课程契约的一部分，修订课程数据时需同步调整 */
 assert.strictEqual(
-  tutorialIds.size, 188,
-  "course should retain 6 preface sections, all 91 main topics plus 91 appendix sections"
+  tutorialIds.size, 190,
+  "course should retain 6 preface sections, all 91 main topics plus 93 appendix sections"
 );
 console.log(
   `[ OK ] ${chapters.length} chapters, ${tutorialCount} tutorials ` +

@@ -4,7 +4,7 @@
 
   结构：报头 → 阅读工具条（最左为目录开关，其后为章节进度与阅读偏好）→ 左栏目录（三级瀑布式：
         章条目内嵌小节，带子节的小节再内嵌三级小节）→ 右栏教程（正文）→ 浮动代码工作台 → 底部脚本
-  数据：lessons.js 加载 course-content.json，app.js 渲染并驱动全部交互；
+  数据：lessons.js 直接加载并解析 md/ 下的章节书稿，app.js 渲染并驱动全部交互；
         因此本文件中的 #sections、#chapterNav 等初始为空。
   本地偏好：<head> 内的内联脚本在首屏绘制前恢复目录收缩状态，避免样式跳变。
 -->
@@ -172,7 +172,8 @@
 
 </main>
 
-<!-- 加载顺序即依赖顺序：课程数据 → 正文代码块标注 → 语法高亮 → 渲染与交互 -->
+<!-- 加载顺序即依赖顺序：Markdown 解析 → 课程书稿 → 正文代码块标注 → 语法高亮 → 渲染与交互 -->
+<script src="markdown-course.js"></script>
 <script src="lessons.js"></script>
 <script src="code-blocks.js"></script>
 <script src="highlight.js"></script>

@@ -738,7 +738,7 @@
       /* 标题带上小节号（元信息栏移除后，编号只能由此体现） */
       var content = "<" + heading + ">" + esc(topic.number) + "　" + esc(topic.title) + "</" + heading + ">";
       topic.paragraphs.forEach(function (paragraph) {
-        // paragraphs 由 tools/md_to_course.py 生成: 本身即块级 HTML (<p>/<pre>/<img>/<table>)
+        // paragraphs 由 Markdown 解析器转为块级 HTML (<p>/<pre>/<img>/<table>)
         content += paragraph + "\n";
       });
       article.innerHTML = content;

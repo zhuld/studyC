@@ -17,9 +17,9 @@
 const assert = require("assert");
 /* 本脚本在 tools/ 下：着色实现与课程数据都在上一级仓库根目录 */
 const { highlight } = require("../highlight.js");
-const chapters = require("../course-content.json");
+const chapters = require("../load-markdown-course")();
 
-/* html.escape 生成的实体 (md_to_course.py) → 还原为代码纯文本 */
+/* HTML 转义实体 → 还原为代码纯文本 */
 const ENTITIES = { lt: "<", gt: ">", amp: "&", quot: '"', "#x27": "'", "#39": "'" };
 function decodeEntities(s) {
   return String(s).replace(/&(lt|gt|amp|quot|#x27|#39);/g, (whole, name) => ENTITIES[name]);
